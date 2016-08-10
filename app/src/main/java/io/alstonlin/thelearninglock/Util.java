@@ -49,8 +49,10 @@ public class Util {
         params.y = 100;
         params.screenOrientation = Configuration.ORIENTATION_PORTRAIT;
         // Adds the view to the Window Manager
-        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        windowManager.addView(attach, params);
+        if (attach.getWindowToken() == null) { // If not already attached
+            WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            windowManager.addView(attach, params);
+        }
     }
 
     /**
@@ -68,7 +70,7 @@ public class Util {
 
     /**
      * Converts the list of Cells representing patterns to a list of int[2] with the same row/col info
-     * @param pattern The pattern to convert
+     * @param pattern The pattern_view to convert
      * @return The converted list of int[2]
      */
     public static ArrayList<int[]> toList(List<PatternView.Cell> pattern){

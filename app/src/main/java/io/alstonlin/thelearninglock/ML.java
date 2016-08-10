@@ -119,7 +119,7 @@ public class ML implements Serializable {
 
     /**
      * Adds an entry to the System, and if indicated, retrain the network.
-     * @param data The data (pattern cell times) of the user as input
+     * @param data The data (pattern_view cell times) of the user as input
      * @param validity If the data was valid, the output
      * @param retrain If the network should be retrained
      */

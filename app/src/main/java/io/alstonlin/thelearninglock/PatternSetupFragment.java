@@ -9,9 +9,11 @@ import android.widget.Button;
 
 
 /**
- * The Fragment where the user would select thier pattern lock
+ * The Fragment that the user will select their pattern, and train it
  */
-public class PatternSetupFragment extends Fragment {
+public class PatternSetupFragment extends Fragment implements OnPatternSelectListener{
+    private PatternViewManager manager;
+
     /**
      * Factory method to create a new instance of this Fragment
      * @return A new instance of fragment PatternSetupFragment.
@@ -28,18 +30,13 @@ public class PatternSetupFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_pattern_setup, container, false);
-        Button next = (Button) view.findViewById(R.id.nextButton);
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickNext();
-            }
-        });
+        View view = inflater.inflate(R.layout.pattern_view, container, false);
+        manager = new PatternViewManager(view, this);
         return view;
     }
 
-    public void clickNext() {
+    @Override
+    public void onPatternSelect() {
         ((FragmentChangable)getActivity()).changeFragment(PINSetupFragment.newInstance());
     }
 }

@@ -4,7 +4,12 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
+import android.provider.Settings;
+
+import static android.support.v4.app.ActivityCompat.startActivityForResult;
 
 /**
  * The Service that runs in the background to "lock" and "unlock" the screen by attaching a View
@@ -50,6 +55,7 @@ public class LockScreenService extends Service {
             nextIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(nextIntent);
         } else {
+            lockScreen.hideUnlockScreen(); // If they had the Popup open before
             lockScreen.lock();
         }
         return START_STICKY;
@@ -74,4 +80,5 @@ public class LockScreenService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
 }
