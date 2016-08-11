@@ -19,15 +19,14 @@ public class PatternUtils {
      * Manages the PatternView, listens to it, and handles / process the pattern received from the
      * listener and returns it to the given listener.
      * @param context The context this View is being displayed in
-     * @param layout An instance of the layout defined in pattern_view.xml
+     * @param layout An instance of the layout defined in layout_pattern.xmlml
      * @param listener An instance of OnPatternSelectListener that will receive the processed
      *                 pattern once it has been selected
      * @param title The title that should be displayed on the top of this Layout
      */
     public static void setupPatternLayout(Context context, final View layout, final OnPatternSelectListener listener, String title){
         // Title Setup
-        TextView titleView = (TextView) layout.findViewById(R.id.pattern_view_title);
-        titleView.setText(title);
+        setPatternLayoutTitle(context, layout, title);
         // Pattern
         final ArrayList<Double> selectTimes = new ArrayList<>(); // Keeps track of the times between each node select
         final PatternView patternView = (PatternView) layout.findViewById(R.id.pattern_view_pattern);
@@ -47,17 +46,22 @@ public class PatternUtils {
 
             @Override
             public void onPatternDetected(List<PatternView.Cell> pattern) {
-                patternView.clearPattern();
                 double[] timeBetweenPatternNodes = calculateTimeElapsed(selectTimes);
                 selectTimes.clear();
                 listener.onPatternSelect(PatternUtils.serializePattern(pattern), timeBetweenPatternNodes);
+                patternView.clearPattern();
             }
         });
     }
 
+    public static void setPatternLayoutTitle(Context context, final View layout, String title){
+        TextView titleView = (TextView) layout.findViewById(R.id.pattern_view_title);
+        titleView.setText(title);
+    }
+
     /**
      * Converts the list of Cells representing patterns to a list of int[2] with the same row/col info
-     * @param pattern The pattern_view to convert
+     * @param pattern The layout_pattern to convert
      * @return The converted list of int[2]
      */
     public static ArrayList<int[]> serializePattern(List<PatternView.Cell> pattern){
