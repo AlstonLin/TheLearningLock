@@ -1,4 +1,4 @@
-package io.alstonlin.thelearninglock;
+package io.alstonlin.thelearninglock.setup;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -9,7 +9,11 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 
-public class SetupActivity extends FragmentActivity implements FragmentChangable{
+import io.alstonlin.thelearninglock.FragmentChangable;
+import io.alstonlin.thelearninglock.R;
+import io.alstonlin.thelearninglock.setup.BackgroundPickerFragment;
+
+public class SetupActivity extends FragmentActivity implements FragmentChangable {
     public final static int REQUEST_CODE = 5463;
     private Bundle savedInstanceState;
 

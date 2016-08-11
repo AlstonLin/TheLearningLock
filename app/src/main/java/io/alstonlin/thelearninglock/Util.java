@@ -41,7 +41,9 @@ public class Util {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
                 PixelFormat.OPAQUE);
         params.gravity = Gravity.TOP | Gravity.LEFT;
@@ -55,48 +57,4 @@ public class Util {
         }
     }
 
-    /**
-     * Calculates the time between each unlock.
-     * @param timeAtClick A list of times in milliseconds for each click
-     * @return The time between each click
-     */
-    public static double[] calculateTimeElapsed(ArrayList<Double> timeAtClick){
-        double[] elapsedTimes = new double[timeAtClick.size()-1];
-        for (int i = 0; i < timeAtClick.size() - 1; i++) {
-            elapsedTimes[i] = timeAtClick.get(i + 1) - timeAtClick.get(i);
-        }
-        return elapsedTimes;
-    }
-
-    /**
-     * Converts the list of Cells representing patterns to a list of int[2] with the same row/col info
-     * @param pattern The pattern_view to convert
-     * @return The converted list of int[2]
-     */
-    public static ArrayList<int[]> toList(List<PatternView.Cell> pattern){
-        ArrayList<int[]> list = new ArrayList<>();
-        for (PatternView.Cell cell : pattern){
-            int[] a = new int[2];
-            a[0] = cell.getRow();
-            a[1] = cell.getColumn();
-            list.add(a);
-        }
-        return list;
-    }
-
-    /**
-     * Determines if two lists of int[2] are equal, because apparently Java can't check that for us.
-     * @param l1 The first list
-     * @param l2 The second list
-     * @return If the lists are equal
-     */
-    public static boolean equals(List<int[]> l1, List<int[]> l2){
-        if (l1.size() != l2.size()) return false;
-        for (int i = 0; i < l1.size(); i++){
-            int[] e1 = l1.get(i);
-            int[] e2 = l2.get(i);
-            if (e1[0] != e2[0] || e1[1] != e2[1]) return false;
-        }
-        return true;
-    }
 }

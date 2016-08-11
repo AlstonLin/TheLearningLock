@@ -8,24 +8,18 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:paddingTop="15dp"
+        android:layout_marginTop="15dp"
         android:layout_weight="1"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="INSTRUCTIONS"
-        android:id="@+id/textView"
+        android:text="Large Text"
+        android:textColor="#000000"
+        android:id="@+id/pattern_view_title"
         android:layout_gravity="center_horizontal|top" />
 
     <me.zhanghai.android.patternlock.PatternView
-        android:id="@+id/pattern"
+        android:id="@+id/pattern_view_pattern"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5"
         android:layout_marginTop="10dp" />
-
-    <Button
-        android:id="@+id/unlockButton"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="UNLOCK" />
 </LinearLayout>
