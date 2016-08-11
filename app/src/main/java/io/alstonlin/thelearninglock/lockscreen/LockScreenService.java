@@ -2,9 +2,11 @@ package io.alstonlin.thelearninglock.lockscreen;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
+import android.telephony.TelephonyManager;
 
 import io.alstonlin.thelearninglock.setup.SetupActivity;
 
@@ -14,9 +16,7 @@ import io.alstonlin.thelearninglock.setup.SetupActivity;
  */
 public class LockScreenService extends Service {
     // Constants
-    public static final String PATTERN_FILENAME = "pattern";
-    public static final String PASSCODE_FILENAME = "passcode";
-    public static final String LOCKSCREEN_SERVICE = "lockscreen_service";
+
     // Fields
     private LockScreen lockScreen;
     private BroadcastReceiver receiver;
@@ -52,8 +52,12 @@ public class LockScreenService extends Service {
             nextIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(nextIntent);
         } else {
-            lockScreen.hideUnlockScreen(); // If they had the Popup open before
-            lockScreen.lock();
+            // Checks if currently in a phone call
+            TelephonyManager ts = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            if (ts.getCallState() != TelephonyManager.CALL_STATE_OFFHOOK) {
+                lockScreen.hideUnlockScreen(); // If they had the Popup open before
+                lockScreen.lock();
+            }
         }
         return START_STICKY;
     }
