@@ -1,4 +1,4 @@
-package io.alstonlin.thelearninglock;
+package io.alstonlin.thelearninglock.setup;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import io.alstonlin.thelearninglock.FragmentChangable;
+import io.alstonlin.thelearninglock.R;
 
 
 /**

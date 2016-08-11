@@ -1,15 +1,12 @@
-package io.alstonlin.thelearninglock;
+package io.alstonlin.thelearninglock.lockscreen;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
-import android.os.Build;
 import android.os.IBinder;
-import android.provider.Settings;
 
-import static android.support.v4.app.ActivityCompat.startActivityForResult;
+import io.alstonlin.thelearninglock.setup.SetupActivity;
 
 /**
  * The Service that runs in the background to "lock" and "unlock" the screen by attaching a View

@@ -19,7 +19,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SetupActivity">
+        <activity android:name=".setup.SetupActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,18 +28,12 @@
         </activity>
 
         <service
-            android:name=".LockScreenService"
+            android:name=".lockscreen.LockScreenService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity
-            android:name=".SettingsAcitivity"
-            android:label="@string/title_activity_settings_acitivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
         <receiver
-            android:name=".LockScreenReceiver"
+            android:name=".lockscreen.LockScreenReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

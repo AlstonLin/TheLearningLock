@@ -1,4 +1,4 @@
-package io.alstonlin.thelearninglock;
+package io.alstonlin.thelearninglock.lockscreen;
 
 import android.content.Context;
 import android.view.Gravity;
@@ -8,13 +8,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupWindow;
 
+import java.util.List;
+
+import io.alstonlin.thelearninglock.pattern.OnPatternSelectListener;
+import io.alstonlin.thelearninglock.R;
+import io.alstonlin.thelearninglock.Util;
+import io.alstonlin.thelearninglock.pattern.PatternUtils;
+
 /**
  * Manages all the interactions with the View for the lock screen. Similar to a Fragment for it.
  */
-public class LockScreen implements OnPatternSelectListener{
+public class LockScreen implements OnPatternSelectListener {
     private View lockView;
     private Context context;
-    private PatternViewManager manager;
     private PopupWindow unlockScreen;
 
     public LockScreen(Context context){
@@ -53,7 +59,7 @@ public class LockScreen implements OnPatternSelectListener{
     private void showUnlockScreen(){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View unlockView = inflater.inflate(R.layout.pattern_view, null, false);
-        manager = new PatternViewManager(unlockView, this);
+        PatternUtils.setupPatternLayout(context, unlockView, this, "Draw your pattern to unlock");
         unlockScreen = new PopupWindow(
                 unlockView,
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -64,7 +70,7 @@ public class LockScreen implements OnPatternSelectListener{
     }
 
     @Override
-    public void onPatternSelect() {
+    public void onPatternSelect(List<int[]> pattern, double[] timeBetweenNodeSelects) {
         unlock();
     }
 
