@@ -30,6 +30,7 @@ public class LockScreenService extends Service {
         // Registers the receiver to detect when screen is turned off and on
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.setPriority(999);
         receiver = new LockScreenReceiver();
         registerReceiver(receiver, filter);
         // Creates the Lock Screen
