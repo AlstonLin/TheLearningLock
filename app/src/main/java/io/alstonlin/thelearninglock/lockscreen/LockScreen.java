@@ -1,5 +1,6 @@
 package io.alstonlin.thelearninglock.lockscreen;
 
+import android.app.Notification;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -45,6 +46,9 @@ public class LockScreen implements OnPatternSelectListener {
 
     public void unlock(){
         LockUtils.unlock(context, lockView);
+    }
+
+    public void updateNotifications(Notification[] notifications){
     }
 
     private void setupLockView(View view){

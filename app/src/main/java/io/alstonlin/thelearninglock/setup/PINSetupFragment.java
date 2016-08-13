@@ -46,7 +46,6 @@ public class PINSetupFragment extends Fragment {
 
     public void clickFinish() {
         Toast.makeText(getActivity(), "All set up!", Toast.LENGTH_SHORT).show();
-        getActivity().startService(new Intent(getActivity(), LockScreenService.class));
         getActivity().finish();
     }
 }

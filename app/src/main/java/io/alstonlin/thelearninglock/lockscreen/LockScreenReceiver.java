@@ -12,17 +12,21 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e("TAG", ">>>>>>>>>>>>>>>>>>>>>>>>>>.RECEIVED ACTION: " + intent.getAction() + "<<<<<<<<<<<<<<<<<<<<");
         if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF) ||
                 intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
-            Log.e("LockScreenReceiver", ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>..RECEIVED INTENT<<<<<<<<<<<<<<<<<<<<<<<<<<");
-            startLockscreen(context);
+            startLockscreen(context, false);
+        } else if(intent.getAction().equals(Intent.ACTION_SCREEN_ON)){
+            startLockscreen(context, true);
         }
     }
 
-    private void startLockscreen(Context context) {
+    private void startLockscreen(Context context, boolean screenOn) {
         // It's safe to call this multiple times; It will not start if already running
-        context.startService(new Intent(context, LockScreenService.class));
+        Intent intent = new Intent(context, LockScreenService.class);
+        if (screenOn) {
+            intent.addFlags(LockScreenService.UNLOCK_FLAG);
+        }
+        context.startService(intent);
     }
 
 }
