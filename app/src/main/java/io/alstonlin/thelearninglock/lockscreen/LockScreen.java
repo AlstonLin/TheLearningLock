@@ -2,11 +2,13 @@ package io.alstonlin.thelearninglock.lockscreen;
 
 import android.app.Notification;
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
@@ -25,6 +27,8 @@ import io.alstonlin.thelearninglock.pattern.PatternUtils;
  */
 public class LockScreen implements OnPatternSelectListener {
     private View lockView;
+    private LockScreenNotificationsAdapter notificationsAdapter;
+    private ListView notificationsList;
     private Context context;
     // Unlocking
     private PopupWindow unlockScreen;
@@ -34,9 +38,9 @@ public class LockScreen implements OnPatternSelectListener {
     public LockScreen(Context context){
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View lockView = layoutInflater.inflate(R.layout.lock_screen, null);
-        setupLockView(lockView);
         this.lockView = lockView;
         this.context = context;
+        setupLockView(lockView);
         this.actualPattern = loadPattern();
     }
 
@@ -48,7 +52,12 @@ public class LockScreen implements OnPatternSelectListener {
         LockUtils.unlock(context, lockView);
     }
 
+    /**
+     * Change the notifications displayed on the lock screen.
+     * @param notifications The new notifications
+     */
     public void updateNotifications(Notification[] notifications){
+        notificationsAdapter.setNotifications(notifications);
     }
 
     private void setupLockView(View view){
@@ -59,8 +68,14 @@ public class LockScreen implements OnPatternSelectListener {
                 showUnlockScreen();
             }
         });
+        notificationsList = (ListView) view.findViewById(R.id.lock_screen_notifications_list);
+        notificationsAdapter = new LockScreenNotificationsAdapter(context);
+        notificationsList.setAdapter(notificationsAdapter);
     }
 
+    /**
+     * Shows the unlock Popup.
+     */
     private void showUnlockScreen(){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         patternLayout = inflater.inflate(R.layout.layout_pattern, null, false);
@@ -74,6 +89,9 @@ public class LockScreen implements OnPatternSelectListener {
         unlockScreen.showAtLocation(lockView, Gravity.CENTER, 0, 0);
     }
 
+    /**
+     * Hides the unlock Popup.
+     */
     public void hideUnlockScreen(){
         if (unlockScreen != null){
             unlockScreen.dismiss();

@@ -1,19 +1,19 @@
 package io.alstonlin.thelearninglock.lockscreen;
 
-import android.Manifest;
-import android.app.Notification;
+import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
+
+import android.content.ServiceConnection;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.service.notification.NotificationListenerService;
-import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
+
 import android.telephony.TelephonyManager;
 
 import java.util.Set;
@@ -25,15 +25,31 @@ import io.alstonlin.thelearninglock.setup.SetupActivity;
  * The Service that runs in the background to "lock" and "unlock" the screen by attaching a View
  * over the WindowManager whenever the power button is pressed.
  */
-public class LockScreenService extends NotificationListenerService {
+public class LockScreenService extends Service implements NotificationsUpdateListener{
     // Constants
     public static final int UNLOCK_FLAG = 69;
     public static final int OPEN_SETUP_ACTIVITY = 70;
 
     // Fields
+    private Handler uiHandler; // Allows sending messages to the "UI" thread (Service's main Thread)
     private LockScreen lockScreen;
     private BroadcastReceiver receiver;
-    private boolean notificationsOn = false;
+    private LockScreenNotificationService notificationService;
+    /**
+     * The connection to the Notification service
+     */
+    private ServiceConnection notificationConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            LockScreenNotificationService.ServiceBinder notifBinder = (LockScreenNotificationService.ServiceBinder) iBinder;
+            notificationService = notifBinder.getService();
+            notifBinder.setNotificationsUpdateListener(LockScreenService.this);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+        }
+    };
 
     /**
      * Called when the Service is started. Either runs the initial setup, or simply locks the screen.
@@ -41,6 +57,10 @@ public class LockScreenService extends NotificationListenerService {
     @Override
     public void onCreate() {
         super.onCreate();
+        // Starts the notification service
+        Intent intent = new Intent(this, LockScreenNotificationService.class);
+        bindService(intent, notificationConnection, Context.BIND_AUTO_CREATE);
+        startService(intent);
         // Registers the receiver to detect when screen is turned off and on
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
@@ -50,10 +70,12 @@ public class LockScreenService extends NotificationListenerService {
         registerReceiver(receiver, filter);
         // Creates the Lock Screen
         lockScreen = new LockScreen(this);
+        // Creates the handler
+        uiHandler = new Handler();
     }
 
     /**
-     * Called everytime the screen is locked, or during setup.
+     * Called every time the screen is locked, or during setup.
      * @param intent The intent this was called by
      * @param flags Flags passed
      * @param startId Service ID
@@ -70,14 +92,7 @@ public class LockScreenService extends NotificationListenerService {
                 }
                 break;
             case UNLOCK_FLAG: // Update notifications when unlocking
-                if (notificationsOn){
-                    StatusBarNotification[] statusNotifications = getActiveNotifications();
-                    Notification[] notifications = new Notification[statusNotifications.length];
-                    for (int i = 0; i < statusNotifications.length; i++){
-                        notifications[i] = statusNotifications[i].getNotification();
-                    }
-                    lockScreen.updateNotifications(notifications);
-                }
+                notifyNotificationsUpdated();
                 break;
             default:
                 // Checks if currently in a phone call
@@ -89,6 +104,25 @@ public class LockScreenService extends NotificationListenerService {
         }
         return START_STICKY;
     }
+
+    /**
+     * Re-fetches all the notifications and updates the list.
+     */
+    public void notifyNotificationsUpdated(){
+        uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (notificationService != null){
+                    lockScreen.updateNotifications(notificationService.getNotifications());
+                }
+            }
+        });
+    }
+
+
+    /*
+        Permission Checks
+    */
 
     private boolean checkDrawOverlayPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
@@ -122,31 +156,15 @@ public class LockScreenService extends NotificationListenerService {
         return true;
     }
 
-    @Override
-    public void onListenerConnected(){
-        notificationsOn = true;
-    }
-
     /**
-     * Unregisters receiver.
+     * Unregisters the resources used
      */
     @Override
     public void onDestroy() {
         super.onDestroy();
         lockScreen.unlock();
         unregisterReceiver(receiver);
-    }
-
-
-    /*
-        Stuff below is not actually used
-    */
-
-    @Override
-    public void onNotificationPosted(StatusBarNotification sbn) {
-    }
-    @Override
-    public void onNotificationRemoved(StatusBarNotification sbn) {
+        unbindService(notificationConnection);
     }
 
     @Override
