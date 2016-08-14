@@ -6,15 +6,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import java.util.ArrayList;
+
 public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
     private Context context;
+    private NotificationSelectListener selectListener;
 
-    public LockScreenNotificationsAdapter(Context context){
+    public LockScreenNotificationsAdapter(Context context, NotificationSelectListener selectListener){
         super(context, 0);
         this.context = context;
+        this.selectListener = selectListener;
     }
 
-    public void setNotifications(Notification[] notifications){
+    /**
+     * Sets and updates the notifications this shows on the attached ListView.
+     * @param notifications The new notifications to show
+     */
+    public void setNotifications(ArrayList<Notification> notifications){
         clear();
         addAll(notifications);
         notifyDataSetChanged();
@@ -22,8 +30,14 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
 
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {
-        Notification notification = getItem(i);
+        final Notification notification = getItem(i);
         View view = notification.contentView.apply(context, parent);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectListener.onNotificationSelected(notification);
+            }
+        });
         return view;
     }
 }
