@@ -1,6 +1,7 @@
 package io.alstonlin.thelearninglock.lockscreen;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.util.Log;
 import android.view.Gravity;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.alstonlin.thelearninglock.Const;
@@ -25,7 +27,7 @@ import io.alstonlin.thelearninglock.pattern.PatternUtils;
 /**
  * Manages all the interactions with the View for the lock screen. Similar to a Fragment for it.
  */
-public class LockScreen implements OnPatternSelectListener {
+public class LockScreen {
     private View lockView;
     private LockScreenNotificationsAdapter notificationsAdapter;
     private ListView notificationsList;
@@ -35,13 +37,40 @@ public class LockScreen implements OnPatternSelectListener {
     private View patternLayout;
     private List<int[]> actualPattern;
 
+    // Listeners
+    private OnPatternSelectListener patternListener = new OnPatternSelectListener() {
+        @Override
+        public void onPatternSelect(List<int[]> pattern, double[] timeBetweenNodeSelects) {
+            if (actualPattern == null){ // There was a problem loading the pattern, so we'll pretend what they entered was right
+                // TODO: Is this really what should be done?
+                unlock();
+                return;
+            }
+            if (PatternUtils.arePatternsEqual(actualPattern, pattern)){
+                unlock();
+            } else{
+                PatternUtils.setPatternLayoutTitle(context, patternLayout, "Invalid Pattern! Please try again.");
+            }
+        }
+    };
+    private NotificationSelectListener notificationListener = new NotificationSelectListener() {
+        @Override
+        public void onNotificationSelected(Notification notification) {
+            PendingIntent intent = notification.contentIntent;
+            try {
+                intent.send();
+                showUnlockScreen();
+            } catch (PendingIntent.CanceledException e) {
+            }
+        }
+    };
+
     public LockScreen(Context context){
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View lockView = layoutInflater.inflate(R.layout.lock_screen, null);
         this.lockView = lockView;
         this.context = context;
         setupLockView(lockView);
-        this.actualPattern = loadPattern();
     }
 
     public void lock(){
@@ -57,7 +86,16 @@ public class LockScreen implements OnPatternSelectListener {
      * @param notifications The new notifications
      */
     public void updateNotifications(Notification[] notifications){
-        notificationsAdapter.setNotifications(notifications);
+        // Filters out secret notifications
+        ArrayList<Notification> publicNotifications = new ArrayList<>();
+        for (int i = 0; i < notifications.length; i++){
+            Notification notification = notifications[i];
+            // TODO: Have a setting where the user decides which ones to show?
+            if (notification.visibility != Notification.VISIBILITY_SECRET){
+                publicNotifications.add(notification);
+            }
+        }
+        notificationsAdapter.setNotifications(publicNotifications);
     }
 
     private void setupLockView(View view){
@@ -69,7 +107,7 @@ public class LockScreen implements OnPatternSelectListener {
             }
         });
         notificationsList = (ListView) view.findViewById(R.id.lock_screen_notifications_list);
-        notificationsAdapter = new LockScreenNotificationsAdapter(context);
+        notificationsAdapter = new LockScreenNotificationsAdapter(context, notificationListener);
         notificationsList.setAdapter(notificationsAdapter);
     }
 
@@ -77,9 +115,12 @@ public class LockScreen implements OnPatternSelectListener {
      * Shows the unlock Popup.
      */
     private void showUnlockScreen(){
+        if (actualPattern == null){
+            this.actualPattern = loadPattern();
+        }
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         patternLayout = inflater.inflate(R.layout.layout_pattern, null, false);
-        PatternUtils.setupPatternLayout(context, patternLayout, this, "Draw your pattern to unlock");
+        PatternUtils.setupPatternLayout(context, patternLayout, patternListener, "Draw your pattern to unlock");
         unlockScreen = new PopupWindow(
                 patternLayout,
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -96,20 +137,6 @@ public class LockScreen implements OnPatternSelectListener {
         if (unlockScreen != null){
             unlockScreen.dismiss();
             unlockScreen = null;
-        }
-    }
-
-    @Override
-    public void onPatternSelect(List<int[]> pattern, double[] timeBetweenNodeSelects) {
-        if (this.actualPattern == null){ // There was a problem loading the pattern, so we'll pretend what they entered was right
-            // TODO: Is this really what should be done?
-            unlock();
-            return;
-        }
-        if (PatternUtils.arePatternsEqual(actualPattern, pattern)){
-            unlock();
-        } else{
-            PatternUtils.setPatternLayoutTitle(context, patternLayout, "Invalid Pattern! Please try again.");
         }
     }
 

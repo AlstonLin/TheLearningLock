@@ -100,6 +100,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
                 if (ts.getCallState() != TelephonyManager.CALL_STATE_OFFHOOK) {
                     lockScreen.hideUnlockScreen(); // If they had the Popup open before
                     lockScreen.lock();
+                    notifyNotificationsUpdated();
                 }
         }
         return START_STICKY;
