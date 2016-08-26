@@ -4,17 +4,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="25dp"
+    android:background="@drawable/tmp_wallpaper"
     tools:context=".setup.PINSetupFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="PIN SETUP" />
-
-    <Button
-        android:id="@+id/finishButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Finish" />
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:layout_weight="1"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:textColor="#FFFFFF"
+        android:id="@+id/pin_view_title"
+        android:layout_gravity="center_horizontal|top" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="7">
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/pin_view_enter"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:text="Enter" />
 </LinearLayout>

@@ -32,6 +32,8 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
     public View getView(int i, View convertView, ViewGroup parent) {
         final Notification notification = getItem(i);
         View view = notification.contentView.apply(context, parent);
+        // TODO: Add a possibility to swiper to delete it?
+        // Maybe use https://github.com/hudomju/android-swipe-to-dismiss-undo
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

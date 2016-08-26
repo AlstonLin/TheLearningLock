@@ -6,8 +6,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import java.io.FileOutputStream;
@@ -17,6 +15,7 @@ import java.util.List;
 
 import io.alstonlin.thelearninglock.Const;
 import io.alstonlin.thelearninglock.FragmentChangable;
+import io.alstonlin.thelearninglock.ML;
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pattern.OnPatternSelectListener;
 import io.alstonlin.thelearninglock.pattern.PatternUtils;
@@ -26,6 +25,11 @@ import io.alstonlin.thelearninglock.pattern.PatternUtils;
  * The Fragment that the user will select their pattern, and train it
  */
 public class PatternSetupFragment extends Fragment implements OnPatternSelectListener {
+
+    public static final int TRAINING_SIZE = 8;
+    private ML ml;
+    private List<int[]> pattern;
+    private int patternsLeft = TRAINING_SIZE;
 
     /**
      * Factory method to create a new instance of this Fragment
@@ -50,11 +54,30 @@ public class PatternSetupFragment extends Fragment implements OnPatternSelectLis
 
     @Override
     public void onPatternSelect(List<int[]> pattern, double[] timeBetweenNodeSelects) {
-        if (savePattern(pattern)) {
-            // TODO: Want to repeat this a few times
+        if (this.pattern == null) { // First pattern
+            if (savePattern(pattern)) {
+                this.pattern = pattern;
+                ml = new ML(getContext(), timeBetweenNodeSelects.length);
+            } else {
+                Toast.makeText(getContext(), "An error occurred! Please try again", Toast.LENGTH_LONG).show();
+                return;
+            }
+        } else {
+            // Checks if it's the same pattern
+            if (!PatternUtils.arePatternsEqual(pattern, this.pattern)){
+                Toast.makeText(getContext(), "Pattern does not match you first one!", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+        // Training
+        ml.addEntry(timeBetweenNodeSelects, false);
+        patternsLeft--;
+        // Updates UI
+        if (patternsLeft == 0){
+            ml.train();
             ((FragmentChangable) getActivity()).changeFragment(PINSetupFragment.newInstance());
         } else {
-            Toast.makeText(getContext(), "An error occurred! Please try again", Toast.LENGTH_LONG).show();
+            PatternUtils.setPatternLayoutTitle(getContext(), getView(), "Please enter your pattern " + patternsLeft + " more times.");
         }
     }
 

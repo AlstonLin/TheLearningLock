@@ -6,4 +6,5 @@ package io.alstonlin.thelearninglock;
 public class Const {
     public static final String PATTERN_FILENAME = "pattern.dat";
     public static final String PASSCODE_FILENAME = "passcode.dat";
+    public static final String ML_FILENAME = "learning_lock_saved.eg";
 }
