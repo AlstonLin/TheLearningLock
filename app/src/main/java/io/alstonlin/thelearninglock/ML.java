@@ -19,8 +19,6 @@ import java.util.ArrayList;
  */
 public class ML implements Serializable {
     // Constants
-    private static final int NUM_VALIDATION = 3;
-    private static final double EPSILON_POWER = 1.25;
     private static final long serialVersionUID = 19981017L;
     // Fields
     private transient Context context;
@@ -84,7 +82,7 @@ public class ML implements Serializable {
     public void train(){
         // Sums all the inputs per feature
         double[] featureSums = new double[n];
-        int m = trainingSet.size() - NUM_VALIDATION;
+        int m = trainingSet.size() - Const.NUM_VALIDATION_ENTRIES;
         for (double[] entry : trainingSet){
             for (int i = 0; i < entry.length; i++){
                 featureSums[i] += entry[i];
@@ -108,7 +106,7 @@ public class ML implements Serializable {
         for (int i = m; i < trainingSet.size(); i++){
             sum += getPrediction(trainingSet.get(i));
         }
-        epsilon = Math.pow(sum / NUM_VALIDATION, EPSILON_POWER);
+        epsilon = sum / Const.NUM_VALIDATION_ENTRIES;
         // Saves everything this is trained
         save();
     }
