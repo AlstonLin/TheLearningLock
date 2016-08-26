@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.alstonlin.thelearninglock.Const;
+import io.alstonlin.thelearninglock.ML;
 import io.alstonlin.thelearninglock.pattern.OnPatternSelectListener;
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pattern.PatternUtils;
@@ -33,6 +34,7 @@ public class LockScreen {
     private ListView notificationsList;
     private Context context;
     // Unlocking
+    private ML ml;
     private PopupWindow unlockScreen;
     private View patternLayout;
     private List<int[]> actualPattern;
@@ -47,7 +49,11 @@ public class LockScreen {
                 return;
             }
             if (PatternUtils.arePatternsEqual(actualPattern, pattern)){
-                unlock();
+                if (ml.predictImposter(timeBetweenNodeSelects)){
+                    Toast.makeText(context, "IMPOSTER!", Toast.LENGTH_LONG).show();
+                } else {
+                    unlock();
+                }
             } else{
                 PatternUtils.setPatternLayoutTitle(context, patternLayout, "Invalid Pattern! Please try again.");
             }
@@ -115,6 +121,11 @@ public class LockScreen {
      * Shows the unlock Popup.
      */
     private void showUnlockScreen(){
+        // Reloads the ML
+        ml = ML.loadFromFile(context);
+        if (ml == null){ // This really should be been set up
+            Toast.makeText(context, "You have no set up the lock screen yet!", Toast.LENGTH_LONG).show();
+        }
         if (actualPattern == null){
             this.actualPattern = loadPattern();
         }
