@@ -24,6 +24,8 @@ import io.alstonlin.thelearninglock.ML;
 import io.alstonlin.thelearninglock.pattern.OnPatternSelectListener;
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pattern.PatternUtils;
+import io.alstonlin.thelearninglock.pin.OnPINSelectListener;
+import io.alstonlin.thelearninglock.pin.PINUtils;
 
 /**
  * Manages all the interactions with the View for the lock screen. Similar to a Fragment for it.
@@ -36,13 +38,15 @@ public class LockScreen {
     // Unlocking
     private ML ml;
     private PopupWindow unlockScreen;
+    private PopupWindow pinScreen;
     private View patternLayout;
     private List<int[]> actualPattern;
+    private String pin;
 
     // Listeners
     private OnPatternSelectListener patternListener = new OnPatternSelectListener() {
         @Override
-        public void onPatternSelect(List<int[]> pattern, double[] timeBetweenNodeSelects) {
+        public void onPatternSelect(List<int[]> pattern, final double[] timeBetweenNodeSelects) {
             if (actualPattern == null){ // There was a problem loading the pattern, so we'll pretend what they entered was right
                 // TODO: Is this really what should be done?
                 unlock();
@@ -50,7 +54,8 @@ public class LockScreen {
             }
             if (PatternUtils.arePatternsEqual(actualPattern, pattern)){
                 if (ml.predictImposter(timeBetweenNodeSelects)){
-                    Toast.makeText(context, "IMPOSTER!", Toast.LENGTH_LONG).show();
+                    if (unlockScreen != null) unlockScreen.dismiss();
+                    showPINScreen(timeBetweenNodeSelects);
                 } else {
                     unlock();
                 }
@@ -104,6 +109,25 @@ public class LockScreen {
         notificationsAdapter.setNotifications(publicNotifications);
     }
 
+    /**
+     * Hides the unlock Popup.
+     */
+    public void hideUnlockScreen(){
+        if (unlockScreen != null){
+            unlockScreen.dismiss();
+            unlockScreen = null;
+        }
+        if (pinScreen != null){
+            pinScreen.dismiss();
+            pinScreen = null;
+        }
+    }
+
+
+    /**
+     * Helper method to set up the View of the Lock Screen itself.
+     * @param view The Lock Screen's View
+     */
     private void setupLockView(View view){
         Button unlock = (Button) view.findViewById(R.id.unlockButton);
         unlock.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +152,7 @@ public class LockScreen {
         }
         if (actualPattern == null){
             this.actualPattern = loadPattern();
+            this.pin = loadPIN();
         }
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         patternLayout = inflater.inflate(R.layout.layout_pattern, null, false);
@@ -142,13 +167,32 @@ public class LockScreen {
     }
 
     /**
-     * Hides the unlock Popup.
+     * Shows the PIN keypad popup if the user seems suspicious.
+     * Entering the PIN successfully will result in unlock and retraining of the algorithm
+     * @param timeBetweenNodeSelects The data that will be used to retrain if PIN unlocks this
      */
-    public void hideUnlockScreen(){
-        if (unlockScreen != null){
-            unlockScreen.dismiss();
-            unlockScreen = null;
-        }
+    private void showPINScreen(final double[] timeBetweenNodeSelects){
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View pinLayout = inflater.inflate(R.layout.layout_pin, null, false);
+        PINUtils.setupPINView(pinLayout, new OnPINSelectListener() {
+            @Override
+            public void onPINSelected(String PIN) {
+                if (PIN.equals(pin)){
+                    unlock();
+                    // Retrains algorithm
+                    ml.addEntry(timeBetweenNodeSelects, true);
+                } else{
+                    PINUtils.setPINTitle(pinLayout, "Wrong PIN!");
+                }
+            }
+        }, "That was a suspicious unlock! Please enter your PIN to confirm you're the owner");
+        pinScreen = new PopupWindow(
+                pinLayout,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                true
+        );
+        pinScreen.showAtLocation(lockView, Gravity.CENTER, 0, 0);
     }
 
     /**
@@ -175,6 +219,32 @@ public class LockScreen {
             }
         }
         return pattern;
+    }
+
+    /**
+     * Loads the PIN from file
+     * @return The PIN, or null if an error occurred.
+     */
+    private String loadPIN(){
+        String pin = null;
+        FileInputStream fis = null;
+        ObjectInputStream is = null;
+        try {
+            fis = context.openFileInput(Const.PASSCODE_FILENAME);
+            is = new ObjectInputStream(fis);
+            pin = (String) is.readObject();
+        } catch(IOException | ClassNotFoundException e){
+            e.printStackTrace();
+            Toast.makeText(context, "An Error has occurred loading the lock screen! Please try again later.", Toast.LENGTH_LONG).show();
+        } finally {
+            try {
+                if (is != null) is.close();
+                if (fis != null) fis.close();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        return pin;
     }
 
 }

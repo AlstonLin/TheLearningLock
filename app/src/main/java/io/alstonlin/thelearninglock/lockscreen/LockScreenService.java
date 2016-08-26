@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationManagerCompat;
 
@@ -18,6 +20,7 @@ import android.telephony.TelephonyManager;
 
 import java.util.Set;
 
+import io.alstonlin.thelearninglock.Const;
 import io.alstonlin.thelearninglock.PermissionRequestActivity;
 import io.alstonlin.thelearninglock.setup.SetupActivity;
 
@@ -95,6 +98,9 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
                 notifyNotificationsUpdated();
                 break;
             default:
+                // Checks if set up
+                boolean setup = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Const.SETUP_FLAG, false);
+                if (!setup) return START_STICKY;
                 // Checks if currently in a phone call
                 TelephonyManager ts = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                 if (ts.getCallState() != TelephonyManager.CALL_STATE_OFFHOOK) {

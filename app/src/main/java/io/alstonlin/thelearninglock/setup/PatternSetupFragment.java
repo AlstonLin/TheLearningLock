@@ -26,10 +26,9 @@ import io.alstonlin.thelearninglock.pattern.PatternUtils;
  */
 public class PatternSetupFragment extends Fragment implements OnPatternSelectListener {
 
-    public static final int TRAINING_SIZE = 8;
     private ML ml;
     private List<int[]> pattern;
-    private int patternsLeft = TRAINING_SIZE;
+    private int patternsLeft = Const.STARTING_TRAINING_SIZE;
 
     /**
      * Factory method to create a new instance of this Fragment
@@ -54,6 +53,7 @@ public class PatternSetupFragment extends Fragment implements OnPatternSelectLis
 
     @Override
     public void onPatternSelect(List<int[]> pattern, double[] timeBetweenNodeSelects) {
+        // TODO: Something to reset this in case they screw up their first entry
         if (this.pattern == null) { // First pattern
             if (savePattern(pattern)) {
                 this.pattern = pattern;
