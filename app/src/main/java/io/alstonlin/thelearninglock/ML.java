@@ -11,6 +11,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Random;
 
 /**
  * The Object that represents the Machine Learning portion of the app,
@@ -22,7 +24,7 @@ public class ML implements Serializable {
     private static final long serialVersionUID = 19981017L;
     // Fields
     private transient Context context;
-    private ArrayList<double[]> trainingSet = new ArrayList<>();
+    private ArrayList<double[]> trainingData = new ArrayList<>();
     private double[] muArr;
     private double[] sigmaSquaredArr;
     private int n;
@@ -72,17 +74,32 @@ public class ML implements Serializable {
         if (data.length != n) {
             throw new IllegalArgumentException("N is set to " + n + " but given data of size " + data.length);
         }
-        trainingSet.add(data);
+        trainingData.add(data);
+        // Shortens the list if over max size
+        int m = trainingData.size();
+        if (m > Const.MAX_TRAINING_SIZE){
+            trainingData = (ArrayList<double[]>) trainingData.subList(m - Const.MAX_TRAINING_SIZE, m);
+        }
         if (retrain) train();
     }
 
     /**
-     * Sets the muArr and sigmaSquaredArr based on the current trainingSet.
+     * Sets the muArr and sigmaSquaredArr based on the current trainingData.
      */
     public void train(){
+        // Builds the training and cross validation sets
+        LinkedList<double[]> crossValidationSet = new LinkedList<>();
+        ArrayList<double[]> trainingSet = new ArrayList<>(trainingData);
+        Random random = new Random();
+        int crossValidationSize = (int) (trainingData.size() * Const.CROSS_VALIDATION_FACTOR);
+        while (crossValidationSet.size() < crossValidationSize){
+            int index = random.nextInt(trainingSet.size());
+            double[] entry = trainingSet.remove(index);
+            crossValidationSet.add(entry);
+        }
         // Sums all the inputs per feature
         double[] featureSums = new double[n];
-        int m = trainingSet.size() - Const.NUM_VALIDATION_ENTRIES;
+        int m = trainingSet.size();
         for (double[] entry : trainingSet){
             for (int i = 0; i < entry.length; i++){
                 featureSums[i] += entry[i];
@@ -99,14 +116,12 @@ public class ML implements Serializable {
             }
             sigmaSquaredArr[i] += sum / m;
         }
-        // Last 3 for cross-validation to calculate an epsilon by averaging the prediction
-        // and exponentiation it by some constant
-        // TODO: Can increase this accuracy if we do a k-fold cross validation instead
+        // Ghetto cross validation to determine what epsilon should be
         double sum = 0;
-        for (int i = m; i < trainingSet.size(); i++){
-            sum += getPrediction(trainingSet.get(i));
+        for (double[] entry : crossValidationSet){
+            sum += getPrediction(entry);
         }
-        epsilon = sum / Const.NUM_VALIDATION_ENTRIES;
+        epsilon = sum / crossValidationSet.size();
         // Saves everything this is trained
         save();
     }
