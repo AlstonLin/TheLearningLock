@@ -3,6 +3,8 @@ package io.alstonlin.thelearninglock.lockscreen;
 import android.app.Notification;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -34,7 +36,11 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
     public View getView(int i, View convertView, ViewGroup parent) {
         final Notification notification = getItem(i);
         View view = notification.contentView.apply(context, parent);
-        view.setBackgroundColor(Color.WHITE);
+        Drawable background = view.getBackground();
+        // Adds a white translucent background if there is none
+        if (background == null){
+            view.setBackgroundColor(Color.parseColor("#88FFFFFF"));
+        }
         // TODO: Add a possibility to swiper to delete it?
         // Maybe use https://github.com/hudomju/android-swipe-to-dismiss-undo
         view.setOnClickListener(new View.OnClickListener() {
