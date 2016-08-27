@@ -85,6 +85,12 @@ public class LockScreen {
     }
 
     public void lock(){
+        // Loads everything from files in the background
+        // This should be okay since the user will probably not be turning on the phone
+        // right after it's locked
+        this.actualPattern = loadPattern();
+        this.pin = loadPIN();
+        ml = ML.loadFromFile(context);
         LockUtils.lock(context, lockView);
     }
 
@@ -145,14 +151,8 @@ public class LockScreen {
      * Shows the unlock Popup.
      */
     private void showUnlockScreen(){
-        // Reloads the ML
-        ml = ML.loadFromFile(context);
         if (ml == null){ // This really should be been set up
             Toast.makeText(context, "You have no set up the lock screen yet!", Toast.LENGTH_LONG).show();
-        }
-        if (actualPattern == null){
-            this.actualPattern = loadPattern();
-            this.pin = loadPIN();
         }
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         patternLayout = inflater.inflate(R.layout.layout_pattern, null, false);
