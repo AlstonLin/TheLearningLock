@@ -12,7 +12,9 @@ public class Const {
     public static final String ML_FILENAME = "learning_lock_saved.eg";
     // The number of patterns that will be requested at the beginning
     public static final int STARTING_TRAINING_SIZE = 10;
-    // Of those number of patterns, this many will be used for (very ghetto) cross-validation to
-    // calculate an epsilon. The rest will be used to actually train
-    public static final int NUM_VALIDATION_ENTRIES = 3;
+    // The percentage of the training data that will be used to calculate what epsilon should be.
+    public static final float CROSS_VALIDATION_FACTOR = 0.3f;
+    // The reasoning for this would be that if the user's behavior change, this will start
+    // invalidating their old behavior. This is prevents it to become impossible to change it
+    public static final int MAX_TRAINING_SIZE = 100;
 }
