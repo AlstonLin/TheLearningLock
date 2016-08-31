@@ -59,6 +59,7 @@ public class PINSetupFragment extends Fragment {
         // Sets the flag
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
         editor.putBoolean(Const.SETUP_FLAG, true);
+        editor.putBoolean(Const.ENABLED, true);
         editor.commit();
         // Finished this activity
         Toast.makeText(getActivity(), "All set up!", Toast.LENGTH_SHORT).show();

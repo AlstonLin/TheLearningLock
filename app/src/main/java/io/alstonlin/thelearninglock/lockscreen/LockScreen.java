@@ -21,6 +21,7 @@ import java.util.List;
 
 import io.alstonlin.thelearninglock.Const;
 import io.alstonlin.thelearninglock.ML;
+import io.alstonlin.thelearninglock.Utils;
 import io.alstonlin.thelearninglock.pattern.OnPatternSelectListener;
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pattern.PatternUtils;
@@ -200,25 +201,7 @@ public class LockScreen {
      * @return The pattern, or null if an error occurred
      */
     private List<int[]> loadPattern(){
-        List<int[]> pattern = null;
-        FileInputStream fis = null;
-        ObjectInputStream is = null;
-        try {
-            fis = context.openFileInput(Const.PATTERN_FILENAME);
-            is = new ObjectInputStream(fis);
-            pattern = (List<int[]>) is.readObject();
-        } catch(IOException | ClassNotFoundException e){
-            e.printStackTrace();
-            Toast.makeText(context, "An Error has occurred loading the lock screen! Please try again later.", Toast.LENGTH_LONG).show();
-        } finally {
-            try {
-                if (is != null) is.close();
-                if (fis != null) fis.close();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-        }
-        return pattern;
+        return (List<int[]>) Utils.loadObjectFromFile(context, Const.PATTERN_FILENAME);
     }
 
     /**
@@ -226,25 +209,7 @@ public class LockScreen {
      * @return The PIN, or null if an error occurred.
      */
     private String loadPIN(){
-        String pin = null;
-        FileInputStream fis = null;
-        ObjectInputStream is = null;
-        try {
-            fis = context.openFileInput(Const.PASSCODE_FILENAME);
-            is = new ObjectInputStream(fis);
-            pin = (String) is.readObject();
-        } catch(IOException | ClassNotFoundException e){
-            e.printStackTrace();
-            Toast.makeText(context, "An Error has occurred loading the lock screen! Please try again later.", Toast.LENGTH_LONG).show();
-        } finally {
-            try {
-                if (is != null) is.close();
-                if (fis != null) fis.close();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-        }
-        return pin;
+        return (String) Utils.loadObjectFromFile(context, Const.PASSCODE_FILENAME);
     }
 
 }
