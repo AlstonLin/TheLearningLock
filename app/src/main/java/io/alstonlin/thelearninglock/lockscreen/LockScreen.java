@@ -174,7 +174,7 @@ public class LockScreen {
     private void showPINScreen(final double[] timeBetweenNodeSelects){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View pinLayout = inflater.inflate(R.layout.layout_pin, null, false);
-        PINUtils.setupPINView(pinLayout, new OnPINSelectListener() {
+        PINUtils.setupPINView(context, pinLayout, new OnPINSelectListener() {
             @Override
             public void onPINSelected(String PIN) {
                 if (PIN.equals(pin)){
