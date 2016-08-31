@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="25dp"
-    android:background="@drawable/tmp_wallpaper"
     tools:context=".setup.PINSetupFragment">
 
     <TextView

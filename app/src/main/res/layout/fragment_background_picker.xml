@@ -5,15 +5,18 @@
     android:orientation="vertical"
     android:paddingTop="25dp"
     tools:context=".setup.BackgroundPickerFragment">
-
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="BACKGROUND PICKER" />
+        android:textSize="24sp"
+        android:gravity="center"
+        android:text="Select a Background"
+        android:layout_marginBottom="32dp"/>
     <Button
-        android:id="@+id/selectButton"
+        android:id="@+id/fragment_background_picker_gallery_button"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Select" />
+        android:textSize="21sp"
+        android:text="Pick from Gallery" />
 </LinearLayout>

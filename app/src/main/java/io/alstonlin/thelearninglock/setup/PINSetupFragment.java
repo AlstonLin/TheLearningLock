@@ -44,7 +44,7 @@ public class PINSetupFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.layout_pin, container, false);
-        PINUtils.setupPINView(view, new OnPINSelectListener() {
+        PINUtils.setupPINView(getContext(), view, new OnPINSelectListener() {
             @Override
             public void onPINSelected(String PIN) {
                 // TODO: Probably want to confirm this

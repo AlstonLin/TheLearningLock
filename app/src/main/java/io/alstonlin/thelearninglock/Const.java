@@ -6,6 +6,7 @@ package io.alstonlin.thelearninglock;
 public class Const {
     // Flag names
     public static final String SETUP_FLAG = "SETUPFLAG";
+    public static final String BACKGROUND_URI_KEY = "BACKGROUNDURI";
     // File names
     public static final String PATTERN_FILENAME = "pattern.dat";
     public static final String PASSCODE_FILENAME = "passcode.dat";

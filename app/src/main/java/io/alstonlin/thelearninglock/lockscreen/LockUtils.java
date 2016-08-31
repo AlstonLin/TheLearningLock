@@ -2,14 +2,20 @@ package io.alstonlin.thelearninglock.lockscreen;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.alstonlin.thelearninglock.Const;
+import io.alstonlin.thelearninglock.Utils;
 import me.zhanghai.android.patternlock.PatternView;
 
 /**
@@ -38,7 +44,9 @@ public class LockUtils {
      */
     public static void lock(Context context, View attach){
         // Sets up the window manage parameters for the View to add
-        // TODO: How do I get the status bar to have the background as well?
+        // TODO: There's no way to change the status bar background from WindowManager.
+        // TODO: Instead, make a custom status bar with the same info and hide the original once
+        // TODO: by changing the level to FLAG_LAYOUT_SYSTEM_ERROR
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT,
@@ -49,6 +57,8 @@ public class LockUtils {
         params.x = 0;
         params.y = 100;
         params.screenOrientation = Configuration.ORIENTATION_PORTRAIT;
+        // Sets the lock screen background
+        Utils.setupBackground(context, attach);
         // Adds the view to the Window Manager
         if (attach.getWindowToken() == null) { // If not already attached
             WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
