@@ -65,7 +65,7 @@ public class PatternSetupFragment extends Fragment implements OnPatternSelectLis
         } else {
             // Checks if it's the same pattern
             if (!PatternUtils.arePatternsEqual(pattern, this.pattern)){
-                Toast.makeText(getContext(), "Pattern does not match you first one!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Pattern does not match you first one!", Toast.LENGTH_SHORT).show();
                 return;
             }
         }

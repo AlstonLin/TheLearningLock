@@ -100,7 +100,8 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
             default:
                 // Checks if set up
                 boolean setup = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Const.SETUP_FLAG, false);
-                if (!setup) return START_STICKY;
+                boolean enabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Const.ENABLED, false);
+                if (!setup || !enabled) return START_STICKY;
                 // Checks if currently in a phone call
                 TelephonyManager ts = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                 if (ts.getCallState() != TelephonyManager.CALL_STATE_OFFHOOK) {
