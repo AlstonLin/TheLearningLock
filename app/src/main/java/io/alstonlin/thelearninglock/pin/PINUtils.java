@@ -1,18 +1,12 @@
 package io.alstonlin.thelearninglock.pin;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.io.File;
-
-import io.alstonlin.thelearninglock.Const;
 import io.alstonlin.thelearninglock.R;
-import io.alstonlin.thelearninglock.Utils;
+import io.alstonlin.thelearninglock.shared.SharedUtils;
 
 /**
  * This class provides helper methods that has to do with the PIN and it's view
@@ -81,7 +75,7 @@ public class PINUtils {
         });
         setPINTitle(PINView, title);
         // Sets up background
-        Utils.setupBackground(context, PINView);
+        SharedUtils.setupBackground(context, PINView);
     }
 
     public static void setPINTitle(View PINView, String newTitle){

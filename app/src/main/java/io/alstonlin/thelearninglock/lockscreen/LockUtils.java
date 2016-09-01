@@ -2,21 +2,12 @@ package io.alstonlin.thelearninglock.lockscreen;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
-import android.graphics.drawable.Drawable;
-import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import io.alstonlin.thelearninglock.Const;
-import io.alstonlin.thelearninglock.Utils;
-import me.zhanghai.android.patternlock.PatternView;
+import io.alstonlin.thelearninglock.shared.SharedUtils;
 
 /**
  * Contains utility functions that is used by LockScreenService.
@@ -58,7 +49,7 @@ public class LockUtils {
         params.y = 100;
         params.screenOrientation = Configuration.ORIENTATION_PORTRAIT;
         // Sets the lock screen background
-        Utils.setupBackground(context, attach);
+        SharedUtils.setupBackground(context, attach);
         // Adds the view to the Window Manager
         if (attach.getWindowToken() == null) { // If not already attached
             WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);

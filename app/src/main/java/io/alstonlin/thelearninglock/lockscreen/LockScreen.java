@@ -3,7 +3,6 @@ package io.alstonlin.thelearninglock.lockscreen;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,15 +12,12 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.alstonlin.thelearninglock.Const;
-import io.alstonlin.thelearninglock.ML;
-import io.alstonlin.thelearninglock.Utils;
+import io.alstonlin.thelearninglock.shared.Const;
+import io.alstonlin.thelearninglock.shared.ML;
+import io.alstonlin.thelearninglock.shared.SharedUtils;
 import io.alstonlin.thelearninglock.pattern.OnPatternSelectListener;
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pattern.PatternUtils;
@@ -201,7 +197,7 @@ public class LockScreen {
      * @return The pattern, or null if an error occurred
      */
     private List<int[]> loadPattern(){
-        return (List<int[]>) Utils.loadObjectFromFile(context, Const.PATTERN_FILENAME);
+        return (List<int[]>) SharedUtils.loadObjectFromFile(context, Const.PATTERN_FILENAME);
     }
 
     /**
@@ -209,7 +205,7 @@ public class LockScreen {
      * @return The PIN, or null if an error occurred.
      */
     private String loadPIN(){
-        return (String) Utils.loadObjectFromFile(context, Const.PASSCODE_FILENAME);
+        return (String) SharedUtils.loadObjectFromFile(context, Const.PASSCODE_FILENAME);
     }
 
 }
