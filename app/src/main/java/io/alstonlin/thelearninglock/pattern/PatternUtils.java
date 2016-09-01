@@ -1,19 +1,14 @@
 package io.alstonlin.thelearninglock.pattern;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.alstonlin.thelearninglock.Const;
 import io.alstonlin.thelearninglock.R;
-import io.alstonlin.thelearninglock.Utils;
+import io.alstonlin.thelearninglock.shared.SharedUtils;
 import me.zhanghai.android.patternlock.PatternView;
 
 /**
@@ -59,7 +54,7 @@ public class PatternUtils {
             }
         });
         // Background
-        Utils.setupBackground(context, layout);
+        SharedUtils.setupBackground(context, layout);
     }
 
     public static void setPatternLayoutTitle(Context context, final View layout, String title){

@@ -19,8 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import io.alstonlin.thelearninglock.Const;
-import io.alstonlin.thelearninglock.FragmentChangable;
+import io.alstonlin.thelearninglock.shared.Const;
+import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
 import io.alstonlin.thelearninglock.R;
 
 
@@ -81,7 +81,7 @@ public class BackgroundPickerFragment extends Fragment {
     }
 
     public void onBackgroundSelected(){
-        ((FragmentChangable)getActivity()).changeFragment(PatternSetupFragment.newInstance());
+        ((OnFragmentFinishedListener)getActivity()).onFragmentFinished();
     }
 
     /**

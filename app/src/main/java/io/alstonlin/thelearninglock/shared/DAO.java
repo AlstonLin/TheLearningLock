@@ -1,4 +1,4 @@
-package io.alstonlin.thelearninglock;
+package io.alstonlin.thelearninglock.shared;
 
 /**
  * Data Access Object. Handles any network requests.

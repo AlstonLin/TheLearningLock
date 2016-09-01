@@ -1,4 +1,4 @@
-package io.alstonlin.thelearninglock;
+package io.alstonlin.thelearninglock.shared;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -15,7 +15,7 @@ import java.io.ObjectInputStream;
 /**
  * Common helper methods that are used by multiple parts of the app
  */
-public class Utils {
+public class SharedUtils {
     /**
      * Sets up the background that the user selected for the given View.
      * @param context The context that the Background path will be retrieved from
