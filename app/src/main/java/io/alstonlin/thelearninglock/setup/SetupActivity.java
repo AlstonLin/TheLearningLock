@@ -4,15 +4,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.widget.Toast;
 
-import io.alstonlin.thelearninglock.FragmentChangable;
+import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
 import io.alstonlin.thelearninglock.R;
 
 /**
  * The activity that goes through the set up process of the lock screen.
  */
-public class SetupActivity extends FragmentActivity implements FragmentChangable {
+public class SetupActivity extends FragmentActivity implements OnFragmentFinishedListener {
     private Bundle savedInstanceState;
+    private int fragmentStateIndex;
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,23 +24,61 @@ public class SetupActivity extends FragmentActivity implements FragmentChangable
     }
 
     private void startApp(){
+        fragmentStateIndex = 0;
         setContentView(R.layout.activity_setup);
-        if (findViewById(R.id.fragment_container) != null) {
-            if (savedInstanceState != null) {
-                return;
-            }
-            // Permission Check first
-            BackgroundPickerFragment firstFragment = new BackgroundPickerFragment();
-            firstFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, firstFragment).commit();
+        if (savedInstanceState != null) {
+            return;
         }
+        // Permission Check first
+        BackgroundPickerFragment firstFragment = new BackgroundPickerFragment();
+        firstFragment.setArguments(getIntent().getExtras());
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.activity_setup_fragment_container, firstFragment).commit();
     }
 
-    public void changeFragment(Fragment fragment){
+    /*
+     * Fragment life cycle management
+     */
+
+    private enum FragmentStates {
+        // The order of which the Fragments are shown
+        BACKGROUND_PICKER {
+            @Override
+            protected Fragment newFragment() {
+                return BackgroundPickerFragment.newInstance();
+            }
+        },
+        PATTERN_SETUP {
+            @Override
+            protected Fragment newFragment() {
+                return PatternSetupFragment.newInstance();
+            }
+        },
+        PIN_SETUP {
+            @Override
+            protected Fragment newFragment() {
+                return PINSetupFragment.newInstance();
+            }
+        };
+        protected abstract Fragment newFragment();
+    }
+
+    private void changeFragment(Fragment fragment){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment);
+        transaction.replace(R.id.activity_setup_fragment_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void onFragmentFinished() {
+        fragmentStateIndex++;
+        if (fragmentStateIndex >= FragmentStates.values().length){ // Last step. Finished set up
+            Toast.makeText(this, "All set up!", Toast.LENGTH_SHORT).show();
+            // TODO: Maybe just go to the settings page instead?
+            finish();
+        } else {
+            changeFragment(FragmentStates.values()[fragmentStateIndex].newFragment());
+        }
     }
 }

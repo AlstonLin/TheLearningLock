@@ -13,9 +13,9 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
-import io.alstonlin.thelearninglock.Const;
-import io.alstonlin.thelearninglock.FragmentChangable;
-import io.alstonlin.thelearninglock.ML;
+import io.alstonlin.thelearninglock.shared.Const;
+import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
+import io.alstonlin.thelearninglock.shared.ML;
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pattern.OnPatternSelectListener;
 import io.alstonlin.thelearninglock.pattern.PatternUtils;
@@ -74,11 +74,15 @@ public class PatternSetupFragment extends Fragment implements OnPatternSelectLis
         patternsLeft--;
         // Updates UI
         if (patternsLeft == 0){
-            ml.train();
-            ((FragmentChangable) getActivity()).changeFragment(PINSetupFragment.newInstance());
+            finished();
         } else {
             PatternUtils.setPatternLayoutTitle(getContext(), getView(), "Please enter your pattern " + patternsLeft + " more times.");
         }
+    }
+
+    private void finished(){
+        ml.train();
+        ((OnFragmentFinishedListener)getActivity()).onFragmentFinished();
     }
 
     private boolean savePattern(List<int[]> pattern) {

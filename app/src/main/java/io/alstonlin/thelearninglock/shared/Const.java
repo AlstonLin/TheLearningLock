@@ -1,4 +1,4 @@
-package io.alstonlin.thelearninglock;
+package io.alstonlin.thelearninglock.shared;
 
 /**
  * Contains any hardcoded constants for the app that is shared between files
