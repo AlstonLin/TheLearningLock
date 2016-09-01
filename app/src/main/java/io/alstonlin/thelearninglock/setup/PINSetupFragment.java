@@ -5,19 +5,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.List;
 
-import io.alstonlin.thelearninglock.Const;
+import io.alstonlin.thelearninglock.shared.Const;
+import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pin.OnPINSelectListener;
 import io.alstonlin.thelearninglock.pin.PINUtils;
@@ -61,9 +58,7 @@ public class PINSetupFragment extends Fragment {
         editor.putBoolean(Const.SETUP_FLAG, true);
         editor.putBoolean(Const.ENABLED, true);
         editor.commit();
-        // Finished this activity
-        Toast.makeText(getActivity(), "All set up!", Toast.LENGTH_SHORT).show();
-        getActivity().finish();
+        ((OnFragmentFinishedListener)getActivity()).onFragmentFinished();
     }
 
     // TODO: This is insecure. we should so something like a salted hash. Same thing for patterns just in case

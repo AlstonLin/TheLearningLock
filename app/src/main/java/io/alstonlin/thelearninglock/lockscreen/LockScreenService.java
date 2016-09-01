@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -20,8 +19,7 @@ import android.telephony.TelephonyManager;
 
 import java.util.Set;
 
-import io.alstonlin.thelearninglock.Const;
-import io.alstonlin.thelearninglock.PermissionRequestActivity;
+import io.alstonlin.thelearninglock.shared.Const;
 import io.alstonlin.thelearninglock.setup.SetupActivity;
 
 /**

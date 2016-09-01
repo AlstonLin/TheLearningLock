@@ -1,46 +1,48 @@
-package io.alstonlin.thelearninglock;
+package io.alstonlin.thelearninglock.main;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Bundle;
 
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.CompoundButton;
 import android.widget.PopupWindow;
-import android.widget.Switch;
 import android.widget.Toast;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-
+import io.alstonlin.thelearninglock.setup.BackgroundPickerFragment;
+import io.alstonlin.thelearninglock.setup.PINSetupFragment;
+import io.alstonlin.thelearninglock.setup.PatternSetupFragment;
+import io.alstonlin.thelearninglock.shared.Const;
+import io.alstonlin.thelearninglock.R;
+import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
+import io.alstonlin.thelearninglock.shared.SharedUtils;
 import io.alstonlin.thelearninglock.lockscreen.LockScreenService;
 import io.alstonlin.thelearninglock.pin.OnPINSelectListener;
 import io.alstonlin.thelearninglock.pin.PINUtils;
 
 /**
- * Entry point to the app.
+ * Warning: This flow is VERY complicated due to Android's new permission system.
+ *
+ * Entry point to the app (Activity that is launched when the app is started).
  * The first thing this will do is to check the non-super permissions, and request them.
- * It will then show a Settings page showing options to configure the app if already set up.
+ * It will then show a Settings Fragment showing options to configure the app if already set up.
  * If the app is not set up, then it will show a welcome screen that will then prompt the user
  * to set up.
  * To set up, the app will start the LockScreenService with the OPEN_SETUP_ACTIVITY flag, which
  * will run the super permissions checks followed by starting the SetupActivity.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity implements OnFragmentFinishedListener {
     private static final int REQUEST_PERMISSIONS_CODE = 3;
     private static String[] PERMISSIONS = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -48,47 +50,24 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private boolean setup;
-    private boolean enabled;
     private PopupWindow authCheckPopup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         // Basic permission checks
         ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSIONS_CODE);
-        // Sets the content view depending on if this is already set up
+        // Sets the Fragment to show based on if Lockscreen has already been set up
         setup = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Const.SETUP_FLAG, false);
-        enabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Const.ENABLED, false);
+        Fragment fragment;
         if (setup){
-            setContentView(R.layout.settings_page);
-            // Sets up the enabled switch
-            Switch enabledSwitch = (Switch) findViewById(R.id.settings_page_enable);
-            enabledSwitch.setChecked(enabled);
-            enabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    enabled = b;
-                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit();
-                    editor.putBoolean(Const.ENABLED, enabled);
-                    editor.commit();
-                }
-            });
+            fragment = SettingsFragment.newInstance();
         } else {
-            setContentView(R.layout.welcome_page);
+            fragment = WelcomeFragment.newInstance();
         }
-    }
-
-    /**
-     * Goes through the setup process. Can either been called from the Welcome or Settings pages.
-     * @param v Unused
-     */
-    public void clickSetup(View v){
-        runAuthenticated(new Runnable() {
-            @Override
-            public void run() {
-                setupLockScreen();
-            }
-        });
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.activity_main_fragment_container, fragment).commit();
     }
 
     @Override
@@ -109,6 +88,66 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+     * Fragment Flow
+     */
+
+    private void changeFragment(Fragment fragment){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.activity_main_fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    @Override
+    public void onFragmentFinished() {
+        // Always return back to the setup screen when finished
+        changeFragment(SettingsFragment.newInstance());
+    }
+
+    /*
+     * onClick methods from SettingsFragment
+     */
+
+    public void clickChangeBackground(View view){
+        changeFragment(BackgroundPickerFragment.newInstance());
+    }
+
+    public void clickChangePattern(View view){
+        runAuthenticated(new Runnable() {
+            @Override
+            public void run() {
+                changeFragment(PatternSetupFragment.newInstance());
+            }
+        });
+    }
+
+    public void clickChangePIN(View view){
+        runAuthenticated(new Runnable() {
+            @Override
+            public void run() {
+                changeFragment(PINSetupFragment.newInstance());
+            }
+        });
+    }
+
+    /**
+     * Goes through the setup process.
+     * Can be called from both the SettingsFragment and WelcomeFragment.
+     * @param v Unused
+     */
+    public void clickSetup(View v){
+        runAuthenticated(new Runnable() {
+            @Override
+            public void run() {
+                setupLockScreen();
+            }
+        });
+    }
+
+    /**
+     * Launches the SetupActivity through the LockScreenService (so it can permission check first).
+     */
     private void setupLockScreen(){
         Intent intent = new Intent(this, LockScreenService.class);
         intent.addFlags(LockScreenService.OPEN_SETUP_ACTIVITY);
@@ -127,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         // Loads the real PIN
-        final String realPIN = (String) Utils.loadObjectFromFile(this, Const.PASSCODE_FILENAME);
+        final String realPIN = (String) SharedUtils.loadObjectFromFile(this, Const.PASSCODE_FILENAME);
         // Sets up the popup window
         // TODO: This would probably look better as a Dialog maybe?
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -149,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 true
         );
-        // Adds a small margin so that it looks like an actual popup\
+        // Adds a small margin so that it looks like an actual popup
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -158,6 +197,6 @@ public class MainActivity extends AppCompatActivity {
         final int MARGIN = 125;
         authCheckPopup.setWidth(width - MARGIN);
         authCheckPopup.setHeight(height - 2 * MARGIN);
-        authCheckPopup.showAtLocation(findViewById(R.id.activity_main_root), Gravity.CENTER, 0, 0);
+        authCheckPopup.showAtLocation(findViewById(R.id.activity_main_fragment_container), Gravity.CENTER, 0, 0);
     }
 }

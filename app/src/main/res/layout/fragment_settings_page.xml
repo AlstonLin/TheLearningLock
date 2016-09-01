@@ -35,9 +35,19 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Change Background"
+        android:textSize="21sp"
+        android:onClick="clickChangeBackground"
+        android:id="@+id/settings_page_change_background"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Change Pattern"
         android:textSize="21sp"
         android:id="@+id/settings_page_change_pattern"
+        android:onClick="clickChangePattern"
         android:layout_gravity="center_horizontal" />
 
     <Button
@@ -45,6 +55,7 @@
         android:layout_height="wrap_content"
         android:text="Change PIN"
         android:textSize="21sp"
+        android:onClick="clickChangePIN"
         android:id="@+id/settings_page_change_pin"
         android:layout_gravity="center_horizontal" />
 </LinearLayout>

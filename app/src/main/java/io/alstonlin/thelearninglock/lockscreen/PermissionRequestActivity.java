@@ -1,4 +1,4 @@
-package io.alstonlin.thelearninglock;
+package io.alstonlin.thelearninglock.lockscreen;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,7 +10,7 @@ import android.os.Bundle;
 import io.alstonlin.thelearninglock.lockscreen.LockScreenService;
 
 /**
- * An Activity that's called from LockScreenService to Request a permission, and then
+ * An Activity that's called from LockScreenService to Request a strict permission, and then
  * delegate back to the Service. The only reason this exists is because startActivityForResult or
  * onResume apparently not a thing for services. Yay, Android Dev!
  */
