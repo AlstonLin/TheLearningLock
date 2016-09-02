@@ -23,6 +23,7 @@ import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pattern.PatternUtils;
 import io.alstonlin.thelearninglock.pin.OnPINSelectListener;
 import io.alstonlin.thelearninglock.pin.PINUtils;
+import me.zhanghai.android.patternlock.PatternView;
 
 /**
  * Manages all the interactions with the View for the lock screen. Similar to a Fragment for it.
@@ -43,7 +44,8 @@ public class LockScreen {
     // Listeners
     private OnPatternSelectListener patternListener = new OnPatternSelectListener() {
         @Override
-        public void onPatternSelect(List<int[]> pattern, final double[] timeBetweenNodeSelects) {
+        public void onPatternSelect(List<int[]> pattern, final double[] timeBetweenNodeSelects, PatternView patternView) {
+            patternView.clearPattern();
             if (actualPattern == null){ // There was a problem loading the pattern, so we'll pretend what they entered was right
                 // TODO: Is this really what should be done?
                 unlock();
@@ -57,7 +59,7 @@ public class LockScreen {
                     unlock();
                 }
             } else{
-                PatternUtils.setPatternLayoutTitle(context, patternLayout, "Invalid Pattern! Please try again.");
+                PatternUtils.setPatternLayoutTitle(patternLayout, "Invalid Pattern! Please try again.");
             }
         }
     };
