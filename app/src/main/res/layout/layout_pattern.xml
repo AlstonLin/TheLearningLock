@@ -27,4 +27,27 @@
         android:layout_weight="5"
         android:layout_marginTop="10dp"
         PatternView:pl_regularColor="#FFFFFF"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        android:id="@+id/pattern_view_confirm_bar">
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Confirm"
+            android:id="@+id/pattern_view_confirm_button"
+            android:layout_gravity="center_horizontal" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Reset"
+            android:id="@+id/pattern_view_reset_button"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
 </LinearLayout>

@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.FileOutputStream;
@@ -19,12 +21,13 @@ import io.alstonlin.thelearninglock.shared.ML;
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pattern.OnPatternSelectListener;
 import io.alstonlin.thelearninglock.pattern.PatternUtils;
+import me.zhanghai.android.patternlock.PatternView;
 
 
 /**
  * The Fragment that the user will select their pattern, and train it
  */
-public class PatternSetupFragment extends Fragment implements OnPatternSelectListener {
+public class PatternSetupFragment extends Fragment {
 
     private ML ml;
     private List<int[]> pattern;
@@ -46,38 +49,70 @@ public class PatternSetupFragment extends Fragment implements OnPatternSelectLis
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.layout_pattern, container, false);
-        PatternUtils.setupPatternLayout(getContext(), view, this, "Select your pattern");
-        return view;
-    }
-
-    @Override
-    public void onPatternSelect(List<int[]> pattern, double[] timeBetweenNodeSelects) {
-        // TODO: Something to reset this in case they screw up their first entry
-        if (this.pattern == null) { // First pattern
-            if (savePattern(pattern)) {
-                this.pattern = pattern;
-                ml = new ML(getContext(), timeBetweenNodeSelects.length);
-            } else {
-                Toast.makeText(getContext(), "An error occurred! Please try again", Toast.LENGTH_LONG).show();
-                return;
+        final View layout = inflater.inflate(R.layout.layout_pattern, container, false);
+        final LinearLayout confirmBar = (LinearLayout) layout.findViewById(R.id.pattern_view_confirm_bar);
+        final Button confirmButton = (Button) layout.findViewById(R.id.pattern_view_confirm_button);
+        final Button resetButton = (Button) layout.findViewById(R.id.pattern_view_reset_button);
+        OnPatternSelectListener listener = new OnPatternSelectListener() {
+            @Override
+            public void onPatternSelect(final List<int[]> pattern, final double[] timeBetweenPatternNodes, final PatternView patternView) {
+                if (PatternSetupFragment.this.pattern == null) { // First pattern
+                    // Confirm / Reset pattern logic
+                    patternView.setInputEnabled(false);
+                    confirmBar.setVisibility(View.VISIBLE);
+                    resetButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            confirmBar.setVisibility(View.GONE);
+                            patternView.clearPattern();
+                            patternView.setInputEnabled(true);
+                            patternsLeft = Const.STARTING_TRAINING_SIZE;
+                        }
+                    });
+                    confirmButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (savePattern(pattern)) {
+                                PatternSetupFragment.this.pattern = pattern;
+                                ml = new ML(getContext(), timeBetweenPatternNodes.length);
+                                confirmBar.setVisibility(View.GONE);
+                                patternView.clearPattern();
+                                patternView.setInputEnabled(true);
+                                // ML stuff that was skipped
+                                ml.addEntry(timeBetweenPatternNodes, false);
+                                patternsLeft--;
+                                PatternUtils.setPatternLayoutTitle(layout,
+                                        "Please enter your pattern " + patternsLeft + " more times.");
+                            } else {
+                                Toast.makeText(getContext(), "An error occurred! Please try again",
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                } else {
+                    confirmBar.setVisibility(View.GONE);
+                    patternView.clearPattern();
+                    // Checks if it's the same pattern
+                    if (!PatternUtils.arePatternsEqual(pattern, PatternSetupFragment.this.pattern)){
+                        Toast.makeText(getContext(), "Pattern does not match you first one!",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    // Training
+                    ml.addEntry(timeBetweenPatternNodes, false);
+                    patternsLeft--;
+                    // Updates the title
+                    if (patternsLeft == 0){
+                        finished();
+                    } else {
+                        PatternUtils.setPatternLayoutTitle(layout,
+                                "Please enter your pattern " + patternsLeft + " more times.");
+                    }
+                }
             }
-        } else {
-            // Checks if it's the same pattern
-            if (!PatternUtils.arePatternsEqual(pattern, this.pattern)){
-                Toast.makeText(getContext(), "Pattern does not match you first one!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-        // Training
-        ml.addEntry(timeBetweenNodeSelects, false);
-        patternsLeft--;
-        // Updates UI
-        if (patternsLeft == 0){
-            finished();
-        } else {
-            PatternUtils.setPatternLayoutTitle(getContext(), getView(), "Please enter your pattern " + patternsLeft + " more times.");
-        }
+        };
+        PatternUtils.setupPatternLayout(getContext(), layout, listener, "Select your pattern");
+        return layout;
     }
 
     private void finished(){

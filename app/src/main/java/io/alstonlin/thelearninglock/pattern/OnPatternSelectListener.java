@@ -2,6 +2,8 @@ package io.alstonlin.thelearninglock.pattern;
 
 import java.util.List;
 
+import me.zhanghai.android.patternlock.PatternView;
+
 /**
  * A listener for a PatternView
  */
@@ -12,6 +14,7 @@ public interface OnPatternSelectListener {
      *                the x and y values.
      * @param timeBetweenPatternNodes The time in milliseconds between each selection of the nodes
      *                                in the pattern.
+     * @param patternView The PatternView that this pattern got selected on
      */
-    void onPatternSelect(List<int[]> pattern, double[] timeBetweenPatternNodes);
+    void onPatternSelect(List<int[]> pattern, double[] timeBetweenPatternNodes, PatternView patternView);
 }
