@@ -27,7 +27,7 @@ public class PatternUtils {
      */
     public static void setupPatternLayout(Context context, final View layout, final OnPatternSelectListener listener, String title){
         // Title Setup
-        setPatternLayoutTitle(context, layout, title);
+        setPatternLayoutTitle(layout, title);
         // Pattern
         final ArrayList<Double> selectTimes = new ArrayList<>(); // Keeps track of the times between each node select
         final PatternView patternView = (PatternView) layout.findViewById(R.id.pattern_view_pattern);
@@ -49,15 +49,15 @@ public class PatternUtils {
             public void onPatternDetected(List<PatternView.Cell> pattern) {
                 double[] timeBetweenPatternNodes = calculateTimeElapsed(selectTimes);
                 selectTimes.clear();
-                listener.onPatternSelect(PatternUtils.serializePattern(pattern), timeBetweenPatternNodes);
-                patternView.clearPattern();
+                listener.onPatternSelect(PatternUtils.serializePattern(pattern),
+                        timeBetweenPatternNodes, patternView);
             }
         });
         // Background
         SharedUtils.setupBackground(context, layout);
     }
 
-    public static void setPatternLayoutTitle(Context context, final View layout, String title){
+    public static void setPatternLayoutTitle(final View layout, String title){
         TextView titleView = (TextView) layout.findViewById(R.id.pattern_view_title);
         titleView.setText(title);
     }
