@@ -6,15 +6,6 @@
     android:paddingTop="25dp"
     tools:context=".setup.BackgroundPickerFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Before We Start"
-        android:id="@+id/textView3"
-        android:layout_gravity="center_horizontal"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"

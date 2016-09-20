@@ -24,7 +24,7 @@
         android:id="@+id/pattern_view_pattern"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5"
+        android:layout_weight="4"
         android:layout_marginTop="10dp"
         PatternView:pl_regularColor="#FFFFFF"/>
 

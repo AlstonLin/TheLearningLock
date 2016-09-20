@@ -57,7 +57,7 @@ public class LockScreen {
                     unlock();
                 }
             } else{
-                PatternUtils.setPatternLayoutTitle(patternLayout, "Invalid Pattern! Please try again.");
+                PatternUtils.setPatternLayoutTitle(patternLayout, "Wrong Pattern!");
             }
         }
     };
@@ -184,7 +184,7 @@ public class LockScreen {
                     PINUtils.clearPIN(pinLayout);
                 }
             }
-        }, "That was a suspicious unlock! Please enter your PIN to confirm you're the owner");
+        }, "That was suspicious! Enter your PIN to confirm you're the owner");
         pinScreen = new PopupWindow(
                 pinLayout,
                 ViewGroup.LayoutParams.MATCH_PARENT,

@@ -16,9 +16,9 @@
         android:id="@+id/pin_view_title"
         android:layout_gravity="center_horizontal|top"
         android:gravity="center"
-        android:textSize="16sp"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"/>
+        android:textSize="18sp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
