@@ -3,22 +3,41 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:id="@+id/activity_main_root"
     android:fitsSystemWindows="true"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="The Learning Lock"
-        android:layout_marginTop="18dp"
-        android:textSize="36sp"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical|center_horizontal">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="A lock screen that learns"
-        android:layout_gravity="center_horizontal" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="The Learning Lock"
+            android:textSize="32sp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/textView2"
+            android:layout_alignParentStart="false"
+            android:layout_centerHorizontal="true"
+            android:typeface="monospace"
+            android:textIsSelectable="false"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="A lock screen that learns"
+            android:layout_gravity="center_horizontal"
+            android:layout_below="@+id/textView2"
+            android:layout_alignParentStart="false"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="12dp" />
+
+    </RelativeLayout>
 
     <Button
         android:layout_width="wrap_content"
@@ -27,7 +46,10 @@
         android:id="@+id/button"
         android:onClick="clickSetup"
         android:textSize="18sp"
-        android:layout_marginTop="20dp"
-        android:layout_gravity="center_horizontal" />
+        android:layout_alignParentStart="false"
+        android:layout_centerHorizontal="true"
+        android:elevation="2dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp" />
 
 </LinearLayout>

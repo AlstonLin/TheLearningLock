@@ -1,61 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:id="@+id/activity_main_root"
-    android:fitsSystemWindows="true"
-    android:layout_height="match_parent">
+    android:id="@+id/activity_main_root" android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
         android:layout_height="wrap_content"
-        android:text="Settings"
-        android:textSize="32sp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="15dp"
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal" />
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true">
 
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/settings_page_enable"
-        android:textSize="21sp"
-        android:text="Enable Lock Screen"
-        android:layout_gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:textSize="32sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="15dp"
+            android:id="@+id/textView"
+            android:layout_gravity="center_horizontal" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reset Lockscreen"
-        android:textSize="21sp"
-        android:onClick="clickSetup"
-        android:id="@+id/settings_page_reset_lockscreen"
-        android:layout_gravity="center_horizontal" />
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/settings_page_enable"
+            android:textSize="21sp"
+            android:text="Enable Lock Screen"
+            android:layout_gravity="center"
+            android:switchPadding="12dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Change Background"
-        android:textSize="21sp"
-        android:onClick="clickChangeBackground"
-        android:id="@+id/settings_page_change_background"
-        android:layout_gravity="center_horizontal" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="24dp">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Change Pattern"
-        android:textSize="21sp"
-        android:id="@+id/settings_page_change_pattern"
-        android:onClick="clickChangePattern"
-        android:layout_gravity="center_horizontal" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="2">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Change PIN"
-        android:textSize="21sp"
-        android:onClick="clickChangePIN"
-        android:id="@+id/settings_page_change_pin"
-        android:layout_gravity="center_horizontal" />
-</LinearLayout>
+                <Button
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:text="Reset Lockscreen"
+                    android:textSize="21sp"
+                    android:onClick="clickSetup"
+                    android:id="@+id/settings_page_reset_lockscreen"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/button_background_square"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:text="Change Background"
+                    android:textSize="21sp"
+                    android:onClick="clickChangeBackground"
+                    android:id="@+id/settings_page_change_background"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/button_background_square"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="2">
+
+                <Button
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:text="Change Pattern"
+                    android:textSize="21sp"
+                    android:id="@+id/settings_page_change_pattern"
+                    android:onClick="clickChangePattern"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/button_background_square"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:text="Change PIN"
+                    android:textSize="21sp"
+                    android:onClick="clickChangePIN"
+                    android:id="@+id/settings_page_change_pin"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/button_background_square"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

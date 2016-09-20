@@ -3,6 +3,7 @@ package io.alstonlin.thelearninglock.pin;
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import io.alstonlin.thelearninglock.R;
@@ -55,7 +56,7 @@ public class PINUtils {
                 }
             });
         }
-        Button backspaceButton = (Button) PINView.findViewById(R.id.pin_view_button_backspace);
+        ImageButton backspaceButton = (ImageButton) PINView.findViewById(R.id.pin_view_button_backspace);
         backspaceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,7 +67,7 @@ public class PINUtils {
                 }
             }
         });
-        Button doneButton = (Button) PINView.findViewById(R.id.pin_view_button_done);
+        ImageButton doneButton = (ImageButton) PINView.findViewById(R.id.pin_view_button_done);
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
