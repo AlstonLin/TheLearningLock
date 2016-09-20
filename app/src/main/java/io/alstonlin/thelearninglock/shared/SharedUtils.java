@@ -114,14 +114,44 @@ public class SharedUtils {
     }
 
     /**
-     * Compared the given Serializable object to the one stored in a salted hash from the given file
-     * @param filename The file name to retrieve the hash from
+     * Fetches the byte array representing the hash from the given file
      * @param context The context of the app
-     * @param object The object that will have the hashes compared to
+     * @param filename The file name to retrieve the hash from
+     * @param logIfFail If the function should log exception
      * @return If the hashes matches size
      */
-    // TODO: Find some way to cache this so this doesnt have to run every time (maybe just return the hash instead?)
-    public static boolean compareToSecureObject(String filename, Context context, Object object) {
+    public static byte[] loadHashFromFiledFile(Context context, String filename, boolean logIfFail) {
+        // Opens the file
+        FileInputStream fis = null;
+        try {
+            // Gets bytes
+            fis = context.openFileInput(filename);
+            byte[] hash = new byte[(int) new File(context.getFilesDir() + "/" + filename).length()];
+            fis.read(hash);
+            return hash;
+        } catch (IOException e){
+            if (logIfFail) {
+                e.printStackTrace();
+                Toast.makeText(context, "An error has occurred while loading a file!", Toast.LENGTH_LONG).show();
+            }
+        } finally {
+            try {
+                if (fis != null) fis.close();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks if the given object matches the hash
+     * @param context The context of the app
+     * @param object The Object to check
+     * @param hash The hash to check against
+     * @return If the object matches the hash
+     */
+    public static boolean compareObjectToHash(Context context, Object object, byte[] hash){
         if (!(object instanceof Serializable)){
             throw new IllegalArgumentException("Given object must be Serializable!");
         }
@@ -131,13 +161,8 @@ public class SharedUtils {
         // Streams
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         ObjectOutputStream out = null;
-        FileInputStream fis = null;
+        // Converts checking object to bytes
         try {
-            // Gets bytes
-            fis = context.openFileInput(filename);
-            byte[] hash = new byte[(int) new File(context.getFilesDir() + "/" + filename).length()];
-            fis.read(hash);
-            // Converts checking object to bytes
             out = new ObjectOutputStream(byteStream);
             out.writeObject(object);
             out.flush();
@@ -146,17 +171,13 @@ public class SharedUtils {
             PKCS5S2ParametersGenerator kdf = new PKCS5S2ParametersGenerator();
             kdf.init(bytes, salt, Const.NUM_HASH_ITERATIONS);
             byte[] hashToCheck = ((KeyParameter) kdf.generateDerivedMacParameters(8 * Const.NUM_HASH_BYTES)).getKey();
-            // Compares the hashes
+            // Compares
             return Arrays.equals(hash, hashToCheck);
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(context, "An error has occurred while loading a file!", Toast.LENGTH_LONG).show();
+            return false;
         } finally {
-            try {
-                if (fis != null) fis.close();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
             try {
                 if (out != null) out.close();
             } catch (IOException e) {
@@ -168,6 +189,5 @@ public class SharedUtils {
                 e.printStackTrace();
             }
         }
-        return false;
     }
 }

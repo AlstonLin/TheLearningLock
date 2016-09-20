@@ -7,7 +7,7 @@ public class Const {
     // Security
     public static final int NUM_SEED_BYTES = 32;
     public static final int NUM_HASH_BYTES = 32;
-    public static final int NUM_HASH_ITERATIONS = 1024;
+    public static final int NUM_HASH_ITERATIONS = 512;
     // Flag names
     public static final String SETUP_FLAG = "SETUPFLAG";
     public static final String ENABLED = "ENABLED";

@@ -36,6 +36,8 @@ public class LockScreen {
     private ListView notificationsList;
     private Context context;
     // Unlocking
+    private byte[] PINHash;
+    private byte[] patternHash;
     private ML ml;
     private PopupWindow unlockScreen;
     private PopupWindow pinScreen;
@@ -47,7 +49,7 @@ public class LockScreen {
         @Override
         public void onPatternSelect(List<int[]> pattern, final double[] timeBetweenNodeSelects, PatternView patternView) {
             patternView.clearPattern();
-            if (SharedUtils.compareToSecureObject(Const.PATTERN_FILENAME, context, pattern)){
+            if (SharedUtils.compareObjectToHash(context, pattern, patternHash)){
                 if (ml.predictImposter(timeBetweenNodeSelects)){
                     if (unlockScreen != null) unlockScreen.dismiss();
                     showPINScreen(timeBetweenNodeSelects);
@@ -82,6 +84,9 @@ public class LockScreen {
     public void lock(){
         ml = ML.loadFromFile(context);
         LockUtils.lock(context, lockView);
+        // Reloads hashes
+        PINHash = SharedUtils.loadHashFromFiledFile(context, Const.PASSCODE_FILENAME, true);
+        patternHash = SharedUtils.loadHashFromFiledFile(context, Const.PATTERN_FILENAME, true);
     }
 
     public void unlock(){
@@ -187,7 +192,7 @@ public class LockScreen {
         PINUtils.setupPINView(context, pinLayout, new OnPINSelectListener() {
             @Override
             public void onPINSelected(String PIN) {
-                if (SharedUtils.compareToSecureObject(Const.PASSCODE_FILENAME, context, PIN)){
+                if (SharedUtils.compareObjectToHash(context, PIN, PINHash)){
                     // Shows a dialog to confirm unlock
                     showConfirmRetrain(timeBetweenNodeSelects);
                 } else{
