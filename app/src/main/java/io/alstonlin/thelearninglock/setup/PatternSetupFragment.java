@@ -21,6 +21,7 @@ import io.alstonlin.thelearninglock.shared.ML;
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pattern.OnPatternSelectListener;
 import io.alstonlin.thelearninglock.pattern.PatternUtils;
+import io.alstonlin.thelearninglock.shared.SharedUtils;
 import me.zhanghai.android.patternlock.PatternView;
 
 
@@ -121,28 +122,6 @@ public class PatternSetupFragment extends Fragment {
     }
 
     private boolean savePattern(List<int[]> pattern) {
-        FileOutputStream fos = null;
-        ObjectOutputStream os = null;
-        boolean success = true;
-        try {
-            fos = getContext().openFileOutput(Const.PATTERN_FILENAME, Context.MODE_PRIVATE);
-            os = new ObjectOutputStream(fos);
-            os.writeObject(pattern);
-        } catch (IOException e) {
-            e.printStackTrace();
-            success = false;
-        } finally {
-            try {
-                if (os != null) os.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (fos != null) fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return success;
+        return SharedUtils.storeObjectSecurely(Const.PATTERN_FILENAME, getContext(), pattern);
     }
 }
