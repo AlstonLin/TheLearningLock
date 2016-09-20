@@ -19,3 +19,4 @@ Minimum API - Android 4.4 (Level 19) / Kitkat
 
 ##### Credits
 Created by Alston Lin
+Designed by David Liu
