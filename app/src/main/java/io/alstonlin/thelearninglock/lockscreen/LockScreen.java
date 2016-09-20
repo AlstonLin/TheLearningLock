@@ -39,6 +39,7 @@ public class LockScreen {
     private ML ml;
     private PopupWindow unlockScreen;
     private PopupWindow pinScreen;
+    private PopupWindow confirmTrainScreen;
     private View patternLayout;
 
     // Listeners
@@ -116,6 +117,10 @@ public class LockScreen {
             pinScreen.dismiss();
             pinScreen = null;
         }
+        if (confirmTrainScreen != null){
+            confirmTrainScreen.dismiss();
+            confirmTrainScreen = null;
+        }
     }
 
 
@@ -183,11 +188,11 @@ public class LockScreen {
             @Override
             public void onPINSelected(String PIN) {
                 if (SharedUtils.compareToSecureObject(Const.PASSCODE_FILENAME, context, PIN)){
-                    unlock();
-                    // Retrains algorithm
-                    ml.addEntry(timeBetweenNodeSelects, true);
+                    // Shows a dialog to confirm unlock
+                    showConfirmRetrain(timeBetweenNodeSelects);
                 } else{
                     PINUtils.setPINTitle(pinLayout, "Wrong PIN!");
+                    PINUtils.clearPIN(pinLayout);
                 }
             }
         }, "That was a suspicious unlock! Please enter your PIN to confirm you're the owner");
@@ -198,6 +203,40 @@ public class LockScreen {
                 true
         );
         pinScreen.showAtLocation(lockView, Gravity.CENTER, 0, 0);
+    }
+
+    /**
+     * Shows a dialog prompting if the user wants to retrain ML, and unlocks after
+     * @param timeBetweenNodeSelects The entry to add to ML if the user presses yes
+     */
+    private void showConfirmRetrain(final double[] timeBetweenNodeSelects){
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View confirmLayout = inflater.inflate(R.layout.layout_add_entry, null, false);
+        SharedUtils.setupBackground(context, confirmLayout);
+        // Sets up buttons
+        Button yesBtn = (Button) confirmLayout.findViewById(R.id.layout_add_entry_yes);
+        Button noBtn = (Button) confirmLayout.findViewById(R.id.layout_add_entry_no);
+        yesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                unlock();
+                ml.addEntry(timeBetweenNodeSelects, true);
+            }
+        });
+        noBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                unlock();
+            }
+        });
+        // Popup Window
+        confirmTrainScreen = new PopupWindow(
+                confirmLayout,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                true
+        );
+        confirmTrainScreen.showAtLocation(lockView, Gravity.CENTER, 0, 0);
     }
 
 }
