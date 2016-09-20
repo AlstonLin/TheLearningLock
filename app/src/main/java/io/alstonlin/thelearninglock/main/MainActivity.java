@@ -55,6 +55,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
 
     private boolean setup;
     private PopupWindow authCheckPopup;
+    private byte[] PINHash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,12 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
         }
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.activity_main_fragment_container, fragment).commit();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        PINHash = SharedUtils.loadHashFromFiledFile(this, Const.PASSCODE_FILENAME, false);
     }
 
     @Override
@@ -180,7 +187,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
         PINUtils.setupPINView(this, pinView, new OnPINSelectListener() {
             @Override
             public void onPINSelected(String PIN) {
-                if (SharedUtils.compareToSecureObject(Const.PASSCODE_FILENAME, getApplicationContext(), PIN)){
+                if (SharedUtils.compareObjectToHash(getApplicationContext(), PIN, PINHash)){
                     task.run();
                     authCheckPopup.dismiss();
                 } else {
