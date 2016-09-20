@@ -19,6 +19,7 @@ public class Const {
     public static final String ML_FILENAME = "learning_lock_saved.eg";
     // The number of patterns that will be requested at the beginning
     public static final int STARTING_TRAINING_SIZE = 10;
+    public static final int CHANGE_FINGERS_MESSAGE_AT = 5;
     // The percentage of the training data that will be used to calculate what epsilon should be.
     public static final float CROSS_VALIDATION_FACTOR = 0.3f;
     // The reasoning for this would be that if the user's behavior change, this will start

@@ -48,7 +48,7 @@ public class PINSetupFragment extends Fragment {
             public void onPINSelected(String PIN) {
                 if (PINToConfirm[0] == null) {
                     PINToConfirm[0] = PIN;
-                    PINUtils.setPINTitle(view, "Please confirm your PIN");
+                    PINUtils.setPINTitle(view, "Confirm your PIN");
                     PINUtils.clearPIN(view);
                 } else {
                     if (PINToConfirm[0].equals(PIN)){
@@ -61,7 +61,7 @@ public class PINSetupFragment extends Fragment {
                     }
                 }
             }
-        }, "Please select a backup PIN. This will be used when the pattern was drawn suspiciously.");
+        }, "Choose a backup PIN. This will be used to verify suspicious pattern draws.");
         return view;
     }
 

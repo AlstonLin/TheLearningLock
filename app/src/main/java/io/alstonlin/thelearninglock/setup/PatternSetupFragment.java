@@ -79,8 +79,8 @@ public class PatternSetupFragment extends Fragment {
                                 // ML stuff that was skipped
                                 ml.addEntry(timeBetweenPatternNodes, false);
                                 patternsLeft--;
-                                PatternUtils.setPatternLayoutTitle(layout,
-                                        "Please enter your pattern " + patternsLeft + " more times.");
+                                String title = "Enter the pattern " + patternsLeft + " more times";
+                                PatternUtils.setPatternLayoutTitle(layout, title);
                             } else {
                                 Snackbar.make(layout, "An error occurred! Please try again",
                                         Snackbar.LENGTH_SHORT).show();
@@ -92,7 +92,7 @@ public class PatternSetupFragment extends Fragment {
                     patternView.clearPattern();
                     // Checks if it's the same pattern
                     if (!PatternUtils.arePatternsEqual(pattern, PatternSetupFragment.this.pattern)){
-                        Snackbar.make(layout, "Pattern does not match you first one!",
+                        Snackbar.make(layout, "That pattern does not match your first one!",
                                 Snackbar.LENGTH_SHORT).show();
                         return;
                     }
@@ -103,13 +103,17 @@ public class PatternSetupFragment extends Fragment {
                     if (patternsLeft == 0){
                         finished();
                     } else {
+                        String title = "Enter the pattern " + patternsLeft + " more times";
+                        if (patternsLeft <= Const.CHANGE_FINGERS_MESSAGE_AT){
+                            title += "\nTry changing fingers";
+                        }
                         PatternUtils.setPatternLayoutTitle(layout,
-                                "Please enter your pattern " + patternsLeft + " more times.");
+                                "Enter the pattern " + patternsLeft + " more times");
                     }
                 }
             }
         };
-        PatternUtils.setupPatternLayout(getContext(), layout, listener, "Select your pattern");
+        PatternUtils.setupPatternLayout(getContext(), layout, listener, "Draw the pattern you want to use");
         return layout;
     }
 
