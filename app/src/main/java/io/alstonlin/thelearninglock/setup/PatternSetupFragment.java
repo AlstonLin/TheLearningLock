@@ -1,6 +1,5 @@
 package io.alstonlin.thelearninglock.setup;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -9,11 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.List;
 
 import io.alstonlin.thelearninglock.shared.Const;
@@ -33,7 +28,7 @@ public class PatternSetupFragment extends Fragment {
 
     private ML ml;
     private List<int[]> pattern;
-    private int patternsLeft = Const.STARTING_TRAINING_SIZE;
+    private int patternsLeft;
 
     /**
      * Factory method to create a new instance of this Fragment
@@ -51,6 +46,7 @@ public class PatternSetupFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        patternsLeft = Const.STARTING_TRAINING_SIZE;
         final View layout = inflater.inflate(R.layout.layout_pattern, container, false);
         final LinearLayout confirmBar = (LinearLayout) layout.findViewById(R.id.pattern_view_confirm_bar);
         final Button confirmButton = (Button) layout.findViewById(R.id.pattern_view_confirm_button);
