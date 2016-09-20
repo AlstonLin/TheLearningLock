@@ -3,6 +3,7 @@ package io.alstonlin.thelearninglock.lockscreen;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -139,7 +140,7 @@ public class LockScreen {
      */
     private void showUnlockScreen(){
         if (ml == null){ // This really should be been set up
-            Toast.makeText(context, "You have no set up the lock screen yet!", Toast.LENGTH_LONG).show();
+            Snackbar.make(lockView, "You have no set up the lock screen yet!", Snackbar.LENGTH_SHORT).show();
         }
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         patternLayout = inflater.inflate(R.layout.layout_pattern, null, false);

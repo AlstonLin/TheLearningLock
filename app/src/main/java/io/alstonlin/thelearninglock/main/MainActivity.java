@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -81,13 +82,13 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         if (requestCode == REQUEST_PERMISSIONS_CODE){
             if (grantResults.length != PERMISSIONS.length){
-                Toast.makeText(this, "All the permissions must be accepted before the lock screen can be started", Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.activity_main_fragment_container), "All the permissions must be accepted before the lock screen can be started", Snackbar.LENGTH_SHORT).show();
                 finish();
                 return;
             }
             for (int i = 0; i < grantResults.length; i++){
                 if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(this, "All the permissions must be accepted before the lock screen can be started", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(R.id.activity_main_fragment_container), "All the permissions must be accepted before the lock screen can be started", Snackbar.LENGTH_SHORT).show();
                     finish();
                     return;
                 }
