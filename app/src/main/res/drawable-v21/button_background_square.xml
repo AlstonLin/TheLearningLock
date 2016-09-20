@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple android:color="@color/colorPrimaryDark" xmlns:android="http://schemas.android.com/apk/res/android">
+    <item >
+        <shape android:shape="rectangle">
+            <solid android:color="@color/colorPrimary"/>
+            <padding android:left="@dimen/fab_margin"
+                android:right="@dimen/fab_margin"
+                android:bottom="@dimen/fab_margin"
+                android:top="@dimen/fab_margin"/>
+        </shape>
+    </item>
+</ripple>

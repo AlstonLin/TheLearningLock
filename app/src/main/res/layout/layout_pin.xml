@@ -32,7 +32,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_weight="7">
+        android:layout_weight="7"
+        android:layout_margin="24dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -40,28 +41,36 @@
             android:layout_weight="1">
             <Button
                 android:id="@+id/pin_view_button_one"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:textSize="36sp"
-                android:text="1" />
+                android:text="1"
+                android:background="@drawable/button_pin_number_background" />
+            <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
             <Button
                 android:id="@+id/pin_view_button_two"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:textSize="36sp"
-                android:text="2" />
+                android:text="2"
+                android:background="@drawable/button_pin_number_background" />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
             <Button
                 android:id="@+id/pin_view_button_three"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:textSize="36sp"
-                android:text="3" />
+                android:text="3"
+                android:background="@drawable/button_pin_number_background" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,28 +79,40 @@
             android:layout_weight="1">
             <Button
                 android:id="@+id/pin_view_button_four"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:textSize="36sp"
-                android:text="4" />
+                android:text="4"
+                android:background="@drawable/button_pin_number_background" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
             <Button
                 android:id="@+id/pin_view_button_five"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:textSize="36sp"
-                android:text="5" />
+                android:text="5"
+                android:background="@drawable/button_pin_number_background" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
             <Button
                 android:id="@+id/pin_view_button_six"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:textSize="36sp"
-                android:text="6" />
+                android:text="6"
+                android:background="@drawable/button_pin_number_background" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -100,58 +121,82 @@
             android:layout_weight="1">
             <Button
                 android:id="@+id/pin_view_button_seven"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:textSize="36sp"
-                android:text="7" />
+                android:text="7"
+                android:background="@drawable/button_pin_number_background" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
             <Button
                 android:id="@+id/pin_view_button_eight"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:textSize="36sp"
-                android:text="8" />
+                android:text="8"
+                android:background="@drawable/button_pin_number_background" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
             <Button
                 android:id="@+id/pin_view_button_nine"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:textSize="36sp"
-                android:text="9" />
+                android:text="9"
+                android:background="@drawable/button_pin_number_background" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="horizontal"
             android:layout_weight="1">
-            <Button
+            <ImageButton
                 android:id="@+id/pin_view_button_backspace"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:textSize="18sp"
-                android:text="Backspace" />
+                android:src="@drawable/ic_backspace_white_36dp"
+                android:background="@drawable/button_pin_number_background" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
             <Button
                 android:id="@+id/pin_view_button_zero"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:textSize="36sp"
-                android:text="0" />
-            <Button
-                android:id="@+id/pin_view_button_done"
+                android:text="0"
+                android:background="@drawable/button_pin_number_background" />
+
+            <Space
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/pin_view_button_done"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:textSize="24sp"
-                android:text="Done" />
+                android:src="@drawable/ic_check_circle_white_36dp"
+                android:background="@drawable/button_pin_number_background" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

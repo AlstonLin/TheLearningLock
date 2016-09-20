@@ -1,22 +1,44 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="25dp"
     tools:context=".setup.BackgroundPickerFragment">
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:gravity="center"
-        android:text="Select a Background"
-        android:layout_marginBottom="32dp"/>
-    <Button
-        android:id="@+id/fragment_background_picker_gallery_button"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="21sp"
-        android:text="Pick from Gallery" />
-</LinearLayout>
+        android:text="Before We Start"
+        android:id="@+id/textView3"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:text="Select a Background"
+            android:layout_marginBottom="24dp"
+            android:layout_gravity="center" />
+
+        <Button
+            android:id="@+id/fragment_background_picker_gallery_button"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="21sp"
+            android:text="Pick from Gallery"
+            android:background="@drawable/button_background" />
+    </LinearLayout>
+
+</RelativeLayout>

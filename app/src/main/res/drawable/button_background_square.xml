@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/colorPrimaryDark"/>
+            <padding android:left="@dimen/fab_margin"
+                android:right="@dimen/fab_margin"
+                android:bottom="@dimen/fab_margin"
+                android:top="@dimen/fab_margin"/>
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/colorPrimary"/>
+            <padding android:left="@dimen/fab_margin"
+                android:right="@dimen/fab_margin"
+                android:bottom="@dimen/fab_margin"
+                android:top="@dimen/fab_margin"/>
+        </shape>
+    </item>
+</selector>
