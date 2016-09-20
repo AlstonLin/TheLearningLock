@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -123,11 +124,27 @@ public class LockScreen {
      * @param view The Lock Screen's View
      */
     private void setupLockView(View view){
-        Button unlock = (Button) view.findViewById(R.id.unlockButton);
-        unlock.setOnClickListener(new View.OnClickListener() {
+        SeekBar seekBar  = (SeekBar) view.findViewById(R.id.slider);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onClick(View v) {
-                showUnlockScreen();
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(progress>95){
+                    seekBar.setThumb(context.getResources().getDrawable(R.mipmap.ic_launcher));
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (seekBar.getProgress() > 95) {
+                    showUnlockScreen();
+                } else {
+                    seekBar.setThumb(context.getResources().getDrawable(R.mipmap.ic_launcher));
+                }
             }
         });
         notificationsList = (ListView) view.findViewById(R.id.lock_screen_notifications_list);
