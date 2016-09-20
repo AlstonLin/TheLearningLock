@@ -41,13 +41,25 @@ public class PINSetupFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.layout_pin, container, false);
+        final View view = inflater.inflate(R.layout.layout_pin, container, false);
+        final String[] PINToConfirm = {null};
         PINUtils.setupPINView(getContext(), view, new OnPINSelectListener() {
             @Override
             public void onPINSelected(String PIN) {
-                // TODO: Probably want to confirm this
-                savePIN(PIN);
-                finished();
+                if (PINToConfirm[0] == null) {
+                    PINToConfirm[0] = PIN;
+                    PINUtils.setPINTitle(view, "Please confirm your PIN");
+                    PINUtils.clearPIN(view);
+                } else {
+                    if (PINToConfirm[0].equals(PIN)){
+                        savePIN(PIN);
+                        finished();
+                    } else {
+                        PINToConfirm[0] = null;
+                        PINUtils.setPINTitle(view, "The PIN you've entered does not match! Enter your PIN again.");
+                        PINUtils.clearPIN(view);
+                    }
+                }
             }
         }, "Please select a backup PIN. This will be used when the pattern was drawn suspiciously.");
         return view;

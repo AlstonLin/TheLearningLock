@@ -24,8 +24,9 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:text="PIN"
+        android:inputType="textPassword"
         android:textColor="#FFFFFF"
-        android:textSize="21sp"
+        android:textSize="32sp"
         android:gravity="center"
         android:id="@+id/pin_view_display"/>
     <LinearLayout

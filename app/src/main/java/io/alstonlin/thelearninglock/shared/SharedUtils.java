@@ -120,7 +120,7 @@ public class SharedUtils {
      * @param object The object that will have the hashes compared to
      * @return If the hashes matches size
      */
-    // TODO: Find some way to cache this so this doesnt have to run every time
+    // TODO: Find some way to cache this so this doesnt have to run every time (maybe just return the hash instead?)
     public static boolean compareToSecureObject(String filename, Context context, Object object) {
         if (!(object instanceof Serializable)){
             throw new IllegalArgumentException("Given object must be Serializable!");

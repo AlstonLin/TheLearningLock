@@ -42,7 +42,6 @@ public class PINUtils {
      * @param title The title of the PIN View
      */
     public static void setupPINView(Context context, View PINView, final OnPINSelectListener listener, String title){
-        final StringBuilder PINBuilder = new StringBuilder();
         final TextView tv = (TextView) PINView.findViewById(R.id.pin_view_display);
         tv.setText("");
         // Listeners for the keypad buttons
@@ -50,9 +49,8 @@ public class PINUtils {
             PINView.findViewById(b.id).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    PINBuilder.append(b.character);
-                    String str = new String(new char[PINBuilder.length()]).replace('\0','*');
-                    tv.setText(str);
+                    CharSequence chars = tv.getText();
+                    tv.setText(chars.toString() + b.character);
                 }
             });
         }
@@ -60,10 +58,9 @@ public class PINUtils {
         backspaceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (PINBuilder.length() > 0) {
-                    PINBuilder.deleteCharAt(PINBuilder.length() - 1);
-                    String str = new String(new char[PINBuilder.length()]).replace('\0','*');
-                    tv.setText(str);
+                CharSequence chars = tv.getText();
+                if (chars.length() > 0) {
+                    tv.setText(chars.subSequence(0, chars.length() - 1));
                 }
             }
         });
@@ -71,12 +68,18 @@ public class PINUtils {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.onPINSelected(PINBuilder.toString());
+                CharSequence chars = tv.getText();
+                listener.onPINSelected(chars.toString());
             }
         });
         setPINTitle(PINView, title);
         // Sets up background
         SharedUtils.setupBackground(context, PINView);
+    }
+
+    public static void clearPIN(View PINView) {
+        final TextView tv = (TextView) PINView.findViewById(R.id.pin_view_display);
+        tv.setText("");
     }
 
     public static void setPINTitle(View PINView, String newTitle){
