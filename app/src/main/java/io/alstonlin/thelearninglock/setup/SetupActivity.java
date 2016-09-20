@@ -1,5 +1,6 @@
 package io.alstonlin.thelearninglock.setup;
 
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -74,7 +75,7 @@ public class SetupActivity extends FragmentActivity implements OnFragmentFinishe
     public void onFragmentFinished() {
         fragmentStateIndex++;
         if (fragmentStateIndex >= FragmentStates.values().length){ // Last step. Finished set up
-            Toast.makeText(this, "All set up!", Toast.LENGTH_SHORT).show();
+            Snackbar.make(findViewById(R.id.activity_setup_fragment_container), "All set up!", Snackbar.LENGTH_SHORT).show();
             // TODO: Maybe just go to the settings page instead?
             finish();
         } else {

@@ -2,6 +2,7 @@ package io.alstonlin.thelearninglock.setup;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,8 +86,8 @@ public class PatternSetupFragment extends Fragment {
                                 PatternUtils.setPatternLayoutTitle(layout,
                                         "Please enter your pattern " + patternsLeft + " more times.");
                             } else {
-                                Toast.makeText(getContext(), "An error occurred! Please try again",
-                                        Toast.LENGTH_LONG).show();
+                                Snackbar.make(layout, "An error occurred! Please try again",
+                                        Snackbar.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -95,8 +96,8 @@ public class PatternSetupFragment extends Fragment {
                     patternView.clearPattern();
                     // Checks if it's the same pattern
                     if (!PatternUtils.arePatternsEqual(pattern, PatternSetupFragment.this.pattern)){
-                        Toast.makeText(getContext(), "Pattern does not match you first one!",
-                                Toast.LENGTH_SHORT).show();
+                        Snackbar.make(layout, "Pattern does not match you first one!",
+                                Snackbar.LENGTH_SHORT).show();
                         return;
                     }
                     // Training
