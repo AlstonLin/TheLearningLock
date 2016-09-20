@@ -38,20 +38,13 @@ public class LockScreen {
     private PopupWindow unlockScreen;
     private PopupWindow pinScreen;
     private View patternLayout;
-    private List<int[]> actualPattern;
-    private String pin;
 
     // Listeners
     private OnPatternSelectListener patternListener = new OnPatternSelectListener() {
         @Override
         public void onPatternSelect(List<int[]> pattern, final double[] timeBetweenNodeSelects, PatternView patternView) {
             patternView.clearPattern();
-            if (actualPattern == null){ // There was a problem loading the pattern, so we'll pretend what they entered was right
-                // TODO: Is this really what should be done?
-                unlock();
-                return;
-            }
-            if (PatternUtils.arePatternsEqual(actualPattern, pattern)){
+            if (SharedUtils.compareToSecureObject(Const.PATTERN_FILENAME, context, pattern)){
                 if (ml.predictImposter(timeBetweenNodeSelects)){
                     if (unlockScreen != null) unlockScreen.dismiss();
                     showPINScreen(timeBetweenNodeSelects);
@@ -84,11 +77,6 @@ public class LockScreen {
     }
 
     public void lock(){
-        // Loads everything from files in the background
-        // This should be okay since the user will probably not be turning on the phone
-        // right after it's locked
-        this.actualPattern = loadPattern();
-        this.pin = loadPIN();
         ml = ML.loadFromFile(context);
         LockUtils.lock(context, lockView);
     }
@@ -176,7 +164,7 @@ public class LockScreen {
         PINUtils.setupPINView(context, pinLayout, new OnPINSelectListener() {
             @Override
             public void onPINSelected(String PIN) {
-                if (PIN.equals(pin)){
+                if (SharedUtils.compareToSecureObject(Const.PASSCODE_FILENAME, context, PIN)){
                     unlock();
                     // Retrains algorithm
                     ml.addEntry(timeBetweenNodeSelects, true);
@@ -192,22 +180,6 @@ public class LockScreen {
                 true
         );
         pinScreen.showAtLocation(lockView, Gravity.CENTER, 0, 0);
-    }
-
-    /**
-     * Loads the pattern from a file
-     * @return The pattern, or null if an error occurred
-     */
-    private List<int[]> loadPattern(){
-        return (List<int[]>) SharedUtils.loadObjectFromFile(context, Const.PATTERN_FILENAME);
-    }
-
-    /**
-     * Loads the PIN from file
-     * @return The PIN, or null if an error occurred.
-     */
-    private String loadPIN(){
-        return (String) SharedUtils.loadObjectFromFile(context, Const.PASSCODE_FILENAME);
     }
 
 }
