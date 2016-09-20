@@ -18,6 +18,7 @@ import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pin.OnPINSelectListener;
 import io.alstonlin.thelearninglock.pin.PINUtils;
+import io.alstonlin.thelearninglock.shared.SharedUtils;
 
 
 /**
@@ -61,31 +62,7 @@ public class PINSetupFragment extends Fragment {
         ((OnFragmentFinishedListener)getActivity()).onFragmentFinished();
     }
 
-    // TODO: This is insecure. we should so something like a salted hash. Same thing for patterns just in case
-    // Or something like this: http://android-developers.blogspot.ca/2013/02/using-cryptography-to-store-credentials.html
     private boolean savePIN(String PIN) {
-        FileOutputStream fos = null;
-        ObjectOutputStream os = null;
-        boolean success = true;
-        try {
-            fos = getContext().openFileOutput(Const.PASSCODE_FILENAME, Context.MODE_PRIVATE);
-            os = new ObjectOutputStream(fos);
-            os.writeObject(PIN);
-        } catch (IOException e) {
-            e.printStackTrace();
-            success = false;
-        } finally {
-            try {
-                if (os != null) os.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (fos != null) fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return success;
+        return SharedUtils.storeObjectSecurely(Const.PASSCODE_FILENAME, getContext(), PIN);
     }
 }

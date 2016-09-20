@@ -4,10 +4,15 @@ package io.alstonlin.thelearninglock.shared;
  * Contains any hardcoded constants for the app that is shared between files
  */
 public class Const {
+    // Security
+    public static final int NUM_SEED_BYTES = 32;
+    public static final int NUM_HASH_BYTES = 32;
+    public static final int NUM_HASH_ITERATIONS = 1024;
     // Flag names
     public static final String SETUP_FLAG = "SETUPFLAG";
     public static final String ENABLED = "ENABLED";
     public static final String BACKGROUND_URI_KEY = "BACKGROUNDURI";
+    public static final String SALT = "SALT";
     // File names
     public static final String PATTERN_FILENAME = "pattern.dat";
     public static final String PASSCODE_FILENAME = "passcode.dat";

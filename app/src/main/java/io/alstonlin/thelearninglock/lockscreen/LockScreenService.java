@@ -169,7 +169,6 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
     public void onDestroy() {
         super.onDestroy();
         lockScreen.unlock();
-        unregisterReceiver(receiver);
         unbindService(notificationConnection);
     }
 

@@ -20,6 +20,8 @@ import android.view.ViewGroup;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+
 import io.alstonlin.thelearninglock.setup.BackgroundPickerFragment;
 import io.alstonlin.thelearninglock.setup.PINSetupFragment;
 import io.alstonlin.thelearninglock.setup.PatternSetupFragment;
@@ -30,6 +32,7 @@ import io.alstonlin.thelearninglock.shared.SharedUtils;
 import io.alstonlin.thelearninglock.lockscreen.LockScreenService;
 import io.alstonlin.thelearninglock.pin.OnPINSelectListener;
 import io.alstonlin.thelearninglock.pin.PINUtils;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Warning: This flow is VERY complicated due to Android's new permission system.
@@ -56,6 +59,10 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Crashlytics
+        Fabric.with(this, new Crashlytics());
+        // Sets up the salt for security
+        SharedUtils.setupSalt(this);
         // Basic permission checks
         ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSIONS_CODE);
         // Sets the Fragment to show based on if Lockscreen has already been set up
@@ -165,8 +172,6 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
             task.run();
             return;
         }
-        // Loads the real PIN
-        final String realPIN = (String) SharedUtils.loadObjectFromFile(this, Const.PASSCODE_FILENAME);
         // Sets up the popup window
         // TODO: This would probably look better as a Dialog maybe?
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -174,7 +179,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
         PINUtils.setupPINView(this, pinView, new OnPINSelectListener() {
             @Override
             public void onPINSelected(String PIN) {
-                if (PIN.equals(realPIN)){
+                if (SharedUtils.compareToSecureObject(Const.PASSCODE_FILENAME, getApplicationContext(), PIN)){
                     task.run();
                     authCheckPopup.dismiss();
                 } else {
