@@ -6,11 +6,11 @@
     android:fitsSystemWindows="true">
 
     <TextClock
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="64dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/clock"
-        android:textSize="64sp"
+        android:textSize="72sp"
         android:textColor="#FFFFFF"
         android:layout_gravity="center"
         android:typeface="sans"
@@ -38,28 +38,29 @@
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/lock_screen_notifications_list"
         android:layout_alignEnd="@+id/lock_screen_notifications_list"
-        android:layout_marginBottom="16dp">
-
-        <SeekBar
-            android:id="@+id/slider"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:max="100"
-            android:thumb="@mipmap/ic_launcher"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:progressDrawable="@android:color/transparent" />
+        android:layout_marginBottom="50dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="SLIDE TO UNLOCK"
-            android:id="@+id/textView4"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
+            android:textSize="24sp"
             android:typeface="monospace" />
+
+        <io.alstonlin.thelearninglock.lockscreen.SlideButton
+            android:id="@+id/lock_screen_slider"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:max="100"
+            android:thumb="@mipmap/ic_launcher"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:progressDrawable="@android:color/transparent"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
 </RelativeLayout>
