@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TheLearningLock</string>
+    <string name="app_name">Learning Lock</string>
     <string name="title_activity_lock">LockActivity</string>
     <string name="title_activity_settings_acitivity">SettingsAcitivity</string>
 
