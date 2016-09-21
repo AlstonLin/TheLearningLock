@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 
 import io.alstonlin.thelearninglock.shared.Const;
@@ -42,6 +43,7 @@ public class BackgroundPickerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().setTitle("Pick a Background");
     }
 
     @Override
