@@ -3,24 +3,26 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:id="@+id/activity_main_root" android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/fragment_settings_page_title"
+        android:text="Settings"
+        android:gravity="left"
+        android:background="@color/colorPrimary"
+        android:textSize="32sp"
+        android:paddingTop="24dp"
+        android:paddingBottom="12dp"
+        android:textColor="@color/white"
+        android:paddingLeft="16dp"/>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:fitsSystemWindows="true"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Settings"
-            android:textSize="32sp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="15dp"
-            android:id="@+id/textView"
-            android:layout_gravity="center_horizontal" />
+        android:layout_marginTop="32dp"
+        android:layout_below="@id/fragment_settings_page_title">
 
         <Switch
             android:layout_width="wrap_content"

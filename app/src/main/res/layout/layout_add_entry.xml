@@ -6,14 +6,19 @@
     <TextView
         android:text="Do you want the Lock Screen to learn from this entry to improve future accuracy?"
         android:layout_width="match_parent"
-        android:textSize="18sp"
+        android:textSize="21sp"
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_marginTop="64sp"
+        android:layout_marginLeft="21sp"
+        android:layout_marginRight="21sp"
+        android:textColor="@color/white"
         android:layout_height="wrap_content" />
 
     <Button
         android:text="Yes"
+        style="@style/AppTheme.Button"
+        android:background="@drawable/button_background"
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,6 +29,8 @@
 
     <Button
         android:text="No"
+        style="@style/AppTheme.Button"
+        android:background="@drawable/button_background"
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

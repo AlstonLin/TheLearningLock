@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import io.alstonlin.thelearninglock.main.MainActivity;
@@ -21,9 +23,13 @@ public class SetupActivity extends FragmentActivity implements OnFragmentFinishe
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.savedInstanceState = savedInstanceState;
-        startApp();
+         super.onCreate(savedInstanceState);
+         this.savedInstanceState = savedInstanceState;
+         // Full Screen
+         requestWindowFeature(Window.FEATURE_NO_TITLE);
+         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+         startApp();
     }
 
     private void startApp(){

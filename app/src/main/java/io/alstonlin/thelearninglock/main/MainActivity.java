@@ -18,6 +18,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
@@ -60,6 +62,10 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Full screen
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         // Crashlytics
         Fabric.with(this, new Crashlytics());
@@ -72,6 +78,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
         Fragment fragment;
         if (setup){
             fragment = SettingsFragment.newInstance();
+            setTitle("Settings");
         } else {
             fragment = WelcomeFragment.newInstance();
         }
