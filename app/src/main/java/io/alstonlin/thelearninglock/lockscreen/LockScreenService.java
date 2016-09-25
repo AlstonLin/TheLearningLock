@@ -84,6 +84,9 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null) {
+            return START_STICKY;
+        }
         switch (intent.getFlags()){
             case OPEN_SETUP_ACTIVITY: // Setup
                 if (checkDrawOverlayPermission() && checkNotificationsPermission()){
@@ -170,6 +173,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
         super.onDestroy();
         lockScreen.unlock();
         unbindService(notificationConnection);
+        unregisterReceiver(receiver);
     }
 
     @Override
