@@ -94,6 +94,7 @@ public class SetupActivity extends FragmentActivity implements OnFragmentFinishe
             Snackbar.make(findViewById(R.id.activity_setup_fragment_container), "All set up!", Snackbar.LENGTH_SHORT).show();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+            finish();
         } else {
             changeFragment(FragmentStates.values()[fragmentStateIndex].newFragment());
         }
