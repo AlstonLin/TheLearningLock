@@ -19,13 +19,12 @@ public class PatternUtils {
     /**
      * Manages the PatternView, listens to it, and handles / process the pattern received from the
      * listener and returns it to the given listener.
-     * @param context The context this View is being displayed in
      * @param layout An instance of the layout defined in layout_pattern.xmlml
      * @param listener An instance of OnPatternSelectListener that will receive the processed
      *                 pattern once it has been selected
      * @param title The title that should be displayed on the top of this Layout
      */
-    public static void setupPatternLayout(Context context, final View layout, final OnPatternSelectListener listener, String title){
+    public static void setupPatternLayout(final View layout, final OnPatternSelectListener listener, String title){
         // Title Setup
         setPatternLayoutTitle(layout, title);
         // Pattern
@@ -53,8 +52,6 @@ public class PatternUtils {
                         timeBetweenPatternNodes, patternView);
             }
         });
-        // Background
-        SharedUtils.setupBackground(context, layout);
     }
 
     public static void setPatternLayoutTitle(final View layout, String title){

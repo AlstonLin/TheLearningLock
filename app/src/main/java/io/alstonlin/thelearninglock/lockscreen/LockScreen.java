@@ -4,15 +4,12 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.support.design.widget.Snackbar;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.SeekBar;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,17 +28,17 @@ import me.zhanghai.android.patternlock.PatternView;
  * Manages all the interactions with the View for the lock screen. Similar to a Fragment for it.
  */
 public class LockScreen {
-    private View lockView;
+    private ViewGroup lockView;
+    private View backgroundView;
     private LockScreenNotificationsAdapter notificationsAdapter;
     private ListView notificationsList;
     private Context context;
+    private LockScreenService service;
     // Unlocking
+    private double[] timeBetweenNodeSelects;
     private byte[] PINHash;
     private byte[] patternHash;
     private ML ml;
-    private PopupWindow unlockScreen;
-    private PopupWindow pinScreen;
-    private PopupWindow confirmTrainScreen;
     private View patternLayout;
 
     // Listeners
@@ -51,8 +48,8 @@ public class LockScreen {
             patternView.clearPattern();
             if (SharedUtils.compareObjectToHash(context, pattern, patternHash)){
                 if (ml.predictImposter(timeBetweenNodeSelects)){
-                    if (unlockScreen != null) unlockScreen.dismiss();
-                    showPINScreen(timeBetweenNodeSelects);
+                    LockScreen.this.timeBetweenNodeSelects = timeBetweenNodeSelects;
+                    showPINScreen();
                 } else {
                     unlock();
                 }
@@ -73,24 +70,26 @@ public class LockScreen {
         }
     };
 
-    public LockScreen(Context context){
+    public LockScreen(LockScreenService service){
+        // Attrs
+        this.service = service;
+        this.context = service;
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View lockView = layoutInflater.inflate(R.layout.lock_screen, null);
-        this.lockView = lockView;
-        this.context = context;
-        setupLockView(lockView);
-    }
-
-    public void lock(){
+        View lockView = layoutInflater.inflate(R.layout.lock_container, null);
+        this.lockView = (ViewGroup) lockView;
+        this.backgroundView = new LinearLayout(context);
+        // Loads data
         ml = ML.loadFromFile(context);
-        LockUtils.lock(context, lockView);
-        // Reloads hashes
         PINHash = SharedUtils.loadHashFromFiledFile(context, Const.PASSCODE_FILENAME, true);
         patternHash = SharedUtils.loadHashFromFiledFile(context, Const.PATTERN_FILENAME, true);
+        // Setup and lock
+        setupLockContainer(lockView);
+        LockUtils.lock(context, lockView, backgroundView);
     }
 
     public void unlock(){
-        LockUtils.unlock(context, lockView);
+        LockUtils.unlock(context, lockView, backgroundView);
+        service.destroyLockScreen();
     }
 
     /**
@@ -113,19 +112,8 @@ public class LockScreen {
     /**
      * Hides the unlock Popup.
      */
-    public void hideUnlockScreen(){
-        if (unlockScreen != null){
-            unlockScreen.dismiss();
-            unlockScreen = null;
-        }
-        if (pinScreen != null){
-            pinScreen.dismiss();
-            pinScreen = null;
-        }
-        if (confirmTrainScreen != null){
-            confirmTrainScreen.dismiss();
-            confirmTrainScreen = null;
-        }
+    public void resetToLockScreen(){
+        LockUtils.setVisibleScreen(lockView, R.id.lock_screen);
     }
 
 
@@ -133,7 +121,8 @@ public class LockScreen {
      * Helper method to set up the View of the Lock Screen itself.
      * @param view The Lock Screen's View
      */
-    private void setupLockView(View view){
+    private void setupLockContainer(View view){
+        // Lock screen
         SlideButton seekBar  = (SlideButton) view.findViewById(R.id.lock_screen_slider);
         seekBar.setSlideButtonListener(new SlideButtonListener() {
             @Override
@@ -144,6 +133,41 @@ public class LockScreen {
         notificationsList = (ListView) view.findViewById(R.id.lock_screen_notifications_list);
         notificationsAdapter = new LockScreenNotificationsAdapter(context, notificationListener);
         notificationsList.setAdapter(notificationsAdapter);
+        // Unlock screen
+        patternLayout = lockView.findViewById(R.id.unlock_screen);
+        PatternUtils.setupPatternLayout(patternLayout, patternListener, "Enter your pattern");
+        // PIN screen
+        final View pinLayout = lockView.findViewById(R.id.pin_screen);
+        PINUtils.setupPINView(pinLayout, new OnPINSelectListener() {
+            @Override
+            public void onPINSelected(String PIN) {
+                if (SharedUtils.compareObjectToHash(context, PIN, PINHash)){
+                    // Shows a dialog to confirm unlock
+                    showConfirmRetrain();
+                } else{
+                    PINUtils.setPINTitle(pinLayout, "Wrong PIN!");
+                    PINUtils.clearPIN(pinLayout);
+                }
+            }
+        }, "That was suspicious! Enter your PIN to confirm you're the owner");
+        // Add entry dialog
+        View confirmLayout = lockView.findViewById(R.id.add_dialog);
+        Button yesBtn = (Button) confirmLayout.findViewById(R.id.layout_add_entry_yes);
+        Button noBtn = (Button) confirmLayout.findViewById(R.id.layout_add_entry_no);
+        yesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                unlock();
+                if (timeBetweenNodeSelects != null) ml.addEntry(timeBetweenNodeSelects, true);
+            }
+        });
+        noBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                unlock();
+                timeBetweenNodeSelects = null;
+            }
+        });
     }
 
     /**
@@ -153,79 +177,21 @@ public class LockScreen {
         if (ml == null){ // This really should be been set up
             Snackbar.make(lockView, "You have no set up the lock screen yet!", Snackbar.LENGTH_SHORT).show();
         }
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        patternLayout = inflater.inflate(R.layout.layout_pattern, null, false);
-        PatternUtils.setupPatternLayout(context, patternLayout, patternListener, "Draw your pattern to unlock");
-        unlockScreen = new PopupWindow(
-                patternLayout,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                true
-        );
-        unlockScreen.showAtLocation(lockView, Gravity.CENTER, 0, 0);
+        LockUtils.setVisibleScreen(lockView, R.id.unlock_screen);
     }
 
     /**
      * Shows the PIN keypad popup if the user seems suspicious.
      * Entering the PIN successfully will result in unlock and retraining of the algorithm
-     * @param timeBetweenNodeSelects The data that will be used to retrain if PIN unlocks this
      */
-    private void showPINScreen(final double[] timeBetweenNodeSelects){
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View pinLayout = inflater.inflate(R.layout.layout_pin, null, false);
-        PINUtils.setupPINView(context, pinLayout, new OnPINSelectListener() {
-            @Override
-            public void onPINSelected(String PIN) {
-                if (SharedUtils.compareObjectToHash(context, PIN, PINHash)){
-                    // Shows a dialog to confirm unlock
-                    showConfirmRetrain(timeBetweenNodeSelects);
-                } else{
-                    PINUtils.setPINTitle(pinLayout, "Wrong PIN!");
-                    PINUtils.clearPIN(pinLayout);
-                }
-            }
-        }, "That was suspicious! Enter your PIN to confirm you're the owner");
-        pinScreen = new PopupWindow(
-                pinLayout,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                true
-        );
-        pinScreen.showAtLocation(lockView, Gravity.CENTER, 0, 0);
+    private void showPINScreen(){
+        LockUtils.setVisibleScreen(lockView, R.id.pin_screen);
     }
 
     /**
      * Shows a dialog prompting if the user wants to retrain ML, and unlocks after
-     * @param timeBetweenNodeSelects The entry to add to ML if the user presses yes
      */
-    private void showConfirmRetrain(final double[] timeBetweenNodeSelects){
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View confirmLayout = inflater.inflate(R.layout.layout_add_entry, null, false);
-        SharedUtils.setupBackground(context, confirmLayout);
-        // Sets up buttons
-        Button yesBtn = (Button) confirmLayout.findViewById(R.id.layout_add_entry_yes);
-        Button noBtn = (Button) confirmLayout.findViewById(R.id.layout_add_entry_no);
-        yesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                unlock();
-                ml.addEntry(timeBetweenNodeSelects, true);
-            }
-        });
-        noBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                unlock();
-            }
-        });
-        // Popup Window
-        confirmTrainScreen = new PopupWindow(
-                confirmLayout,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                true
-        );
-        confirmTrainScreen.showAtLocation(lockView, Gravity.CENTER, 0, 0);
+    private void showConfirmRetrain(){
+        LockUtils.setVisibleScreen(lockView, R.id.add_dialog);
     }
-
 }

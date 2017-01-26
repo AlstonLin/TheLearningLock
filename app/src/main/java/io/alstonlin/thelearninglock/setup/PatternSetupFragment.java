@@ -115,7 +115,8 @@ public class PatternSetupFragment extends Fragment {
                 }
             }
         };
-        PatternUtils.setupPatternLayout(getContext(), layout, listener, "Draw the pattern you want to use");
+        SharedUtils.setupBackground(getContext(), layout);
+        PatternUtils.setupPatternLayout(layout, listener, "Draw the pattern you want to use");
         return layout;
     }
 

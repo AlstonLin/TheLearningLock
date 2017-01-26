@@ -191,7 +191,8 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
         // TODO: This would probably look better as a Dialog maybe?
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View pinView = inflater.inflate(R.layout.layout_pin, null);
-        PINUtils.setupPINView(this, pinView, new OnPINSelectListener() {
+        SharedUtils.setupBackground(this, pinView);
+        PINUtils.setupPINView(pinView, new OnPINSelectListener() {
             @Override
             public void onPINSelected(String PIN) {
                 if (SharedUtils.compareObjectToHash(getApplicationContext(), PIN, PINHash)){

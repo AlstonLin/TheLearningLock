@@ -1,5 +1,6 @@
 package io.alstonlin.thelearninglock.lockscreen;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -32,6 +33,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
     public static final int OPEN_SETUP_ACTIVITY = 70;
 
     // Fields
+    private Notification[] notifications;
     private Handler uiHandler; // Allows sending messages to the "UI" thread (Service's main Thread)
     private LockScreen lockScreen;
     private BroadcastReceiver receiver;
@@ -69,8 +71,6 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
         filter.setPriority(999);
         receiver = new LockScreenReceiver();
         registerReceiver(receiver, filter);
-        // Creates the Lock Screen
-        lockScreen = new LockScreen(this);
         // Creates the handler
         uiHandler = new Handler();
     }
@@ -106,8 +106,8 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
                 // Checks if currently in a phone call
                 TelephonyManager ts = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                 if (ts.getCallState() != TelephonyManager.CALL_STATE_OFFHOOK) {
-                    lockScreen.hideUnlockScreen(); // If they had the Popup open before
-                    lockScreen.lock();
+                    if (lockScreen != null) lockScreen.resetToLockScreen();
+                    else lockScreen = new LockScreen(this);
                     notifyNotificationsUpdated();
                 }
         }
@@ -122,7 +122,8 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
             @Override
             public void run() {
                 if (notificationService != null){
-                    lockScreen.updateNotifications(notificationService.getNotifications());
+                    notifications = notificationService.getNotifications();
+                    if (lockScreen != null) lockScreen.updateNotifications(notifications);
                 }
             }
         });
@@ -171,7 +172,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
     @Override
     public void onDestroy() {
         super.onDestroy();
-        lockScreen.unlock();
+        if (lockScreen != null) lockScreen.unlock();
         unbindService(notificationConnection);
         unregisterReceiver(receiver);
     }
@@ -179,6 +180,10 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public void destroyLockScreen(){
+        this.lockScreen = null;
     }
 
 }

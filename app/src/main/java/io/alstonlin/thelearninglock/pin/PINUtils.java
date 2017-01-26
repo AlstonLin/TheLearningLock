@@ -36,12 +36,11 @@ public class PINUtils {
 
     /**
      * Sets up listeners for all the buttons for the PIN layout.
-     * @param context The context this View is being set up in
      * @param PINView The View for the layout itself
      * @param listener A listener that gets called when the user selected a PIN
      * @param title The title of the PIN View
      */
-    public static void setupPINView(Context context, View PINView, final OnPINSelectListener listener, String title){
+    public static void setupPINView(View PINView, final OnPINSelectListener listener, String title){
         final TextView tv = (TextView) PINView.findViewById(R.id.pin_view_display);
         tv.setText("");
         // Listeners for the keypad buttons
@@ -73,8 +72,6 @@ public class PINUtils {
             }
         });
         setPINTitle(PINView, title);
-        // Sets up background
-        SharedUtils.setupBackground(context, PINView);
     }
 
     public static void clearPIN(View PINView) {
