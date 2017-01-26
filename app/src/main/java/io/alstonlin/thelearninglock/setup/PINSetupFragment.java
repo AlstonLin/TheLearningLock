@@ -45,7 +45,8 @@ public class PINSetupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.layout_pin, container, false);
         final String[] PINToConfirm = {null};
-        PINUtils.setupPINView(getContext(), view, new OnPINSelectListener() {
+        SharedUtils.setupBackground(getContext(), view);
+        PINUtils.setupPINView(view, new OnPINSelectListener() {
             @Override
             public void onPINSelected(String PIN) {
                 if (PINToConfirm[0] == null) {

@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;

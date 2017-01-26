@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include android:id="@+id/lock_screen"
+        layout="@layout/lock_screen"/>
+    <include android:id="@+id/pin_screen"
+        android:visibility="gone"
+        layout="@layout/layout_pin"/>
+    <include android:id="@+id/unlock_screen"
+        android:visibility="gone"
+        layout="@layout/layout_pattern"/>
+    <include android:id="@+id/add_dialog"
+        android:visibility="gone"
+        layout="@layout/layout_add_entry"/>
+</LinearLayout>
