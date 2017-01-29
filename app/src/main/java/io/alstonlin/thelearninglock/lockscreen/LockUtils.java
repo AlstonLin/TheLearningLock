@@ -1,14 +1,21 @@
 package io.alstonlin.thelearninglock.lockscreen;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.os.BatteryManager;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pin.PINUtils;
@@ -73,15 +80,12 @@ public class LockUtils {
     public static void lock(Context context, View attach, View background){
         // Sets up the window manage parameters for the View to add\
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        // TODO: There's no way to change the status bar background from WindowManager.
-        // TODO: Instead, make a custom status bar with the same info and hide the original once
-        // TODO: by changing the level to FLAG_LAYOUT_SYSTEM_ERROR
-        // TODO: To draw over soft keys, will need to attach another view with only the background with TYPE_SYSTEM_OVERLAY priority
         Point displaySize = new Point();
         windowManager.getDefaultDisplay().getRealSize(displaySize);
         BG_PARAMS.height = displaySize.y;
         BG_PARAMS.width = displaySize.x;
         SharedUtils.setupBackground(context, background);
+        StatusBar.setup(context, background);
         // Adds the view to the Window Manager
         if (attach.getWindowToken() == null) { // If not already attached
             windowManager.addView(background, BG_PARAMS);

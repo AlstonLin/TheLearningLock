@@ -20,6 +20,7 @@ import android.telephony.TelephonyManager;
 
 import java.util.Set;
 
+import io.alstonlin.thelearninglock.ChargingStateReceiver;
 import io.alstonlin.thelearninglock.shared.Const;
 import io.alstonlin.thelearninglock.setup.SetupActivity;
 
@@ -37,6 +38,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
     private Handler uiHandler; // Allows sending messages to the "UI" thread (Service's main Thread)
     private LockScreen lockScreen;
     private BroadcastReceiver receiver;
+    private BroadcastReceiver chargingReceiver;
     private LockScreenNotificationService notificationService;
     /**
      * The connection to the Notification service
@@ -71,6 +73,18 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
         filter.setPriority(999);
         receiver = new LockScreenReceiver();
         registerReceiver(receiver, filter);
+        // Receiver for battery state changes
+        IntentFilter chargingFilter = new IntentFilter(Intent.ACTION_POWER_CONNECTED);
+        chargingFilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+        chargingReceiver = new ChargingStateReceiver(new Runnable() {
+            @Override
+            public void run() {
+                if (lockScreen != null){
+                    lockScreen.onChargingStateChanged();
+                }
+            }
+        });
+        registerReceiver(chargingReceiver, chargingFilter);
         // Creates the handler
         uiHandler = new Handler();
     }
@@ -97,6 +111,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
                 break;
             case UNLOCK_FLAG: // Update notifications when unlocking
                 notifyNotificationsUpdated();
+                lockScreen.onScreenOn();
                 break;
             default:
                 // Checks if set up
@@ -106,7 +121,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
                 // Checks if currently in a phone call
                 TelephonyManager ts = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                 if (ts.getCallState() != TelephonyManager.CALL_STATE_OFFHOOK) {
-                    if (lockScreen != null) lockScreen.resetToLockScreen();
+                    if (lockScreen != null) lockScreen.onScreenOff();
                     else lockScreen = new LockScreen(this);
                     notifyNotificationsUpdated();
                 }
@@ -175,6 +190,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
         if (lockScreen != null) lockScreen.unlock();
         unbindService(notificationConnection);
         unregisterReceiver(receiver);
+        unregisterReceiver(chargingReceiver);
     }
 
     @Override

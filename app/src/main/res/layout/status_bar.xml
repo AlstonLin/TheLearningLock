@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:id="@+id/status_bar"
+    android:gravity="right"
+    android:layout_height="32dp">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_battery_full_white_36dp"
+        android:adjustViewBounds="true"
+        android:id="@+id/battery_icon"/>
+    <TextView
+        android:text="100%"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:id="@+id/battery_percentage"
+        android:textColor="@color/white"/>
+</LinearLayout>

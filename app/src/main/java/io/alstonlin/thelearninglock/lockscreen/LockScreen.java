@@ -112,10 +112,23 @@ public class LockScreen {
     /**
      * Hides the unlock Popup.
      */
-    public void resetToLockScreen(){
+    public void onScreenOff(){
         LockUtils.setVisibleScreen(lockView, R.id.lock_screen);
     }
 
+    /**
+     * Updates the status bar when the screen turns on
+     */
+    public void onScreenOn(){
+        StatusBar.updateStatusBar(context, backgroundView);
+    }
+
+    /**
+     * Notifies that charging state has changed and re-draws status bar
+     */
+    public void onChargingStateChanged(){
+        StatusBar.updateStatusBar(context, backgroundView);
+    }
 
     /**
      * Helper method to set up the View of the Lock Screen itself.
