@@ -3,16 +3,20 @@ package io.alstonlin.thelearninglock.lockscreen;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 import io.alstonlin.thelearninglock.shared.Const;
 import io.alstonlin.thelearninglock.shared.ML;
@@ -52,6 +56,7 @@ public class LockScreen {
                     LockScreen.this.timeBetweenNodeSelects = timeBetweenNodeSelects;
                     showPINScreen();
                 } else {
+                    ml.addEntry(timeBetweenNodeSelects, true); // update training set with new data
                     unlock();
                 }
             } else{
@@ -101,10 +106,9 @@ public class LockScreen {
     public void updateNotifications(Notification[] notifications){
         // Filters out secret notifications
         ArrayList<Notification> publicNotifications = new ArrayList<>();
-        for (int i = 0; i < notifications.length; i++){
-            Notification notification = notifications[i];
+        for (Notification notification : notifications) {
             // TODO: Have a setting where the user decides which ones to show?
-            if (notification.visibility != Notification.VISIBILITY_SECRET){
+            if (notification.visibility != Notification.VISIBILITY_SECRET) {
                 publicNotifications.add(notification);
             }
         }
@@ -158,7 +162,17 @@ public class LockScreen {
             public void onPINSelected(String PIN) {
                 if (SharedUtils.compareObjectToHash(context, PIN, PINHash)){
                     // Shows a dialog to confirm unlock
-                    showConfirmRetrain();
+                    // unless the user has requested not to show it (do not ask again)
+                    String savedRetrainConfirm = PreferenceManager.getDefaultSharedPreferences(context)
+                                                                .getString(Const.SAVED_RETRAIN_CONFIRM, null);
+                    if (savedRetrainConfirm != null) {
+                        if (savedRetrainConfirm.equals("true") && timeBetweenNodeSelects != null ) {
+                            ml.addEntry(timeBetweenNodeSelects, true);
+                        }
+                        unlock();
+                    } else {
+                        showConfirmRetrain();
+                    }
                 } else{
                     PINUtils.setPINTitle(pinLayout, "Wrong PIN!");
                     PINUtils.clearPIN(pinLayout);
@@ -166,12 +180,18 @@ public class LockScreen {
             }
         }, "That was suspicious! Enter your PIN to confirm you're the owner");
         // Add entry dialog
-        View confirmLayout = lockView.findViewById(R.id.add_dialog);
+        final View confirmLayout = lockView.findViewById(R.id.add_dialog);
         Button yesBtn = (Button) confirmLayout.findViewById(R.id.layout_add_entry_yes);
         Button noBtn = (Button) confirmLayout.findViewById(R.id.layout_add_entry_no);
         yesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                CheckBox checkBox = (CheckBox) confirmLayout.findViewById(R.id.do_not_ask_to_retrain);
+                if (checkBox.isChecked()) {
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+                    editor.putString(Const.SAVED_RETRAIN_CONFIRM, "true");
+                    editor.apply();
+                }
                 unlock();
                 if (timeBetweenNodeSelects != null) ml.addEntry(timeBetweenNodeSelects, true);
             }
@@ -179,6 +199,12 @@ public class LockScreen {
         noBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                CheckBox checkBox = (CheckBox) confirmLayout.findViewById(R.id.do_not_ask_to_retrain);
+                if (checkBox.isChecked()) {
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+                    editor.putString(Const.SAVED_RETRAIN_CONFIRM, "false");
+                    editor.apply();
+                }
                 unlock();
                 timeBetweenNodeSelects = null;
             }

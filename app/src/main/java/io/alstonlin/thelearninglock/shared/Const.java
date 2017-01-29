@@ -13,6 +13,7 @@ public class Const {
     public static final String ENABLED = "ENABLED";
     public static final String BACKGROUND_URI_KEY = "BACKGROUNDURI";
     public static final String SALT = "SALT";
+    public static final String SAVED_RETRAIN_CONFIRM = "SAVEDRETRAINCONFIRM";
     // File names
     public static final String PATTERN_FILENAME = "pattern.dat";
     public static final String PASSCODE_FILENAME = "passcode.dat";
