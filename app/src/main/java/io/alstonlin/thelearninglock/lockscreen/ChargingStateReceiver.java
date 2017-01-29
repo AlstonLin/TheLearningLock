@@ -1,4 +1,4 @@
-package io.alstonlin.thelearninglock;
+package io.alstonlin.thelearninglock.lockscreen;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

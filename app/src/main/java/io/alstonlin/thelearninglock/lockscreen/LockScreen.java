@@ -40,6 +40,7 @@ public class LockScreen {
     private byte[] patternHash;
     private ML ml;
     private View patternLayout;
+    private StatusBar statusBar;
 
     // Listeners
     private OnPatternSelectListener patternListener = new OnPatternSelectListener() {
@@ -85,6 +86,7 @@ public class LockScreen {
         // Setup and lock
         setupLockContainer(lockView);
         LockUtils.lock(context, lockView, backgroundView);
+        statusBar = new StatusBar(context, backgroundView);
     }
 
     public void unlock(){
@@ -120,14 +122,14 @@ public class LockScreen {
      * Updates the status bar when the screen turns on
      */
     public void onScreenOn(){
-        StatusBar.updateStatusBar(context, backgroundView);
+        statusBar.updateStatusBar();
     }
 
     /**
      * Notifies that charging state has changed and re-draws status bar
      */
     public void onChargingStateChanged(){
-        StatusBar.updateStatusBar(context, backgroundView);
+        statusBar.updateStatusBar();
     }
 
     /**

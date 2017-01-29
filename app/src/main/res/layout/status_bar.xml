@@ -7,6 +7,26 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:src="@drawable/ic_signal_wifi_off_white_36dp"
+        android:adjustViewBounds="true"
+        android:visibility="gone"
+        android:id="@+id/signal_icon"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_signal_wifi_off_white_36dp"
+        android:adjustViewBounds="true"
+        android:id="@+id/wifi_icon"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_airplanemode_active_white_36dp"
+        android:adjustViewBounds="true"
+        android:visibility="gone"
+        android:id="@+id/airplane_icon"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:src="@drawable/ic_battery_full_white_36dp"
         android:adjustViewBounds="true"
         android:id="@+id/battery_icon"/>

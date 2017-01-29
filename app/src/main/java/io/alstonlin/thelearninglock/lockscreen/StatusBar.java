@@ -3,7 +3,14 @@ package io.alstonlin.thelearninglock.lockscreen;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
+import android.os.Build;
+import android.provider.Settings;
+import android.telephony.PhoneStateListener;
+import android.telephony.SignalStrength;
+import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +29,8 @@ import io.alstonlin.thelearninglock.R;
 public class StatusBar {
     private static final HashMap<Integer, Integer> maxBatteryToIcon = new HashMap<>();
     private static final HashMap<Integer, Integer> maxBatteryChargingToIcon = new HashMap<>();
+    private static final HashMap<Integer, Integer> wifiStrengthToIcon = new HashMap<>();
+    private static final HashMap<Integer, Integer> signalStrengthToIcon = new HashMap<>();
     static {
         // Icon displayed will be the one where the key is closest value that is higher than the pct
         maxBatteryToIcon.put(10, R.drawable.ic_battery_alert_white_36dp);
@@ -39,27 +48,45 @@ public class StatusBar {
         maxBatteryChargingToIcon.put(80, R.drawable.ic_battery_charging_80_white_36dp);
         maxBatteryChargingToIcon.put(90, R.drawable.ic_battery_charging_90_white_36dp);
         maxBatteryChargingToIcon.put(100, R.drawable.ic_battery_charging_full_white_36dp);
+        // Wifi
+        wifiStrengthToIcon.put(0, R.drawable.ic_signal_wifi_0_bar_white_36dp);
+        wifiStrengthToIcon.put(1, R.drawable.ic_signal_wifi_1_bar_white_36dp);
+        wifiStrengthToIcon.put(2, R.drawable.ic_signal_wifi_2_bar_white_36dp);
+        wifiStrengthToIcon.put(3, R.drawable.ic_signal_wifi_3_bar_white_36dp);
+        wifiStrengthToIcon.put(4, R.drawable.ic_signal_wifi_4_bar_white_36dp);
+        // Signal
+        signalStrengthToIcon.put(0, R.drawable.ic_signal_cellular_0_bar_white_36dp);
+        signalStrengthToIcon.put(1, R.drawable.ic_signal_cellular_1_bar_white_36dp);
+        signalStrengthToIcon.put(2, R.drawable.ic_signal_cellular_2_bar_white_36dp);
+        signalStrengthToIcon.put(3, R.drawable.ic_signal_cellular_3_bar_white_36dp);
+        signalStrengthToIcon.put(4, R.drawable.ic_signal_cellular_4_bar_white_36dp);
     }
 
-    public static void setup(Context context, View background){
-        // TODO: Also need something to update it whenever screen turns on
+    private Context context;
+    private View statusBar;
+    private PhoneStateListener phoneListener;
+
+    public StatusBar(Context context, View background){
+        this.context = context;
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View statusBar = layoutInflater.inflate(R.layout.status_bar, (ViewGroup) background);
+        this.statusBar = layoutInflater.inflate(R.layout.status_bar, (ViewGroup) background);
         // Sets status bar height to what the system's is
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 getStatusBarHeight(context)
         );
         statusBar.findViewById(R.id.status_bar).setLayoutParams(layoutParams);
-        updateStatusBar(context, background);
+        setupSignalStrength(); // USes a listener so can update by itself
+        updateStatusBar();
     }
 
-    public static void updateStatusBar(Context context, View background){
-        View statusBar = background.findViewById(R.id.status_bar);
-        setBatteryPct(context, statusBar);
+    public void updateStatusBar(){
+        setBatteryPct();
+        setAirplaneMode();
+        setWifiStrength();
     }
 
-    private static void setBatteryPct(Context context, View statusBar){
+    private void setBatteryPct(){
         // Sets battery percentage
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = context.registerReceiver(null, ifilter);
@@ -81,6 +108,46 @@ public class StatusBar {
             }
         }
         ((ImageView)statusBar.findViewById(R.id.battery_icon)).setImageResource(iconId);
+    }
+
+    private void setAirplaneMode(){
+        boolean airplaneMode = Settings.Global.getInt(context.getContentResolver(),
+                Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
+        if (airplaneMode){
+            statusBar.findViewById(R.id.airplane_icon).setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setWifiStrength(){
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        ImageView wifiIcon = ((ImageView)statusBar.findViewById(R.id.wifi_icon));
+        if (wifiManager.isWifiEnabled()){
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            int level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 5);
+            wifiIcon.setImageResource(wifiStrengthToIcon.get(level));
+        }
+    }
+
+    private void setupSignalStrength(){
+        final TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        final ImageView signalIcon = ((ImageView)statusBar.findViewById(R.id.signal_icon));
+        phoneListener = new PhoneStateListener(){
+            @Override
+            public void onSignalStrengthsChanged(SignalStrength signalStrength) {
+                if (manager.getNetworkOperator().equals("")){
+                    signalIcon.setVisibility(View.GONE);
+                } else {
+                    signalIcon.setVisibility(View.VISIBLE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        signalIcon.setImageResource(signalStrengthToIcon.get(signalStrength.getLevel()));
+                    } else {
+                        // Just show the full icon
+                        signalIcon.setImageResource(signalStrengthToIcon.get(4));
+                    }
+                }
+            }
+        };
+        manager.listen(phoneListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
     }
 
     private static int getStatusBarHeight(Context context) {

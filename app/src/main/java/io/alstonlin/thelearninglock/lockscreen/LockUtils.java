@@ -85,7 +85,6 @@ public class LockUtils {
         BG_PARAMS.height = displaySize.y;
         BG_PARAMS.width = displaySize.x;
         SharedUtils.setupBackground(context, background);
-        StatusBar.setup(context, background);
         // Adds the view to the Window Manager
         if (attach.getWindowToken() == null) { // If not already attached
             windowManager.addView(background, BG_PARAMS);

@@ -16,11 +16,11 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationManagerCompat;
 
+import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 import java.util.Set;
 
-import io.alstonlin.thelearninglock.ChargingStateReceiver;
 import io.alstonlin.thelearninglock.shared.Const;
 import io.alstonlin.thelearninglock.setup.SetupActivity;
 
@@ -111,7 +111,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
                 break;
             case UNLOCK_FLAG: // Update notifications when unlocking
                 notifyNotificationsUpdated();
-                lockScreen.onScreenOn();
+                if (lockScreen != null) lockScreen.onScreenOn();
                 break;
             default:
                 // Checks if set up
