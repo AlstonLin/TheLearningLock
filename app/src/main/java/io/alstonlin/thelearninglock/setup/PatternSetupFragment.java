@@ -1,12 +1,13 @@
 package io.alstonlin.thelearninglock.setup;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -74,11 +75,15 @@ public class PatternSetupFragment extends Fragment {
                         public void onClick(View view) {
                             if (savePattern(pattern)) {
                                 PatternSetupFragment.this.pattern = pattern;
-                                ml = new ML(getContext(), timeBetweenPatternNodes.length);
+                                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
+                                editor.putString(Const.SAVED_RETRAIN_CONFIRM, null);
+                                editor.apply();
+
                                 confirmBar.setVisibility(View.GONE);
                                 patternView.clearPattern();
                                 patternView.setInputEnabled(true);
-                                // ML stuff that was skipped
+
+                                ml = new ML(getContext(), timeBetweenPatternNodes.length);
                                 ml.addEntry(timeBetweenPatternNodes, false);
                                 patternsLeft--;
                                 String title = "Enter the pattern " + patternsLeft + " more times";
@@ -107,7 +112,7 @@ public class PatternSetupFragment extends Fragment {
                     } else {
                         String title = "Enter the pattern " + patternsLeft + " more times";
                         if (patternsLeft <= Const.CHANGE_FINGERS_MESSAGE_AT){
-                            title += "\nTry changing fingers";
+                            title += "\nTry switching fingers/hands";
                         }
                         PatternUtils.setPatternLayoutTitle(layout,
                                 "Enter the pattern " + patternsLeft + " more times");
