@@ -88,6 +88,7 @@ public class ML implements Serializable {
      */
     public void train(){
         // Builds the training and cross validation sets
+        Log.d("ML", "Training started...");
         LinkedList<double[]> crossValidationSet = new LinkedList<>();
         ArrayList<double[]> trainingSet = new ArrayList<>(trainingData);
         Random random = new Random();
@@ -124,6 +125,7 @@ public class ML implements Serializable {
         epsilon = sum / crossValidationSet.size();
         // Saves everything this is trained
         save();
+        Log.d("ML", "Training completed!");
     }
 
     /**
