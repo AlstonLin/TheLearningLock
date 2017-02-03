@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -87,6 +88,9 @@ public class LockScreen {
         setupLockContainer(lockView);
         LockUtils.lock(context, lockView, backgroundView);
         statusBar = new StatusBar(context, backgroundView);
+        // Dismiss keyboard
+        InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
     public void unlock(){
