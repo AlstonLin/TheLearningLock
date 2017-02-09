@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
@@ -43,12 +44,21 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
         }
         // TODO: Add a possibility to swiper to delete it?
         // Maybe use https://github.com/hudomju/android-swipe-to-dismiss-undo
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectListener.onNotificationSelected(notification);
-            }
-        });
+        view.setOnClickListener(new OnNotificationClickListener(selectListener, notification));
         return view;
+    }
+
+    private static class OnNotificationClickListener implements View.OnClickListener {
+        private WeakReference<NotificationSelectListener> selectListener;
+        private Notification notification;
+
+        private OnNotificationClickListener(NotificationSelectListener selectListener, Notification notification){
+            this.selectListener = new WeakReference<>(selectListener);
+            this.notification = notification;
+        }
+        @Override
+        public void onClick(View v) {
+            selectListener.get().onNotificationSelected(notification);
+        }
     }
 }

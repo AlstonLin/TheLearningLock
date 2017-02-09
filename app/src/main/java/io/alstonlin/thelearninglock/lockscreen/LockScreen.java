@@ -100,6 +100,7 @@ public class LockScreen {
 
     public void unlock(){
         LockUtils.unlock(context, lockView, backgroundView);
+        lockView.removeAllViews(); // Prevents memory leaks
         service.destroyLockScreen();
     }
 

@@ -78,7 +78,7 @@ public class ML implements Serializable {
         // Shortens the list if over max size
         int m = trainingData.size();
         if (m > Const.MAX_TRAINING_SIZE){
-            trainingData = (ArrayList<double[]>) trainingData.subList(m - Const.MAX_TRAINING_SIZE, m);
+            trainingData = new ArrayList<>(trainingData.subList(m - Const.MAX_TRAINING_SIZE, m));
         }
         if (retrain) train();
     }
