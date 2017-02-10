@@ -14,7 +14,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextClock;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -100,7 +102,15 @@ public class LockScreen {
 
     public void unlock(){
         LockUtils.unlock(context, lockView, backgroundView);
-        lockView.removeAllViews(); // Prevents memory leaks
+        // Want to be REALLY sure that none of these views leak because of Android Handler behaviour
+        lockView.removeAllViews();
+        notificationsList.invalidate();
+        notificationsAdapter.clear();
+        try {
+            notificationsAdapter.onDestroy();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         service.destroyLockScreen();
     }
 
