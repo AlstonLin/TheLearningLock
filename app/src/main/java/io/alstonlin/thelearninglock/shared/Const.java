@@ -25,5 +25,5 @@ public class Const {
     public static final float CROSS_VALIDATION_FACTOR = 0.3f;
     // The reasoning for this would be that if the user's behavior change, this will start
     // invalidating their old behavior. This is prevents it to become impossible to change it
-    public static final int MAX_TRAINING_SIZE = 100;
+    public static final int MAX_TRAINING_SIZE = 50;
 }
