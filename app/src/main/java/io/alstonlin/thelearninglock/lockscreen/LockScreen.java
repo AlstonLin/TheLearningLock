@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
@@ -102,7 +103,7 @@ public class LockScreen {
 
     public void unlock(){
         LockUtils.unlock(context, lockView, backgroundView);
-        // Want to be REALLY sure that none of these views leak because of Android Handler behaviour
+        // Make absolutely sure there is no memory leak
         lockView.removeAllViews();
         notificationsList.invalidate();
         notificationsAdapter.clear();
@@ -111,6 +112,7 @@ public class LockScreen {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+        statusBar.onDestroy();
         service.destroyLockScreen();
     }
 
@@ -123,7 +125,7 @@ public class LockScreen {
         ArrayList<Notification> publicNotifications = new ArrayList<>();
         for (Notification notification : notifications) {
             // TODO: Have a setting where the user decides which ones to show?
-            if (notification.visibility != Notification.VISIBILITY_SECRET) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || notification.visibility != Notification.VISIBILITY_SECRET) {
                 publicNotifications.add(notification);
             }
         }

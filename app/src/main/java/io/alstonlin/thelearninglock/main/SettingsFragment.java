@@ -1,6 +1,7 @@
 package io.alstonlin.thelearninglock.main;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,6 +13,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import io.alstonlin.thelearninglock.R;
+import io.alstonlin.thelearninglock.lockscreen.LockScreenService;
 import io.alstonlin.thelearninglock.shared.Const;
 
 /**
@@ -44,6 +46,10 @@ public class SettingsFragment extends Fragment {
                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
                 editor.putBoolean(Const.ENABLED, enabled);
                 editor.commit();
+                // Starts the service as well
+                Intent intent = new Intent(getContext(), LockScreenService.class);
+                intent.addFlags(LockScreenService.UNLOCK_FLAG);
+                getActivity().startService(intent);
             }
         });
         return view;

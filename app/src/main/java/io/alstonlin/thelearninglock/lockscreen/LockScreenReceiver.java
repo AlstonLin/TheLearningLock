@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
+
 /**
  * The Receiver that starts shows the Lockscreen when the phone is locked
  */
@@ -14,6 +18,8 @@ public class LockScreenReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF) ||
                 intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+            // Crashlytics
+            Fabric.with(context, new Crashlytics());
             startLockscreen(context, false);
         } else if(intent.getAction().equals(Intent.ACTION_SCREEN_ON)){
             startLockscreen(context, true);

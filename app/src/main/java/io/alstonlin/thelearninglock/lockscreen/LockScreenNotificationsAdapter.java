@@ -25,7 +25,6 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
             NotificationHeaderView = Class.forName("android.view.NotificationHeaderView");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            Crashlytics.logException(e);
         }
         try {
             DatetimeView = Class.forName("android.widget.DateTimeView");
@@ -92,7 +91,7 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
         if (NotificationHeaderView == null || DatetimeView == null || onDetachedFromWindow == null){
             // If code reaches here, then this app is in a very very bad spot
             // It means that the code breaks for some API levels that we support and a memory leak happens
-            Log.w(this.getClass().getName(), "Error loading hidden classes and methods! Memory leak will occur");
+            Log.w(this.getClass().getName(), "Error loading hidden classes and methods! Can either be an older version of Android or a memory is going to occur.");
             return;
         }
         /*

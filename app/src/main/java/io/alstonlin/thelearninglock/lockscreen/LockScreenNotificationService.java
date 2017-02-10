@@ -47,7 +47,6 @@ public class LockScreenNotificationService extends NotificationListenerService {
     }
 
     public Notification[] getNotifications(){
-        if (!ready) return new Notification[0];
         StatusBarNotification[] statusNotifications = getActiveNotifications();
         Notification[] notifications = new Notification[statusNotifications.length];
         for (int i = 0; i < statusNotifications.length; i++) {

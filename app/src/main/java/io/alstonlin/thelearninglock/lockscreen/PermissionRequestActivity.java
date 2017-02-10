@@ -55,7 +55,7 @@ public class PermissionRequestActivity extends Activity {
             Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
             startActivityForResult(intent, NOTIFICATIONS_REQUEST_CODE);
         } else{
-            throw new IllegalStateException("Why is this Activity being started on an API level " + Build.VERSION.SDK_INT);
+            startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
         }
     }
 

@@ -33,6 +33,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
     public static final int UNLOCK_FLAG = 69;
     public static final int OPEN_SETUP_ACTIVITY = 70;
 
+
     // Fields
     private Notification[] notifications;
     private Handler uiHandler; // Allows sending messages to the "UI" thread (Service's main Thread)
@@ -161,24 +162,21 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
     }
 
     private boolean checkNotificationsPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            Set<String> listeners = NotificationManagerCompat.getEnabledListenerPackages(this);
-            boolean enabled = false;
-            for (String pack : listeners){
-                if (pack.equals(getPackageName())){
-                    enabled = true;
-                }
+        Set<String> listeners = NotificationManagerCompat.getEnabledListenerPackages(this);
+        boolean enabled = false;
+        for (String pack : listeners){
+            if (pack.equals(getPackageName())){
+                enabled = true;
             }
-            if (enabled){
-                return true;
-            }
-            Intent intent = new Intent(this, PermissionRequestActivity.class);
-            intent.addFlags(PermissionRequestActivity.NOTIFICATIONS_FLAG);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            return false;
         }
-        return true;
+        if (enabled){
+            return true;
+        }
+        Intent intent = new Intent(this, PermissionRequestActivity.class);
+        intent.addFlags(PermissionRequestActivity.NOTIFICATIONS_FLAG);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        return false;
     }
 
     /**

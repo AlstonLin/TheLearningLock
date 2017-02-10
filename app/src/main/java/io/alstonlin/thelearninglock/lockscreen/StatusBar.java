@@ -86,6 +86,12 @@ public class StatusBar {
         setWifiStrength();
     }
 
+    public void onDestroy(){
+        // Releases resources
+        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        manager.listen(phoneListener, PhoneStateListener.LISTEN_NONE);
+    }
+
     private void setBatteryPct(){
         // Sets battery percentage
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
