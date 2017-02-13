@@ -105,13 +105,8 @@ public class LockScreen {
         LockUtils.unlock(context, lockView, backgroundView);
         // Make absolutely sure there is no memory leak
         lockView.removeAllViews();
-        notificationsList.invalidate();
-        notificationsAdapter.clear();
-        try {
-            notificationsAdapter.onDestroy();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        // Workaround for https://github.com/AlstonLin/TheLearningLock/issues/41
+        notificationsList.removeAllViewsInLayout();
         statusBar.onDestroy();
         service.destroyLockScreen();
     }
