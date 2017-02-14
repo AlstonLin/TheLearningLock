@@ -31,7 +31,34 @@
             android:textSize="24sp"
             android:text="Enable Lock Screen"
             android:layout_gravity="center"
+            android:max="10"
             android:switchPadding="12dp" />
+
+        <TextView
+            android:text="Unlock Tolerance"
+            android:layout_width="wrap_content"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:paddingTop="12dp"
+            android:layout_height="wrap_content" />
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:minHeight="10dp"
+            android:maxHeight="10dp"
+            android:id="@+id/epsilonMult" />
+
+        <TextView
+            android:text="1x"
+            android:layout_width="wrap_content"
+            android:textSize="12sp"
+            android:layout_gravity="center"
+            android:id="@+id/epsilonMultVal"
+            android:paddingBottom="6dp"
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:orientation="vertical"

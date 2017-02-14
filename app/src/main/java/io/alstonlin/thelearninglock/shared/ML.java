@@ -2,6 +2,7 @@ package io.alstonlin.thelearninglock.shared;
 
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.FileInputStream;
@@ -24,6 +25,7 @@ public class ML implements Serializable {
     private static final long serialVersionUID = 19981017L;
     // Fields
     private transient Context context;
+    private transient double epsTol;
     private ArrayList<double[]> trainingData = new ArrayList<>();
     private double[] muArr;
     private double[] sigmaSquaredArr;
@@ -36,6 +38,7 @@ public class ML implements Serializable {
         this.n = n;
         muArr = new double[n];
         sigmaSquaredArr = new double[n];
+        epsTol = PreferenceManager.getDefaultSharedPreferences(context).getFloat(Const.EPSILON_TOL, 1f);
     }
 
     /**
@@ -51,6 +54,7 @@ public class ML implements Serializable {
             is = new ObjectInputStream(fis);
             ML loaded = (ML) is.readObject();
             loaded.context = context;
+            loaded.epsTol = PreferenceManager.getDefaultSharedPreferences(context).getFloat(Const.EPSILON_TOL, 1f);
             result = loaded;
         } catch(IOException | ClassNotFoundException e){
             e.printStackTrace();
@@ -138,7 +142,7 @@ public class ML implements Serializable {
         }
         double prediction = getPrediction(x);
         Log.d("ML", "PREDICTED " + prediction + " with an epsilon " + epsilon);
-        return prediction < epsilon;
+        return prediction < (1 / epsTol) * epsilon;
     }
 
     private double getPrediction(double[] x){

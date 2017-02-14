@@ -10,6 +10,7 @@ public class Const {
     public static final int NUM_HASH_ITERATIONS = 512;
     // Flag names
     public static final String SETUP_FLAG = "SETUPFLAG";
+    public static final String EPSILON_TOL = "EPSILONTOL";
     public static final String ENABLED = "ENABLED";
     public static final String BACKGROUND_URI_KEY = "BACKGROUNDURI";
     public static final String SALT = "SALT";

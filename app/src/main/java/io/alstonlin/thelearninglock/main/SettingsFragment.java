@@ -10,7 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
+
+import java.math.BigDecimal;
+import java.math.MathContext;
 
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.lockscreen.LockScreenService;
@@ -21,6 +26,7 @@ import io.alstonlin.thelearninglock.shared.Const;
  */
 public class SettingsFragment extends Fragment {
     private boolean enabled;
+    private float tolerance;
 
     public static SettingsFragment newInstance() {
         SettingsFragment fragment = new SettingsFragment();
@@ -31,6 +37,7 @@ public class SettingsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         enabled = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(Const.ENABLED, false);
+        tolerance = PreferenceManager.getDefaultSharedPreferences(getContext()).getFloat(Const.EPSILON_TOL, 1f);
     }
 
     @Override
@@ -50,6 +57,34 @@ public class SettingsFragment extends Fragment {
                 Intent intent = new Intent(getContext(), LockScreenService.class);
                 intent.addFlags(LockScreenService.UNLOCK_FLAG);
                 getActivity().startService(intent);
+            }
+        });
+        // Sets up the epsilon multiplier
+        final int MAX_PROGRESS = 100;
+        final float MIN = 0.9f, RANGE = 0.2f; // Want the range to be (0.9, 1.1)
+        final TextView multDisplay = (TextView) view.findViewById(R.id.epsilonMultVal);
+        SeekBar multBar = (SeekBar) view.findViewById(R.id.epsilonMult);
+        multBar.setProgress(Math.round(MAX_PROGRESS * (tolerance - MIN) / RANGE));
+        multDisplay.setText(tolerance + "x");
+        multBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                float calculated = (progress / (float)MAX_PROGRESS) * RANGE + MIN;
+                // Rounds to 2 decimals
+                tolerance = Math.round(calculated * 1000) / 1000f;
+                // Display and saves
+                multDisplay.setText(tolerance + "x");
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
+                editor.putFloat(Const.EPSILON_TOL, tolerance);
+                editor.commit();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
         return view;

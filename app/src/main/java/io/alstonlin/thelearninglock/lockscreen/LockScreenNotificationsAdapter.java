@@ -4,18 +4,11 @@ import android.app.Notification;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
-import com.crashlytics.android.Crashlytics;
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
