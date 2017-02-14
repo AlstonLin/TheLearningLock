@@ -14,10 +14,12 @@ import java.util.ArrayList;
 public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
     private Context context;
     private NotificationSelectListener selectListener;
+    private ArrayList<ViewGroup> createdViews;
 
     public LockScreenNotificationsAdapter(Context context, NotificationSelectListener selectListener){
         super(context, 0);
         this.context = context;
+        this.createdViews = new ArrayList<>();
         this.selectListener = selectListener;
     }
 
@@ -35,6 +37,7 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
     public View getView(int i, View convertView, ViewGroup parent) {
         if (convertView == null){
             convertView = new LinearLayout(context);
+            createdViews.add((ViewGroup) convertView);
         }
         final Notification notification = getItem(i);
         View view = notification.contentView.apply(context, parent);
@@ -56,4 +59,12 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
         ((LinearLayout)convertView).addView(view);
         return convertView;
     }
+
+    public void onDestroy(){
+        for (ViewGroup v : createdViews){
+            v.removeAllViews();
+        }
+        createdViews.clear();
+    }
+
 }
