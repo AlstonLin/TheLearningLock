@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextClock;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,8 +108,11 @@ public class LockScreen {
         // Make absolutely sure there is no memory leak
         lockView.removeAllViews();
         // Workaround for https://github.com/AlstonLin/TheLearningLock/issues/41
-        notificationsAdapter.onDestroy();
-
+        try {
+            notificationsAdapter.onDestroy();
+        } catch (IllegalAccessException e) {
+            Crashlytics.logException(e);
+        }
         statusBar.onDestroy();
         service.destroyLockScreen();
     }
