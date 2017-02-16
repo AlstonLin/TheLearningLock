@@ -3,7 +3,6 @@ package io.alstonlin.thelearninglock.lockscreen;
 import android.app.Notification;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -28,9 +27,9 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
      * @param notifications The new notifications to show
      */
     public void setNotifications(ArrayList<Notification> notifications){
+        onDestroy();
         clear();
         addAll(notifications);
-        onDestroy();
         notifyDataSetChanged();
     }
 
@@ -60,6 +59,10 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
 
     public void onDestroy(){
         for (ViewGroup v : createdViews){
+            // Removes all onClickListeners to prevent leaking by context
+            for (int i = 0; i < v.getChildCount(); i++){
+                v.getChildAt(i).setOnClickListener(null);
+            }
             v.removeAllViews();
         }
         createdViews.clear();
