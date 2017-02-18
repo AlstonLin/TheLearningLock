@@ -1,8 +1,10 @@
 package io.alstonlin.thelearninglock.lockscreen;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
@@ -19,7 +21,6 @@ import android.util.Log;
  */
 public class LockScreenNotificationService extends NotificationListenerService {
     private final ServiceBinder binder = new ServiceBinder();
-    private boolean ready = false;
 
     public class ServiceBinder extends Binder {
         private NotificationsUpdateListener listener;
@@ -42,16 +43,12 @@ public class LockScreenNotificationService extends NotificationListenerService {
         }
     }
 
-    public void onListenerConnected(){
-        ready = true;
-    }
-
-    public Notification[] getNotifications(){
+    public LockScreenNotification[] getNotifications(){
         StatusBarNotification[] statusNotifications = getActiveNotifications();
-        if (statusNotifications == null) return new Notification[0];
-        Notification[] notifications = new Notification[statusNotifications.length];
-        for (int i = 0; i < statusNotifications.length; i++) {
-            notifications[i] = statusNotifications[i].getNotification();
+        if (statusNotifications == null) return new LockScreenNotification[0];
+        LockScreenNotification[] notifications = new LockScreenNotification[statusNotifications.length];
+        for (int i = 0; i < statusNotifications.length; i++){
+            notifications[i] = new LockScreenNotification(statusNotifications[i]);
         }
         return notifications;
     }
@@ -67,5 +64,31 @@ public class LockScreenNotificationService extends NotificationListenerService {
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
         binder.listener.notifyNotificationsUpdated();
+    }
+
+    public class LockScreenNotification {
+        private StatusBarNotification notification;
+        public LockScreenNotification(StatusBarNotification notification){
+            this.notification = notification;
+        }
+        public void cancel(){
+            if (notification.getNotification().deleteIntent != null) {
+                try {
+                    notification.getNotification().deleteIntent.send();
+                } catch (PendingIntent.CanceledException e) {
+                }
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                cancelNotification(notification.getKey());
+            } else {
+                cancelNotification(notification.getPackageName(), notification.getTag(), notification.getId());
+            }
+        }
+        public boolean isDeletable(){
+            return notification.getNotification().deleteIntent != null || !notification.isOngoing();
+        }
+        public Notification getNotification(){
+            return notification.getNotification();
+        }
     }
 }

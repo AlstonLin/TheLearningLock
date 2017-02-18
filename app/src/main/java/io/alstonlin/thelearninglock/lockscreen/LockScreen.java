@@ -6,23 +6,24 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.service.notification.StatusBarNotification;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextClock;
 
-import com.crashlytics.android.Crashlytics;
+import com.hudomju.swipe.SwipeToDismissTouchListener;
+import com.hudomju.swipe.adapter.ListViewAdapter;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
 
 import io.alstonlin.thelearninglock.shared.Const;
 import io.alstonlin.thelearninglock.shared.ML;
@@ -51,6 +52,8 @@ public class LockScreen {
     private ML ml;
     private View patternLayout;
     private StatusBar statusBar;
+    // Notifications + dismissing
+    private SwipeToDismissTouchListener<ListViewAdapter> onDismissListener;
 
     // Listeners
     private OnPatternSelectListener patternListener = new OnPatternSelectListener() {
@@ -67,17 +70,6 @@ public class LockScreen {
                 }
             } else{
                 PatternUtils.setPatternLayoutTitle(patternLayout, "Wrong Pattern!");
-            }
-        }
-    };
-    private NotificationSelectListener notificationListener = new NotificationSelectListener() {
-        @Override
-        public void onNotificationSelected(Notification notification) {
-            PendingIntent intent = notification.contentIntent;
-            try {
-                intent.send();
-                showUnlockScreen();
-            } catch (PendingIntent.CanceledException e) {
             }
         }
     };
@@ -116,12 +108,13 @@ public class LockScreen {
      * Change the notifications displayed on the lock screen.
      * @param notifications The new notifications
      */
-    public void updateNotifications(Notification[] notifications){
+    public void updateNotifications(LockScreenNotificationService.LockScreenNotification[] notifications){
         // Filters out secret notifications
-        ArrayList<Notification> publicNotifications = new ArrayList<>();
-        for (Notification notification : notifications) {
+        ArrayList<LockScreenNotificationService.LockScreenNotification> publicNotifications = new ArrayList<>();
+        for (LockScreenNotificationService.LockScreenNotification notification : notifications) {
             // TODO: Have a setting where the user decides which ones to show?
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || notification.visibility != Notification.VISIBILITY_SECRET) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
+                    || notification.getNotification().visibility != Notification.VISIBILITY_SECRET) {
                 publicNotifications.add(notification);
             }
         }
@@ -155,6 +148,7 @@ public class LockScreen {
      */
     private void setupLockContainer(View view){
         // Lock screen
+        // TODO: Slide up to unlock
         SlideButton seekBar  = (SlideButton) view.findViewById(R.id.lock_screen_slider);
         seekBar.setSlideButtonListener(new SlideButtonListener() {
             @Override
@@ -162,13 +156,71 @@ public class LockScreen {
                 showUnlockScreen();
             }
         });
-        notificationsList = (ListView) view.findViewById(R.id.lock_screen_notifications_list);
-        notificationsAdapter = new LockScreenNotificationsAdapter(context, notificationListener);
+        setupNotificationList(view);
+        setupPatternScreen(view);
+        setupPINScreen(view);
+        setupAddEntryDialog(view);
+    }
+
+    private void setupNotificationList(View lockView){
+        notificationsList = (ListView) lockView.findViewById(R.id.lock_screen_notifications_list);
+        notificationsAdapter = new LockScreenNotificationsAdapter(context, new Runnable() {
+            @Override
+            public void run() {
+                onDismissListener.undoPendingDismiss();
+            }
+        });
         notificationsList.setAdapter(notificationsAdapter);
-        // Unlock screen
+        onDismissListener = new SwipeToDismissTouchListener<>(
+                new ListViewAdapter(notificationsList),
+                new SwipeToDismissTouchListener.DismissCallbacks<ListViewAdapter>() {
+                    @Override
+                    public boolean canDismiss(int position) {
+                        return notificationsAdapter.getItem(position).isDeletable();
+                    }
+
+                    @Override
+                    public void onPendingDismiss(ListViewAdapter recyclerView, int position) {
+                    }
+
+                    @Override
+                    public void onDismiss(ListViewAdapter view, int position) {
+                        notificationsAdapter.dismissNotification(position);
+                    }
+                }
+        );
+        onDismissListener.setDismissDelay(1000);
+        notificationsList.setOnTouchListener(onDismissListener);
+        notificationsList.setOnScrollListener((AbsListView.OnScrollListener) onDismissListener.makeScrollListener());
+        notificationsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                PendingIntent intent = notificationsAdapter.getItem(position).getNotification().contentIntent;
+                try {
+                    intent.send();
+                    showUnlockScreen();
+                } catch (PendingIntent.CanceledException e) {
+                }
+            }
+        });
+    }
+
+    private void setupPatternScreen(View lockView){
         patternLayout = lockView.findViewById(R.id.unlock_screen);
         PatternUtils.setupPatternLayout(patternLayout, patternListener, "Enter your pattern");
-        // PIN screen
+    }
+
+    /**
+     * Shows the unlock Popup.
+     */
+    private void showUnlockScreen(){
+        if (ml == null){ // This really should be been set up
+            Snackbar.make(lockView, "You have no set up the lock screen yet!", Snackbar.LENGTH_SHORT).show();
+        }
+        LockUtils.setVisibleScreen(lockView, R.id.unlock_screen);
+    }
+
+    private void setupPINScreen(View lockView){
         final View pinLayout = lockView.findViewById(R.id.pin_screen);
         PINUtils.setupPINView(pinLayout, new OnPINSelectListener() {
             @Override
@@ -177,7 +229,7 @@ public class LockScreen {
                     // Shows a dialog to confirm unlock
                     // unless the user has requested not to show it (do not ask again)
                     String savedRetrainConfirm = PreferenceManager.getDefaultSharedPreferences(context)
-                                                                .getString(Const.SAVED_RETRAIN_CONFIRM, null);
+                            .getString(Const.SAVED_RETRAIN_CONFIRM, null);
                     if (savedRetrainConfirm != null) {
                         if (savedRetrainConfirm.equals("true") && timeBetweenNodeSelects != null ) {
                             ml.addEntry(timeBetweenNodeSelects, true);
@@ -192,7 +244,9 @@ public class LockScreen {
                 }
             }
         }, "That was suspicious! Enter your PIN to confirm you're the owner");
-        // Add entry dialog
+    }
+
+    private void setupAddEntryDialog(View lockView){
         final View confirmLayout = lockView.findViewById(R.id.add_dialog);
         Button yesBtn = (Button) confirmLayout.findViewById(R.id.layout_add_entry_yes);
         Button noBtn = (Button) confirmLayout.findViewById(R.id.layout_add_entry_no);
@@ -222,16 +276,6 @@ public class LockScreen {
                 timeBetweenNodeSelects = null;
             }
         });
-    }
-
-    /**
-     * Shows the unlock Popup.
-     */
-    private void showUnlockScreen(){
-        if (ml == null){ // This really should be been set up
-            Snackbar.make(lockView, "You have no set up the lock screen yet!", Snackbar.LENGTH_SHORT).show();
-        }
-        LockUtils.setVisibleScreen(lockView, R.id.unlock_screen);
     }
 
     /**

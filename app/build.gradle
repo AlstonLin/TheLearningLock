@@ -3,6 +3,7 @@ apply plugin: 'io.fabric'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    maven { url 'https://jitpack.io' }
 }
 
 android {
@@ -36,6 +37,7 @@ dependencies {
     compile 'com.android.support:design:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'me.zhanghai.android.patternlock:library:2.0.4'
+    compile 'com.github.hudomju:android-swipe-to-dismiss-undo:master'
     compile('com.crashlytics.sdk.android:crashlytics:2.6.3@aar') {
         transitive = true;
     }

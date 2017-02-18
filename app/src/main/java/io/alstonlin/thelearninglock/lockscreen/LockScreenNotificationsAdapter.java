@@ -1,32 +1,39 @@
 package io.alstonlin.thelearninglock.lockscreen;
 
-import android.app.Notification;
 import android.content.Context;
 import android.graphics.Color;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 
-public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
-    private Context context;
-    private NotificationSelectListener selectListener;
-    private ArrayList<ViewGroup> createdViews;
+import io.alstonlin.thelearninglock.R;
 
-    public LockScreenNotificationsAdapter(Context context, NotificationSelectListener selectListener){
+public class LockScreenNotificationsAdapter extends ArrayAdapter<LockScreenNotificationService.LockScreenNotification>{
+    private Context context;
+    private ArrayList<ViewGroup> createdViews;
+    private Runnable undoPendingNotification;
+
+    /**
+     * The constructor
+     * @param context Context where this adapter is being created
+     * @param undoPendingNotification A runnable that will undo the Pending notification (in the dismissTouchListener)
+     */
+    public LockScreenNotificationsAdapter(Context context, Runnable undoPendingNotification){
         super(context, 0);
         this.context = context;
         this.createdViews = new ArrayList<>();
-        this.selectListener = selectListener;
+        this.undoPendingNotification = undoPendingNotification;
     }
 
     /**
      * Sets and updates the notifications this shows on the attached ListView.
      * @param notifications The new notifications to show
      */
-    public void setNotifications(ArrayList<Notification> notifications){
+    public void setNotifications(ArrayList<LockScreenNotificationService.LockScreenNotification> notifications){
         onDestroy();
         clear();
         addAll(notifications);
@@ -36,36 +43,43 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<Notification>{
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {
         if (convertView == null){
-            convertView = new LinearLayout(context);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.notification_list_item, parent, false);
             createdViews.add((ViewGroup) convertView);
         }
         // TODO: Make a style for the Notification and create it with it for consistency
-        final Notification notification = getItem(i);
-        View view = notification.contentView.apply(context, parent);
+        final LockScreenNotificationService.LockScreenNotification notification = getItem(i);
+        View view = notification.getNotification().contentView.apply(context, parent);
         view.setBackgroundColor(Color.parseColor("#88FFFFFF"));
-        // TODO: Add a possibility to swiper to delete it?
-        // Maybe use https://github.com/hudomju/android-swipe-to-dismiss-undo
-        view.setOnClickListener(new View.OnClickListener() {
+        // Sets up the view
+        View undoText = convertView.findViewById(R.id.undo_text);
+        undoText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectListener.onNotificationSelected(notification);
+                undoPendingNotification.run();
             }
         });
-        // Replaces the notification in the wrapper LinearLayout
-        ((LinearLayout)convertView).removeAllViews();
-        ((LinearLayout)convertView).addView(view);
+        // Replaces the notification in the notification container
+        FrameLayout container = (FrameLayout) convertView.findViewById(R.id.notification_container);
+        container.removeAllViews();
+        container.addView(view);
+        // Refresh params to recalculate height
+        ViewGroup.LayoutParams params = convertView.getLayoutParams();
+        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         return convertView;
     }
 
     public void onDestroy(){
         for (ViewGroup v : createdViews){
-            // Removes all onClickListeners to prevent leaking by context
-            for (int i = 0; i < v.getChildCount(); i++){
-                v.getChildAt(i).setOnClickListener(null);
-            }
-            v.removeAllViews();
+            FrameLayout container = (FrameLayout) v.findViewById(R.id.notification_container);
+            container.removeAllViews();
         }
         createdViews.clear();
     }
 
+    public void dismissNotification(int position){
+        final LockScreenNotificationService.LockScreenNotification notification = getItem(position);
+        remove(notification);
+        notification.cancel();
+    }
 }

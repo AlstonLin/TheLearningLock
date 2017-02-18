@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationManagerCompat;
 
 import android.telephony.PhoneStateListener;
@@ -35,7 +36,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
 
 
     // Fields
-    private Notification[] notifications;
+    private LockScreenNotificationService.LockScreenNotification[] notifications;
     private Handler uiHandler; // Allows sending messages to the "UI" thread (Service's main Thread)
     private LockScreen lockScreen;
     private BroadcastReceiver receiver;
