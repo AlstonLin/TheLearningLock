@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.service.notification.StatusBarNotification;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,7 +97,7 @@ public class LockScreen {
     public void unlock(){
         LockUtils.unlock(context, lockView, backgroundView);
         // Make absolutely sure there is no memory leak
-        notificationsAdapter.onDestroy();
+        notificationsAdapter.detachCreatedViews();
         lockView.removeAllViews();
         statusBar.onDestroy();
         service.destroyLockScreen();

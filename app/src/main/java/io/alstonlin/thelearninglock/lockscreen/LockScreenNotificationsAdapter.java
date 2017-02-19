@@ -34,15 +34,15 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<LockScreenNotif
      * @param notifications The new notifications to show
      */
     public void setNotifications(ArrayList<LockScreenNotificationService.LockScreenNotification> notifications){
-        onDestroy();
+        detachCreatedViews();
         clear();
         addAll(notifications);
-        notifyDataSetChanged();
     }
 
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {
-        if (convertView == null){
+        // Also forces re-inflation and discards convertView if the convertView has been detached explicitly
+        if (convertView == null || !createdViews.contains(convertView)){
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.notification_list_item, parent, false);
             createdViews.add((ViewGroup) convertView);
@@ -64,12 +64,14 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<LockScreenNotif
         container.removeAllViews();
         container.addView(view);
         // Refresh params to recalculate height
-        ViewGroup.LayoutParams params = convertView.getLayoutParams();
-        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        convertView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         return convertView;
     }
 
-    public void onDestroy(){
+    /**
+     * Fix for https://github.com/AlstonLin/TheLearningLock/issues/41
+     */
+    public void detachCreatedViews(){
         for (ViewGroup v : createdViews){
             FrameLayout container = (FrameLayout) v.findViewById(R.id.notification_container);
             container.removeAllViews();
@@ -79,7 +81,13 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<LockScreenNotif
 
     public void dismissNotification(int position){
         final LockScreenNotificationService.LockScreenNotification notification = getItem(position);
+        detachCreatedViews();
         remove(notification);
-        notification.cancel();
+        // Actually removes it once animation is finished
+        new android.os.Handler().postDelayed(new Runnable() {
+            public void run() {
+                notification.cancel();
+            }
+        }, 200);
     }
 }
