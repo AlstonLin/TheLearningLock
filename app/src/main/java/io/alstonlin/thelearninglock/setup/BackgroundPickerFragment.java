@@ -5,7 +5,10 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,16 +16,26 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
+import android.widget.PopupWindow;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import io.alstonlin.thelearninglock.shared.Const;
 import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
 import io.alstonlin.thelearninglock.R;
+import io.alstonlin.thelearninglock.shared.SharedUtils;
 
 
 /**
@@ -30,7 +43,8 @@ import io.alstonlin.thelearninglock.R;
  */
 public class BackgroundPickerFragment extends Fragment {
     private int PICK_IMAGE_REQUEST = 1;
-
+    // Ratio of the what % of full screen res to save image as
+    private static final float SCREEN_RES_SAVE_RATIO = 1 / 3f;
     /**
      * Factory method to create a new instance of this Fragment
      * @return A new instance of fragment BackgroundPickerFragment.
@@ -57,6 +71,13 @@ public class BackgroundPickerFragment extends Fragment {
                 pickFromGallery();
             }
         });
+        Button selectPictureButton = (Button) view.findViewById(R.id.fragment_background_picker_select_button);
+        selectPictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectPicture();
+            }
+        });
         return view;
     }
 
@@ -71,10 +92,66 @@ public class BackgroundPickerFragment extends Fragment {
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
+    /**
+     * Picks from the default pictures
+     */
+    private void selectPicture(){
+        // Sets up the gridview
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ViewGroup pickerView = (ViewGroup) inflater.inflate(R.layout.layout_select_bg, null, false);
+        GridView imagesGrid = (GridView) pickerView.findViewById(R.id.bg_grid);
+        final PopupWindow popup = new PopupWindow(pickerView,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                true);
+        final BGImagePickerAdapter bgImageAdapter = new BGImagePickerAdapter(getContext());
+        imagesGrid.setAdapter(bgImageAdapter);
+        imagesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Saves the drawable as a file
+                int maxBGSize = (int) (Math.max(Resources.getSystem().getDisplayMetrics().heightPixels,
+                                        Resources.getSystem().getDisplayMetrics().widthPixels) * SCREEN_RES_SAVE_RATIO);
+                // Usually, full resolution = alot of memory
+                Bitmap bgBitmap = SharedUtils.getResizedDrawable(getContext().getResources(),
+                        bgImageAdapter.getItem(position), maxBGSize, maxBGSize);
+                File dir = new File(Environment.getExternalStorageDirectory() + File.separator + "backgrounds");
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                File file = new File(dir, String.valueOf(System.currentTimeMillis()));
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(file);
+                    bgBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                    fos.close();
+                } catch (IOException e) {
+                    Snackbar.make(getView(), "Couldnt save background!", Snackbar.LENGTH_SHORT).show();
+                } finally {
+                    if (fos != null) {
+                        try {
+                            fos.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                // Saves path to the newly created file
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
+                editor.putString(Const.BACKGROUND_URI_KEY, getPath(getContext(), Uri.fromFile(file)));
+                editor.commit();
+                onBackgroundSelected();
+                popup.dismiss();
+            }
+        });
+        popup.showAtLocation(getView(), Gravity.CENTER, 0, 0);
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null){
             Uri uri = data.getData();
+            // TODO: Make this scale the image saves as well to SCREEN_RES_SAVE_RATIO * screen size to save memory
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
             editor.putString(Const.BACKGROUND_URI_KEY, getPath(getContext(), uri));
             editor.commit();

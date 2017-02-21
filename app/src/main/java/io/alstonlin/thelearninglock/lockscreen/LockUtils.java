@@ -35,8 +35,6 @@ public class LockUtils {
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
                 PixelFormat.TRANSPARENT);
         LOCK_PARAMS.gravity = Gravity.TOP | Gravity.LEFT;
-        LOCK_PARAMS.x = 0;
-        LOCK_PARAMS.y = 0;
         LOCK_PARAMS.screenOrientation = Configuration.ORIENTATION_PORTRAIT;
         BG_PARAMS = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
@@ -46,8 +44,6 @@ public class LockUtils {
                         | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.OPAQUE);
         BG_PARAMS.gravity = Gravity.TOP | Gravity.LEFT;
-        BG_PARAMS.x = 0;
-        BG_PARAMS.y = 0;
         BG_PARAMS.screenOrientation = Configuration.ORIENTATION_PORTRAIT;
     }
 
