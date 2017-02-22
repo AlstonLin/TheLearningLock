@@ -22,7 +22,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
@@ -35,7 +34,6 @@ import java.io.IOException;
 import io.alstonlin.thelearninglock.shared.Const;
 import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
 import io.alstonlin.thelearninglock.R;
-import io.alstonlin.thelearninglock.shared.SharedUtils;
 
 
 /**
@@ -45,6 +43,8 @@ public class BackgroundPickerFragment extends Fragment {
     private int PICK_IMAGE_REQUEST = 1;
     // Ratio of the what % of full screen res to save image as
     private static final float SCREEN_RES_SAVE_RATIO = 1 / 3f;
+    private static final int MAX_BG_SIZE = (int) (Math.max(Resources.getSystem().getDisplayMetrics().heightPixels,
+            Resources.getSystem().getDisplayMetrics().widthPixels) * SCREEN_RES_SAVE_RATIO);
     /**
      * Factory method to create a new instance of this Fragment
      * @return A new instance of fragment BackgroundPickerFragment.
@@ -109,37 +109,9 @@ public class BackgroundPickerFragment extends Fragment {
         imagesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Saves the drawable as a file
-                int maxBGSize = (int) (Math.max(Resources.getSystem().getDisplayMetrics().heightPixels,
-                                        Resources.getSystem().getDisplayMetrics().widthPixels) * SCREEN_RES_SAVE_RATIO);
                 // Usually, full resolution = alot of memory
-                Bitmap bgBitmap = SharedUtils.getResizedDrawable(getContext().getResources(),
-                        bgImageAdapter.getItem(position), maxBGSize, maxBGSize);
-                File dir = new File(Environment.getExternalStorageDirectory() + File.separator + "backgrounds");
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
-                File file = new File(dir, String.valueOf(System.currentTimeMillis()));
-                FileOutputStream fos = null;
-                try {
-                    fos = new FileOutputStream(file);
-                    bgBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                    fos.close();
-                } catch (IOException e) {
-                    Snackbar.make(getView(), "Couldnt save background!", Snackbar.LENGTH_SHORT).show();
-                } finally {
-                    if (fos != null) {
-                        try {
-                            fos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                // Saves path to the newly created file
-                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
-                editor.putString(Const.BACKGROUND_URI_KEY, getPath(getContext(), Uri.fromFile(file)));
-                editor.commit();
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), bgImageAdapter.getItem(position));
+                setBackgroundBitmap(bitmap);
                 onBackgroundSelected();
                 popup.dismiss();
             }
@@ -151,16 +123,45 @@ public class BackgroundPickerFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null){
             Uri uri = data.getData();
-            // TODO: Make this scale the image saves as well to SCREEN_RES_SAVE_RATIO * screen size to save memory
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
-            editor.putString(Const.BACKGROUND_URI_KEY, getPath(getContext(), uri));
-            editor.commit();
+            Bitmap bitmap = BitmapFactory.decodeFile(getPath(getContext(), uri));
+            setBackgroundBitmap(bitmap);
             onBackgroundSelected();
         }
     }
 
     public void onBackgroundSelected(){
         ((OnFragmentFinishedListener)getActivity()).onFragmentFinished();
+    }
+
+    private void setBackgroundBitmap(Bitmap bg){
+        // Resizes the bitmap
+        Bitmap resized = Bitmap.createScaledBitmap(bg, MAX_BG_SIZE, MAX_BG_SIZE, false);
+        // Saves the new resized bg to a file
+        File dir = new File(Environment.getExternalStorageDirectory() + File.separator + "backgrounds");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File file = new File(dir, String.valueOf(System.currentTimeMillis()));
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+            resized.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+        } catch (IOException e) {
+            Snackbar.make(getView(), "Couldnt save background!", Snackbar.LENGTH_SHORT).show();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        // Saves path to the newly created file
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
+        editor.putString(Const.BACKGROUND_URI_KEY, getPath(getContext(), Uri.fromFile(file)));
+        editor.commit();
     }
 
     /**
