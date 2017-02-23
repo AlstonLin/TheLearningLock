@@ -42,9 +42,8 @@ import io.alstonlin.thelearninglock.R;
 public class BackgroundPickerFragment extends Fragment {
     private int PICK_IMAGE_REQUEST = 1;
     // Ratio of the what % of full screen res to save image as
-    private static final float SCREEN_RES_SAVE_RATIO = 1 / 3f;
     private static final int MAX_BG_SIZE = (int) (Math.max(Resources.getSystem().getDisplayMetrics().heightPixels,
-            Resources.getSystem().getDisplayMetrics().widthPixels) * SCREEN_RES_SAVE_RATIO);
+            Resources.getSystem().getDisplayMetrics().widthPixels) * Const.SCREEN_BG_RESIZE_RATIO);
     /**
      * Factory method to create a new instance of this Fragment
      * @return A new instance of fragment BackgroundPickerFragment.
@@ -137,11 +136,11 @@ public class BackgroundPickerFragment extends Fragment {
         // Resizes the bitmap
         Bitmap resized = Bitmap.createScaledBitmap(bg, MAX_BG_SIZE, MAX_BG_SIZE, false);
         // Saves the new resized bg to a file
-        File dir = new File(Environment.getExternalStorageDirectory() + File.separator + "backgrounds");
+        File dir = new File(Const.BACKGROUND_DIR);
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        File file = new File(dir, String.valueOf(System.currentTimeMillis()));
+        File file = new File(dir, Const.BACKGROUND_FILE);
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(file);
@@ -158,10 +157,6 @@ public class BackgroundPickerFragment extends Fragment {
                 }
             }
         }
-        // Saves path to the newly created file
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
-        editor.putString(Const.BACKGROUND_URI_KEY, getPath(getContext(), Uri.fromFile(file)));
-        editor.commit();
     }
 
     /**

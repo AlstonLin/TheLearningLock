@@ -36,14 +36,10 @@ public class SharedUtils {
      * @param view The View that will have the background changed
      */
     public static void setupBackground(Context context, View view){
-        String backgroundPath = PreferenceManager.getDefaultSharedPreferences(context).getString(Const.BACKGROUND_URI_KEY, null);
-        if (backgroundPath == null){
-            // TODO: A better default background
-            view.setBackgroundColor(Color.BLUE);
-        } else {
-            File file = new File(backgroundPath);
-            view.setBackground(Drawable.createFromPath(file.getAbsolutePath()));
-        }
+        File dir = new File(Const.BACKGROUND_DIR);
+        File file = new File(dir, Const.BACKGROUND_FILE);
+        if (file.exists()) view.setBackground(Drawable.createFromPath(file.getAbsolutePath()));
+        else view.setBackgroundColor(Color.BLUE);
     }
 
     /**
