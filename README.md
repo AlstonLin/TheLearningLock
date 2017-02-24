@@ -4,6 +4,7 @@ An Android app that uses an anomaly detection (based on a Normal Distribution) t
 ##### Setup
 - Install JDK
 - Install Android Studio + Android SDK
+- Ask Alston for the `app/src/main/res/values/secrets.xml` file which contains API keys (or make one youself)
 - Build and Run on Android Studio
 
 ##### Details 
