@@ -59,11 +59,11 @@ public class LockScreenNotificationService extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        binder.listener.notifyNotificationsUpdated();
+        if (binder.listener != null) binder.listener.notifyNotificationsUpdated();
     }
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        binder.listener.notifyNotificationsUpdated();
+        if (binder.listener != null) binder.listener.notifyNotificationsUpdated();
     }
 
     public class LockScreenNotification {

@@ -20,6 +20,9 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
+import com.google.android.gms.awareness.Awareness;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.util.Set;
 
 import io.alstonlin.thelearninglock.shared.Const;
@@ -42,6 +45,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
     private BroadcastReceiver receiver;
     private BroadcastReceiver chargingReceiver;
     private LockScreenNotificationService notificationService;
+    private GoogleApiClient googleApi;
     /**
      * The connection to the Notification service
      */
@@ -89,6 +93,11 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
         registerReceiver(chargingReceiver, chargingFilter);
         // Creates the handler
         uiHandler = new Handler();
+        // Connects to Google Awareness API
+        googleApi = new GoogleApiClient.Builder(this)
+                .addApi(Awareness.API)
+                .build();
+        googleApi.connect();
     }
 
     /**
@@ -124,7 +133,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
                 TelephonyManager ts = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                 if (ts.getCallState() != TelephonyManager.CALL_STATE_OFFHOOK) {
                     if (lockScreen != null) lockScreen.onScreenOff();
-                    else lockScreen = new LockScreen(this);
+                    else lockScreen = new LockScreen(this, googleApi);
                     notifyNotificationsUpdated();
                 }
         }

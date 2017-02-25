@@ -33,6 +33,6 @@ public class Const {
     // invalidating their old behavior. This is prevents it to become impossible to change it
     public static final int MAX_TRAINING_SIZE = 50;
     // Ratio to resize background image relative to screen size
-    // Lower this is memory becomes and issue
+    // Lower this is memory becomes and issuex
     public static final float SCREEN_BG_RESIZE_RATIO = 1f;
 }

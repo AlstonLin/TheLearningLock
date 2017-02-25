@@ -73,7 +73,7 @@ public class LockUtils {
      * @param attach The View to attach as the lock screen
      * @param background The view of the separate background layout
      */
-    public static void lock(Context context, View attach, View background){
+    public static void lock(Context context, View attach, View background) throws WindowManager.BadTokenException{
         // Sets up the window manage parameters for the View to add\
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Point displaySize = new Point();

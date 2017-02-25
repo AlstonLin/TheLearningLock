@@ -4,12 +4,18 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -17,12 +23,25 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+
+import com.github.pwittchen.weathericonview.WeatherIconView;
+import com.google.android.gms.awareness.Awareness;
+import com.google.android.gms.awareness.snapshot.LocationResult;
+import com.google.android.gms.awareness.snapshot.WeatherResult;
+import com.google.android.gms.awareness.state.Weather;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.hudomju.swipe.SwipeToDismissTouchListener;
 import com.hudomju.swipe.adapter.ListViewAdapter;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import io.alstonlin.thelearninglock.shared.Const;
 import io.alstonlin.thelearninglock.shared.ML;
@@ -53,30 +72,49 @@ public class LockScreen {
     private StatusBar statusBar;
     // Notifications + dismissing
     private SwipeToDismissTouchListener<ListViewAdapter> onDismissListener;
-
+    // APIs
+    private Geocoder geocoder;
+    private GoogleApiClient googleApi;
     // Listeners
     private OnPatternSelectListener patternListener = new OnPatternSelectListener() {
         @Override
         public void onPatternSelect(List<int[]> pattern, final double[] timeBetweenNodeSelects, PatternView patternView) {
             patternView.clearPattern();
-            if (SharedUtils.compareObjectToHash(context, pattern, patternHash)){
-                if (ml.predictImposter(timeBetweenNodeSelects)){
+            if (SharedUtils.compareObjectToHash(context, pattern, patternHash)) {
+                if (ml.predictImposter(timeBetweenNodeSelects)) {
                     LockScreen.this.timeBetweenNodeSelects = timeBetweenNodeSelects;
                     showPINScreen();
                 } else {
                     ml.addEntry(timeBetweenNodeSelects, true); // update training set with new data
                     unlock();
                 }
-            } else{
+            } else {
                 PatternUtils.setPatternLayoutTitle(patternLayout, "Wrong Pattern!");
             }
         }
     };
+    // Weather mapping
+    private static final HashMap<Integer, Integer> weatherCodeToIcon;
+    static {
+        weatherCodeToIcon = new HashMap<>();
+        weatherCodeToIcon.put(Weather.CONDITION_UNKNOWN, null);
+        weatherCodeToIcon.put(Weather.CONDITION_CLEAR, R.string.wi_day_sunny);
+        weatherCodeToIcon.put(Weather.CONDITION_CLOUDY, R.string.wi_day_cloudy);
+        weatherCodeToIcon.put(Weather.CONDITION_FOGGY, R.string.wi_day_fog);
+        weatherCodeToIcon.put(Weather.CONDITION_HAZY, R.string.wi_day_haze);
+        weatherCodeToIcon.put(Weather.CONDITION_ICY, R.string.wi_day_hail);
+        weatherCodeToIcon.put(Weather.CONDITION_RAINY, R.string.wi_day_rain);
+        weatherCodeToIcon.put(Weather.CONDITION_SNOWY, R.string.wi_day_snow);
+        weatherCodeToIcon.put(Weather.CONDITION_STORMY, R.string.wi_day_thunderstorm);
+        weatherCodeToIcon.put(Weather.CONDITION_WINDY, R.string.wi_day_windy);
+    }
 
-    public LockScreen(LockScreenService service){
+    public LockScreen(LockScreenService service, GoogleApiClient googleApi) {
         // Attrs
         this.service = service;
         this.context = service;
+        this.googleApi = googleApi;
+        this.geocoder = new Geocoder(service, Locale.getDefault());;
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View lockView = layoutInflater.inflate(R.layout.lock_container, null);
         this.lockView = (ViewGroup) lockView;
@@ -87,14 +125,18 @@ public class LockScreen {
         patternHash = SharedUtils.loadHashFromFiledFile(context, Const.PATTERN_FILENAME, true);
         // Setup and lock
         setupLockContainer(lockView);
-        LockUtils.lock(context, lockView, backgroundView);
-        statusBar = new StatusBar(context, backgroundView);
-        // Dismiss keyboard
-        InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        try {
+            LockUtils.lock(context, lockView, backgroundView);
+            statusBar = new StatusBar(context, backgroundView);
+            // Dismiss keyboard
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        } catch (WindowManager.BadTokenException e){
+            e.printStackTrace();
+        }
     }
 
-    public void unlock(){
+    public void unlock() {
         LockUtils.unlock(context, lockView, backgroundView);
         // Make absolutely sure there is no memory leak
         notificationsAdapter.detachCreatedViews();
@@ -107,7 +149,7 @@ public class LockScreen {
      * Change the notifications displayed on the lock screen.
      * @param notifications The new notifications
      */
-    public void updateNotifications(LockScreenNotificationService.LockScreenNotification[] notifications){
+    public void updateNotifications(LockScreenNotificationService.LockScreenNotification[] notifications) {
         // Filters out secret notifications
         ArrayList<LockScreenNotificationService.LockScreenNotification> publicNotifications = new ArrayList<>();
         for (LockScreenNotificationService.LockScreenNotification notification : notifications) {
@@ -123,21 +165,26 @@ public class LockScreen {
     /**
      * Hides the unlock Popup.
      */
-    public void onScreenOff(){
+    public void onScreenOff() {
         LockUtils.setVisibleScreen(lockView, R.id.lock_screen);
     }
 
     /**
      * Updates the status bar when the screen turns on
      */
-    public void onScreenOn(){
+    public void onScreenOn() {
+        if (statusBar == null){
+            Toast.makeText(context, "Permission to draw over apps must be granted for LearningLock to function", Toast.LENGTH_LONG);
+            return;
+        }
         statusBar.updateStatusBar();
+        updateWeather(lockView);
     }
 
     /**
      * Notifies that charging state has changed and re-draws status bar
      */
-    public void onChargingStateChanged(){
+    public void onChargingStateChanged() {
         statusBar.updateStatusBar();
     }
 
@@ -145,10 +192,10 @@ public class LockScreen {
      * Helper method to set up the View of the Lock Screen itself.
      * @param view The Lock Screen's View
      */
-    private void setupLockContainer(View view){
+    private void setupLockContainer(View view) {
         // Lock screen
         // TODO: Slide up to unlock
-        SlideButton seekBar  = (SlideButton) view.findViewById(R.id.lock_screen_slider);
+        SlideButton seekBar = (SlideButton) view.findViewById(R.id.lock_screen_slider);
         seekBar.setSlideButtonListener(new SlideButtonListener() {
             @Override
             public void handleSlide() {
@@ -161,7 +208,7 @@ public class LockScreen {
         setupAddEntryDialog(view);
     }
 
-    private void setupNotificationList(View lockView){
+    private void setupNotificationList(View lockView) {
         notificationsList = (ListView) lockView.findViewById(R.id.lock_screen_notifications_list);
         notificationsAdapter = new LockScreenNotificationsAdapter(context, new Runnable() {
             @Override
@@ -204,7 +251,7 @@ public class LockScreen {
         });
     }
 
-    private void setupPatternScreen(View lockView){
+    private void setupPatternScreen(View lockView) {
         patternLayout = lockView.findViewById(R.id.unlock_screen);
         PatternUtils.setupPatternLayout(patternLayout, patternListener, "Enter your pattern");
     }
@@ -212,32 +259,32 @@ public class LockScreen {
     /**
      * Shows the unlock Popup.
      */
-    private void showUnlockScreen(){
-        if (ml == null){ // This really should be been set up
+    private void showUnlockScreen() {
+        if (ml == null) { // This really should be been set up
             Snackbar.make(lockView, "You have no set up the lock screen yet!", Snackbar.LENGTH_SHORT).show();
         }
         LockUtils.setVisibleScreen(lockView, R.id.unlock_screen);
     }
 
-    private void setupPINScreen(View lockView){
+    private void setupPINScreen(View lockView) {
         final View pinLayout = lockView.findViewById(R.id.pin_screen);
         PINUtils.setupPINView(pinLayout, new OnPINSelectListener() {
             @Override
             public void onPINSelected(String PIN) {
-                if (SharedUtils.compareObjectToHash(context, PIN, PINHash)){
+                if (SharedUtils.compareObjectToHash(context, PIN, PINHash)) {
                     // Shows a dialog to confirm unlock
                     // unless the user has requested not to show it (do not ask again)
                     String savedRetrainConfirm = PreferenceManager.getDefaultSharedPreferences(context)
                             .getString(Const.SAVED_RETRAIN_CONFIRM, null);
                     if (savedRetrainConfirm != null) {
-                        if (savedRetrainConfirm.equals("true") && timeBetweenNodeSelects != null ) {
+                        if (savedRetrainConfirm.equals("true") && timeBetweenNodeSelects != null) {
                             ml.addEntry(timeBetweenNodeSelects, true);
                         }
                         unlock();
                     } else {
                         showConfirmRetrain();
                     }
-                } else{
+                } else {
                     PINUtils.setPINTitle(pinLayout, "Wrong PIN!");
                     PINUtils.clearPIN(pinLayout);
                 }
@@ -245,7 +292,7 @@ public class LockScreen {
         }, "That was suspicious! Enter your PIN to confirm you're the owner");
     }
 
-    private void setupAddEntryDialog(View lockView){
+    private void setupAddEntryDialog(View lockView) {
         final View confirmLayout = lockView.findViewById(R.id.add_dialog);
         Button yesBtn = (Button) confirmLayout.findViewById(R.id.layout_add_entry_yes);
         Button noBtn = (Button) confirmLayout.findViewById(R.id.layout_add_entry_no);
@@ -277,6 +324,57 @@ public class LockScreen {
         });
     }
 
+    private void updateWeather(final View view) {
+        try {
+            Awareness.SnapshotApi.getWeather(googleApi)
+                    .setResultCallback(new ResultCallback<WeatherResult>() {
+                        @Override
+                        public void onResult(WeatherResult weatherResult) {
+                            if (weatherResult.getStatus().isSuccess()) {
+                                Weather weather = weatherResult.getWeather();
+                                // Temperature
+                                int tempC = Math.round(weather.getTemperature(Weather.CELSIUS));
+                                int tempF = Math.round(weather.getTemperature(Weather.FAHRENHEIT));
+                                TextView tempView = (TextView) view.findViewById(R.id.temperature);
+                                tempView.setVisibility(View.VISIBLE);
+                                tempView.setText(String.format("%d℃ / %d℉", tempC, tempF));
+                                // Weather icons
+                                LinearLayout iconsContainer = (LinearLayout) view.findViewById(R.id.weather_icons);
+                                iconsContainer.removeAllViews();
+                                for (Integer i : weather.getConditions()){
+                                    WeatherIconView weatherIconView = new WeatherIconView(context);
+                                    Integer resource = weatherCodeToIcon.get(i);
+                                    if (resource != null) {
+                                        weatherIconView.setIconResource(context.getString(resource));
+                                        weatherIconView.setIconSize(16);
+                                        weatherIconView.setIconColor(Color.WHITE);
+                                        iconsContainer.addView(weatherIconView);
+                                    }
+                                }
+                            }
+                        }
+                    });
+            Awareness.SnapshotApi.getLocation(googleApi)
+                    .setResultCallback(new ResultCallback<LocationResult>() {
+                        @Override
+                        public void onResult(LocationResult locationResult) {
+                            Location location = locationResult.getLocation();
+                            try {
+                                // City name
+                                String cityName = getCity(location.getLatitude(), location.getLongitude());
+                                TextView cityView = (TextView) view.findViewById(R.id.cityName);
+                                cityView.setVisibility(View.VISIBLE);
+                                cityView.setText(cityName);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+        } catch (SecurityException e){
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Shows the PIN keypad popup if the user seems suspicious.
      * Entering the PIN successfully will result in unlock and retraining of the algorithm
@@ -290,5 +388,13 @@ public class LockScreen {
      */
     private void showConfirmRetrain(){
         LockUtils.setVisibleScreen(lockView, R.id.add_dialog);
+    }
+
+    private String getCity(double lat, double lon) throws IOException {
+        List<Address> addresses = geocoder.getFromLocation(lat, lon, 1);
+        if (addresses != null && addresses.size() > 0) {
+            return addresses.get(0).getLocality();
+        }
+        return null;
     }
 }
