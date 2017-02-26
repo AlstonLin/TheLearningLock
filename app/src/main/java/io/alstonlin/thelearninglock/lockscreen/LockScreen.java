@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -358,16 +359,28 @@ public class LockScreen {
                     .setResultCallback(new ResultCallback<LocationResult>() {
                         @Override
                         public void onResult(LocationResult locationResult) {
-                            Location location = locationResult.getLocation();
-                            try {
-                                // City name
-                                String cityName = getCity(location.getLatitude(), location.getLongitude());
-                                TextView cityView = (TextView) view.findViewById(R.id.cityName);
-                                cityView.setVisibility(View.VISIBLE);
-                                cityView.setText(cityName);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            final Location location = locationResult.getLocation();
+                            // Async Task because this network call is not synchronous
+                            new AsyncTask<Void, Void, String>() {
+                                @Override
+                                protected String doInBackground(Void... params) {
+                                    try {
+                                        return getCity(location.getLatitude(), location.getLongitude());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                        return null;
+                                    }
+                                }
+
+                                @Override
+                                protected void onPostExecute(String cityName) {
+                                    super.onPostExecute(cityName);
+                                    if (cityName == null) return;
+                                    TextView cityView = (TextView) view.findViewById(R.id.cityName);
+                                    cityView.setVisibility(View.VISIBLE);
+                                    cityView.setText(cityName);
+                                }
+                            }.execute();
                         }
                     });
         } catch (SecurityException e){
