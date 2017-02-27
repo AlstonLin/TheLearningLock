@@ -61,7 +61,7 @@ public class SettingsFragment extends Fragment {
         });
         // Sets up the epsilon multiplier
         final int MAX_PROGRESS = 100;
-        final float MIN = 0.9f, RANGE = 0.2f; // Want the range to be (0.9, 1.1)
+        final float MIN = 0.975f, RANGE = 0.05f; // Want the range to be (0.975, 1.025)
         final TextView multDisplay = (TextView) view.findViewById(R.id.epsilonMultVal);
         SeekBar multBar = (SeekBar) view.findViewById(R.id.epsilonMult);
         multBar.setProgress(Math.round(MAX_PROGRESS * (tolerance - MIN) / RANGE));
