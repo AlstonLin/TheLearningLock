@@ -19,5 +19,4 @@ Minimum API - Android 4.4 (Level 19) / Kitkat
 - shared: Code that is shared by the other packages
 
 ##### Credits
-Created by Alston Lin
-Designed by David Liu
+Created by [Alston Lin](https://github.com/AlstonLin) with contributions from [David Liu](https://github.com/davidlky) and [Ejaaz Merali](https://github.com/emerali)
