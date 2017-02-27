@@ -7,39 +7,39 @@
     tools:context=".setup.BackgroundPickerFragment">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_alignParentStart="true">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="24dp"
             android:gravity="center"
             android:text="Select a Background"
-            android:layout_marginBottom="24dp"
-            android:layout_gravity="center" />
+            android:textSize="24sp" />
 
         <Button
             android:id="@+id/fragment_background_picker_select_button"
-            android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="21sp"
+            android:layout_gravity="center"
+            android:background="@drawable/button_background"
             android:text="Select Picture"
-            android:background="@drawable/button_background" />
+            android:textSize="21sp" />
 
         <Button
             android:id="@+id/fragment_background_picker_gallery_button"
-            android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginTop="15dp"
-            android:textSize="21sp"
+            android:background="@drawable/button_background"
             android:text="Pick from Gallery"
-            android:background="@drawable/button_background" />
+            android:textSize="21sp" />
     </LinearLayout>
 
 </RelativeLayout>

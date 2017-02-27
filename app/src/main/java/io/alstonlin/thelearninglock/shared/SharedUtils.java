@@ -10,8 +10,10 @@ import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
+
+import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
+import org.bouncycastle.crypto.params.KeyParameter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -23,19 +25,17 @@ import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
-import org.bouncycastle.crypto.params.KeyParameter;
-
 /**
  * Common helper methods that are used by multiple parts of the app
  */
 public class SharedUtils {
     /**
      * Sets up the background that the user selected for the given View.
+     *
      * @param context The context that the Background path will be retrieved from
-     * @param view The View that will have the background changed
+     * @param view    The View that will have the background changed
      */
-    public static void setupBackground(Context context, View view){
+    public static void setupBackground(Context context, View view) {
         File dir = new File(Const.BACKGROUND_DIR);
         File file = new File(dir, Const.BACKGROUND_FILE);
         if (file.exists()) view.setBackground(Drawable.createFromPath(file.getAbsolutePath()));
@@ -44,9 +44,10 @@ public class SharedUtils {
 
     /**
      * Sets up and stores the salt used for secure hashing
+     *
      * @param context The context of this app
      */
-    public static void setupSalt(Context context){
+    public static void setupSalt(Context context) {
         // Created the seed
         if (PreferenceManager.getDefaultSharedPreferences(context).getString(Const.SALT, null) == null) {
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
@@ -59,13 +60,14 @@ public class SharedUtils {
 
     /**
      * Stores the given Serializable Object using a salted hash to the given file
+     *
      * @param filename The file to store the hash from
-     * @param context The context this is being called from
-     * @param obj The object to store as bytes
+     * @param context  The context this is being called from
+     * @param obj      The object to store as bytes
      * @return If the store was successful
      */
-    public static boolean storeObjectSecurely(String filename, Context context, Object obj){
-        if (!(obj instanceof Serializable)){
+    public static boolean storeObjectSecurely(String filename, Context context, Object obj) {
+        if (!(obj instanceof Serializable)) {
             throw new IllegalArgumentException("Given object must be Serializable!");
         }
         // Loads the salt
@@ -115,8 +117,9 @@ public class SharedUtils {
 
     /**
      * Fetches the byte array representing the hash from the given file
-     * @param context The context of the app
-     * @param filename The file name to retrieve the hash from
+     *
+     * @param context   The context of the app
+     * @param filename  The file name to retrieve the hash from
      * @param logIfFail If the function should log exception
      * @return If the hashes matches size
      */
@@ -129,7 +132,7 @@ public class SharedUtils {
             byte[] hash = new byte[(int) new File(context.getFilesDir() + "/" + filename).length()];
             fis.read(hash);
             return hash;
-        } catch (IOException e){
+        } catch (IOException e) {
             if (logIfFail) {
                 e.printStackTrace();
                 Toast.makeText(context, "An error has occurred while loading a file!", Toast.LENGTH_LONG).show();
@@ -137,7 +140,7 @@ public class SharedUtils {
         } finally {
             try {
                 if (fis != null) fis.close();
-            } catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -146,13 +149,14 @@ public class SharedUtils {
 
     /**
      * Checks if the given object matches the hash
+     *
      * @param context The context of the app
-     * @param object The Object to check
-     * @param hash The hash to check against
+     * @param object  The Object to check
+     * @param hash    The hash to check against
      * @return If the object matches the hash
      */
-    public static boolean compareObjectToHash(Context context, Object object, byte[] hash){
-        if (!(object instanceof Serializable)){
+    public static boolean compareObjectToHash(Context context, Object object, byte[] hash) {
+        if (!(object instanceof Serializable)) {
             throw new IllegalArgumentException("Given object must be Serializable!");
         }
         // Loads the salt
@@ -173,7 +177,7 @@ public class SharedUtils {
             byte[] hashToCheck = ((KeyParameter) kdf.generateDerivedMacParameters(8 * Const.NUM_HASH_BYTES)).getKey();
             // Compares
             return Arrays.equals(hash, hashToCheck);
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(context, "An error has occurred while loading a file!", Toast.LENGTH_LONG).show();
             return false;

@@ -13,12 +13,12 @@ import android.widget.LinearLayout;
 
 import java.util.List;
 
-import io.alstonlin.thelearninglock.shared.Const;
-import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
-import io.alstonlin.thelearninglock.shared.ML;
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pattern.OnPatternSelectListener;
 import io.alstonlin.thelearninglock.pattern.PatternUtils;
+import io.alstonlin.thelearninglock.shared.Const;
+import io.alstonlin.thelearninglock.shared.ML;
+import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
 import io.alstonlin.thelearninglock.shared.SharedUtils;
 import me.zhanghai.android.patternlock.PatternView;
 
@@ -34,6 +34,7 @@ public class PatternSetupFragment extends Fragment {
 
     /**
      * Factory method to create a new instance of this Fragment
+     *
      * @return A new instance of fragment PatternSetupFragment.
      */
     public static PatternSetupFragment newInstance() {
@@ -98,7 +99,7 @@ public class PatternSetupFragment extends Fragment {
                     confirmBar.setVisibility(View.GONE);
                     patternView.clearPattern();
                     // Checks if it's the same pattern
-                    if (!PatternUtils.arePatternsEqual(pattern, PatternSetupFragment.this.pattern)){
+                    if (!PatternUtils.arePatternsEqual(pattern, PatternSetupFragment.this.pattern)) {
                         Snackbar.make(layout, "That pattern does not match your first one!",
                                 Snackbar.LENGTH_SHORT).show();
                         return;
@@ -107,11 +108,11 @@ public class PatternSetupFragment extends Fragment {
                     ml.addEntry(timeBetweenPatternNodes, false);
                     patternsLeft--;
                     // Updates the title
-                    if (patternsLeft == 0){
+                    if (patternsLeft == 0) {
                         finished();
                     } else {
                         String title = "Enter the pattern " + patternsLeft + " more times";
-                        if (patternsLeft <= Const.CHANGE_FINGERS_MESSAGE_AT){
+                        if (patternsLeft <= Const.CHANGE_FINGERS_MESSAGE_AT) {
                             title += "\nTry switching fingers/hands";
                         }
                         PatternUtils.setPatternLayoutTitle(layout,
@@ -125,9 +126,9 @@ public class PatternSetupFragment extends Fragment {
         return layout;
     }
 
-    private void finished(){
+    private void finished() {
         ml.train();
-        ((OnFragmentFinishedListener)getActivity()).onFragmentFinished();
+        ((OnFragmentFinishedListener) getActivity()).onFragmentFinished();
     }
 
     private boolean savePattern(List<int[]> pattern) {

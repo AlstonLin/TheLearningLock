@@ -22,15 +22,15 @@ android {
         debug {
             def secrets = (new XmlParser()).parse("${projectDir}/src/main/res/values/secrets.xml")
             manifestPlaceholders = [
-                    FABRIC_API_KEY: (secrets.string.findAll { str -> str.'@name' == 'FABRIC_API_KEY_DEBUG'})[0].text(),
-                    AWARENESS_API_KEY: (secrets.string.findAll { str -> str.'@name' == 'AWARENESS_API_KEY_DEBUG'})[0].text()
+                    FABRIC_API_KEY   : (secrets.string.findAll { str -> str.'@name' == 'FABRIC_API_KEY_DEBUG' })[0].text(),
+                    AWARENESS_API_KEY: (secrets.string.findAll { str -> str.'@name' == 'AWARENESS_API_KEY_DEBUG' })[0].text()
             ]
         }
         release {
             def secrets = (new XmlParser()).parse("${projectDir}/src/main/res/values/secrets.xml")
             manifestPlaceholders = [
-                    FABRIC_API_KEY: (secrets.string.findAll { str -> str.'@name' == 'FABRIC_API_KEY_RELEASE'})[0].text(),
-                    AWARENESS_API_KEY: (secrets.string.findAll { str -> str.'@name' == 'AWARENESS_API_KEY_RELEASE'})[0].text()
+                    FABRIC_API_KEY   : (secrets.string.findAll { str -> str.'@name' == 'FABRIC_API_KEY_RELEASE' })[0].text(),
+                    AWARENESS_API_KEY: (secrets.string.findAll { str -> str.'@name' == 'AWARENESS_API_KEY_RELEASE' })[0].text()
             ]
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

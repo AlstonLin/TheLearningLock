@@ -12,7 +12,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.github.pwittchen.weathericonview.WeatherIconView;
 import com.google.android.gms.awareness.Awareness;
@@ -44,20 +42,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import io.alstonlin.thelearninglock.shared.Const;
-import io.alstonlin.thelearninglock.shared.ML;
-import io.alstonlin.thelearninglock.shared.SharedUtils;
-import io.alstonlin.thelearninglock.pattern.OnPatternSelectListener;
 import io.alstonlin.thelearninglock.R;
+import io.alstonlin.thelearninglock.pattern.OnPatternSelectListener;
 import io.alstonlin.thelearninglock.pattern.PatternUtils;
 import io.alstonlin.thelearninglock.pin.OnPINSelectListener;
 import io.alstonlin.thelearninglock.pin.PINUtils;
+import io.alstonlin.thelearninglock.shared.Const;
+import io.alstonlin.thelearninglock.shared.ML;
+import io.alstonlin.thelearninglock.shared.SharedUtils;
 import me.zhanghai.android.patternlock.PatternView;
 
 /**
  * Manages all the interactions with the View for the lock screen. Similar to a Fragment for it.
  */
 public class LockScreen {
+    // Weather mapping
+    private static final HashMap<Integer, Integer> weatherCodeToIcon;
+
+    static {
+        weatherCodeToIcon = new HashMap<>();
+        weatherCodeToIcon.put(Weather.CONDITION_UNKNOWN, null);
+        weatherCodeToIcon.put(Weather.CONDITION_CLEAR, R.string.wi_day_sunny);
+        weatherCodeToIcon.put(Weather.CONDITION_CLOUDY, R.string.wi_day_cloudy);
+        weatherCodeToIcon.put(Weather.CONDITION_FOGGY, R.string.wi_day_fog);
+        weatherCodeToIcon.put(Weather.CONDITION_HAZY, R.string.wi_day_haze);
+        weatherCodeToIcon.put(Weather.CONDITION_ICY, R.string.wi_day_hail);
+        weatherCodeToIcon.put(Weather.CONDITION_RAINY, R.string.wi_day_rain);
+        weatherCodeToIcon.put(Weather.CONDITION_SNOWY, R.string.wi_day_snow);
+        weatherCodeToIcon.put(Weather.CONDITION_STORMY, R.string.wi_day_thunderstorm);
+        weatherCodeToIcon.put(Weather.CONDITION_WINDY, R.string.wi_day_windy);
+    }
+
     private ViewGroup lockView;
     private View backgroundView;
     private LockScreenNotificationsAdapter notificationsAdapter;
@@ -94,28 +109,14 @@ public class LockScreen {
             }
         }
     };
-    // Weather mapping
-    private static final HashMap<Integer, Integer> weatherCodeToIcon;
-    static {
-        weatherCodeToIcon = new HashMap<>();
-        weatherCodeToIcon.put(Weather.CONDITION_UNKNOWN, null);
-        weatherCodeToIcon.put(Weather.CONDITION_CLEAR, R.string.wi_day_sunny);
-        weatherCodeToIcon.put(Weather.CONDITION_CLOUDY, R.string.wi_day_cloudy);
-        weatherCodeToIcon.put(Weather.CONDITION_FOGGY, R.string.wi_day_fog);
-        weatherCodeToIcon.put(Weather.CONDITION_HAZY, R.string.wi_day_haze);
-        weatherCodeToIcon.put(Weather.CONDITION_ICY, R.string.wi_day_hail);
-        weatherCodeToIcon.put(Weather.CONDITION_RAINY, R.string.wi_day_rain);
-        weatherCodeToIcon.put(Weather.CONDITION_SNOWY, R.string.wi_day_snow);
-        weatherCodeToIcon.put(Weather.CONDITION_STORMY, R.string.wi_day_thunderstorm);
-        weatherCodeToIcon.put(Weather.CONDITION_WINDY, R.string.wi_day_windy);
-    }
 
     public LockScreen(LockScreenService service, GoogleApiClient googleApi) {
         // Attrs
         this.service = service;
         this.context = service;
         this.googleApi = googleApi;
-        this.geocoder = new Geocoder(service, Locale.getDefault());;
+        this.geocoder = new Geocoder(service, Locale.getDefault());
+        ;
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View lockView = layoutInflater.inflate(R.layout.lock_container, null);
         this.lockView = (ViewGroup) lockView;
@@ -132,7 +133,7 @@ public class LockScreen {
             // Dismiss keyboard
             InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        } catch (WindowManager.BadTokenException e){
+        } catch (WindowManager.BadTokenException e) {
             e.printStackTrace();
         }
     }
@@ -148,6 +149,7 @@ public class LockScreen {
 
     /**
      * Change the notifications displayed on the lock screen.
+     *
      * @param notifications The new notifications
      */
     public void updateNotifications(LockScreenNotificationService.LockScreenNotification[] notifications) {
@@ -174,7 +176,7 @@ public class LockScreen {
      * Updates the status bar when the screen turns on
      */
     public void onScreenOn() {
-        if (statusBar == null){
+        if (statusBar == null) {
             Toast.makeText(context, "Permission to draw over apps must be granted for LearningLock to function", Toast.LENGTH_LONG);
             return;
         }
@@ -191,6 +193,7 @@ public class LockScreen {
 
     /**
      * Helper method to set up the View of the Lock Screen itself.
+     *
      * @param view The Lock Screen's View
      */
     private void setupLockContainer(View view) {
@@ -342,7 +345,7 @@ public class LockScreen {
                                 // Weather icons
                                 LinearLayout iconsContainer = (LinearLayout) view.findViewById(R.id.weather_icons);
                                 iconsContainer.removeAllViews();
-                                for (Integer i : weather.getConditions()){
+                                for (Integer i : weather.getConditions()) {
                                     WeatherIconView weatherIconView = new WeatherIconView(context);
                                     Integer resource = weatherCodeToIcon.get(i);
                                     if (resource != null) {
@@ -383,7 +386,7 @@ public class LockScreen {
                             }.execute();
                         }
                     });
-        } catch (SecurityException e){
+        } catch (SecurityException e) {
             e.printStackTrace();
         }
     }
@@ -392,14 +395,14 @@ public class LockScreen {
      * Shows the PIN keypad popup if the user seems suspicious.
      * Entering the PIN successfully will result in unlock and retraining of the algorithm
      */
-    private void showPINScreen(){
+    private void showPINScreen() {
         LockUtils.setVisibleScreen(lockView, R.id.pin_screen);
     }
 
     /**
      * Shows a dialog prompting if the user wants to retrain ML, and unlocks after
      */
-    private void showConfirmRetrain(){
+    private void showConfirmRetrain() {
         LockUtils.setVisibleScreen(lockView, R.id.add_dialog);
     }
 

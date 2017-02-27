@@ -14,9 +14,6 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.lockscreen.LockScreenService;
 import io.alstonlin.thelearninglock.shared.Const;
@@ -69,7 +66,7 @@ public class SettingsFragment extends Fragment {
         multBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float calculated = (progress / (float)MAX_PROGRESS) * RANGE + MIN;
+                float calculated = (progress / (float) MAX_PROGRESS) * RANGE + MIN;
                 // Rounds to 2 decimals
                 tolerance = Math.round(calculated * 1000) / 1000f;
                 // Display and saves

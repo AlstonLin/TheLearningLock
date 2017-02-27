@@ -12,17 +12,18 @@ import java.util.ArrayList;
 
 import io.alstonlin.thelearninglock.R;
 
-public class LockScreenNotificationsAdapter extends ArrayAdapter<LockScreenNotificationService.LockScreenNotification>{
+public class LockScreenNotificationsAdapter extends ArrayAdapter<LockScreenNotificationService.LockScreenNotification> {
     private Context context;
     private ArrayList<ViewGroup> createdViews;
     private Runnable undoPendingNotification;
 
     /**
      * The constructor
-     * @param context Context where this adapter is being created
+     *
+     * @param context                 Context where this adapter is being created
      * @param undoPendingNotification A runnable that will undo the Pending notification (in the dismissTouchListener)
      */
-    public LockScreenNotificationsAdapter(Context context, Runnable undoPendingNotification){
+    public LockScreenNotificationsAdapter(Context context, Runnable undoPendingNotification) {
         super(context, 0);
         this.context = context;
         this.createdViews = new ArrayList<>();
@@ -31,9 +32,10 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<LockScreenNotif
 
     /**
      * Sets and updates the notifications this shows on the attached ListView.
+     *
      * @param notifications The new notifications to show
      */
-    public void setNotifications(ArrayList<LockScreenNotificationService.LockScreenNotification> notifications){
+    public void setNotifications(ArrayList<LockScreenNotificationService.LockScreenNotification> notifications) {
         detachCreatedViews();
         clear();
         addAll(notifications);
@@ -42,7 +44,7 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<LockScreenNotif
     @Override
     public View getView(int i, View convertView, ViewGroup parent) {
         // Also forces re-inflation and discards convertView if the convertView has been detached explicitly
-        if (convertView == null || !createdViews.contains(convertView)){
+        if (convertView == null || !createdViews.contains(convertView)) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.notification_list_item, parent, false);
             createdViews.add((ViewGroup) convertView);
@@ -71,15 +73,15 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<LockScreenNotif
     /**
      * Fix for https://github.com/AlstonLin/TheLearningLock/issues/41
      */
-    public void detachCreatedViews(){
-        for (ViewGroup v : createdViews){
+    public void detachCreatedViews() {
+        for (ViewGroup v : createdViews) {
             FrameLayout container = (FrameLayout) v.findViewById(R.id.notification_container);
             container.removeAllViews();
         }
         createdViews.clear();
     }
 
-    public void dismissNotification(int position){
+    public void dismissNotification(int position) {
         final LockScreenNotificationService.LockScreenNotification notification = getItem(position);
         detachCreatedViews();
         remove(notification);

@@ -1,23 +1,18 @@
 package io.alstonlin.thelearninglock.lockscreen;
 
-import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationManagerCompat;
-
-import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 import com.google.android.gms.awareness.Awareness;
@@ -25,14 +20,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.Set;
 
-import io.alstonlin.thelearninglock.shared.Const;
 import io.alstonlin.thelearninglock.setup.SetupActivity;
+import io.alstonlin.thelearninglock.shared.Const;
 
 /**
  * The Service that runs in the background to "lock" and "unlock" the screen by attaching a View
  * over the WindowManager whenever the power button is pressed.
  */
-public class LockScreenService extends Service implements NotificationsUpdateListener{
+public class LockScreenService extends Service implements NotificationsUpdateListener {
     // Constants
     public static final int UNLOCK_FLAG = 69;
     public static final int OPEN_SETUP_ACTIVITY = 70;
@@ -85,7 +80,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
         chargingReceiver = new ChargingStateReceiver(new Runnable() {
             @Override
             public void run() {
-                if (lockScreen != null){
+                if (lockScreen != null) {
                     lockScreen.onChargingStateChanged();
                 }
             }
@@ -102,8 +97,9 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
 
     /**
      * Called every time the screen is locked, or during setup.
-     * @param intent The intent this was called by
-     * @param flags Flags passed
+     *
+     * @param intent  The intent this was called by
+     * @param flags   Flags passed
      * @param startId Service ID
      * @return The result
      */
@@ -112,9 +108,9 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
         if (intent == null) {
             return START_STICKY;
         }
-        switch (intent.getFlags()){
+        switch (intent.getFlags()) {
             case OPEN_SETUP_ACTIVITY: // Setup
-                if (checkDrawOverlayPermission() && checkNotificationsPermission()){
+                if (checkDrawOverlayPermission() && checkNotificationsPermission()) {
                     Intent setupIntent = new Intent(this, SetupActivity.class);
                     setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(setupIntent);
@@ -143,11 +139,11 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
     /**
      * Re-fetches all the notifications and updates the list.
      */
-    public void notifyNotificationsUpdated(){
+    public void notifyNotificationsUpdated() {
         uiHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (notificationService != null){
+                if (notificationService != null) {
                     notifications = notificationService.getNotifications();
                     if (lockScreen != null) lockScreen.updateNotifications(notifications);
                 }
@@ -174,12 +170,12 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
     private boolean checkNotificationsPermission() {
         Set<String> listeners = NotificationManagerCompat.getEnabledListenerPackages(this);
         boolean enabled = false;
-        for (String pack : listeners){
-            if (pack.equals(getPackageName())){
+        for (String pack : listeners) {
+            if (pack.equals(getPackageName())) {
                 enabled = true;
             }
         }
-        if (enabled){
+        if (enabled) {
             return true;
         }
         Intent intent = new Intent(this, PermissionRequestActivity.class);
@@ -206,7 +202,7 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
         return null;
     }
 
-    public void destroyLockScreen(){
+    public void destroyLockScreen() {
         this.lockScreen = null;
     }
 

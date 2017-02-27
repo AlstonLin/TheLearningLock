@@ -1,53 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:background="@android:color/transparent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
     android:weightSum="1">
 
     <TextView
-        android:text="Do you want the Lock Screen to learn from this entry to improve future accuracy?"
         android:layout_width="match_parent"
-        android:textSize="21sp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="64sp"
         android:layout_marginLeft="21sp"
         android:layout_marginRight="21sp"
+        android:layout_marginTop="64sp"
+        android:gravity="center"
+        android:text="Do you want the Lock Screen to learn from this entry to improve future accuracy?"
         android:textColor="@color/white"
-        android:layout_height="wrap_content" />
+        android:textSize="21sp" />
 
     <Button
-        android:text="Yes"
+        android:id="@+id/layout_add_entry_yes"
         style="@style/AppTheme.Button"
-        android:background="@drawable/button_background"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="32dp"
-        android:id="@+id/layout_add_entry_yes" />
+        android:background="@drawable/button_background"
+        android:text="Yes" />
 
     <Button
-        android:text="No"
+        android:id="@+id/layout_add_entry_no"
         style="@style/AppTheme.Button"
-        android:background="@drawable/button_background"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="32dp"
-        android:id="@+id/layout_add_entry_no" />
+        android:background="@drawable/button_background"
+        android:text="No" />
 
     <CheckBox
-        android:text="Do not ask again"
+        android:id="@+id/do_not_ask_to_retrain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/do_not_ask_to_retrain"
         android:layout_marginEnd="48dp"
         android:layout_marginStart="48dp"
-        android:layout_marginTop="32dp" />
+        android:layout_marginTop="32dp"
+        android:text="Do not ask again" />
 </LinearLayout>

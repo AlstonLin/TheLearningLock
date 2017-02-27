@@ -1,6 +1,5 @@
 package io.alstonlin.thelearninglock.pattern;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.alstonlin.thelearninglock.R;
-import io.alstonlin.thelearninglock.shared.SharedUtils;
 import me.zhanghai.android.patternlock.PatternView;
 
 /**
@@ -19,12 +17,13 @@ public class PatternUtils {
     /**
      * Manages the PatternView, listens to it, and handles / process the pattern received from the
      * listener and returns it to the given listener.
-     * @param layout An instance of the layout defined in layout_pattern.xmlml
+     *
+     * @param layout   An instance of the layout defined in layout_pattern.xmlml
      * @param listener An instance of OnPatternSelectListener that will receive the processed
      *                 pattern once it has been selected
-     * @param title The title that should be displayed on the top of this Layout
+     * @param title    The title that should be displayed on the top of this Layout
      */
-    public static void setupPatternLayout(final View layout, final OnPatternSelectListener listener, String title){
+    public static void setupPatternLayout(final View layout, final OnPatternSelectListener listener, String title) {
         // Title Setup
         setPatternLayoutTitle(layout, title);
         // Pattern
@@ -54,19 +53,20 @@ public class PatternUtils {
         });
     }
 
-    public static void setPatternLayoutTitle(final View layout, String title){
+    public static void setPatternLayoutTitle(final View layout, String title) {
         TextView titleView = (TextView) layout.findViewById(R.id.pattern_view_title);
         titleView.setText(title);
     }
 
     /**
      * Converts the list of Cells representing patterns to a list of int[2] with the same row/col info
+     *
      * @param pattern The layout_pattern to convert
      * @return The converted list of int[2]
      */
-    public static ArrayList<int[]> serializePattern(List<PatternView.Cell> pattern){
+    public static ArrayList<int[]> serializePattern(List<PatternView.Cell> pattern) {
         ArrayList<int[]> list = new ArrayList<>();
-        for (PatternView.Cell cell : pattern){
+        for (PatternView.Cell cell : pattern) {
             int[] a = new int[2];
             a[0] = cell.getRow();
             a[1] = cell.getColumn();
@@ -77,13 +77,14 @@ public class PatternUtils {
 
     /**
      * Determines if two lists of int[2] are equal, because apparently Java can't check that for us.
+     *
      * @param l1 The first list
      * @param l2 The second list
      * @return If the lists are equal
      */
-    public static boolean arePatternsEqual(List<int[]> l1, List<int[]> l2){
+    public static boolean arePatternsEqual(List<int[]> l1, List<int[]> l2) {
         if (l1.size() != l2.size()) return false;
-        for (int i = 0; i < l1.size(); i++){
+        for (int i = 0; i < l1.size(); i++) {
             int[] e1 = l1.get(i);
             int[] e2 = l2.get(i);
             if (e1[0] != e2[0] || e1[1] != e2[1]) return false;
@@ -93,11 +94,12 @@ public class PatternUtils {
 
     /**
      * Calculates the time between each unlock.
+     *
      * @param timeAtClick A list of times in milliseconds for each click
      * @return The time between each click
      */
-    private static double[] calculateTimeElapsed(ArrayList<Double> timeAtClick){
-        double[] elapsedTimes = new double[timeAtClick.size()-1];
+    private static double[] calculateTimeElapsed(ArrayList<Double> timeAtClick) {
+        double[] elapsedTimes = new double[timeAtClick.size() - 1];
         for (int i = 0; i < timeAtClick.size() - 1; i++) {
             elapsedTimes[i] = timeAtClick.get(i + 1) - timeAtClick.get(i);
         }

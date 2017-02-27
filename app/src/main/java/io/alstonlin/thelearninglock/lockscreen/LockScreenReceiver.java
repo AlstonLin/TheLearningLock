@@ -3,7 +3,6 @@ package io.alstonlin.thelearninglock.lockscreen;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -21,7 +20,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
             // Crashlytics
             Fabric.with(context, new Crashlytics());
             startLockscreen(context, false);
-        } else if(intent.getAction().equals(Intent.ACTION_SCREEN_ON)){
+        } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
             startLockscreen(context, true);
         }
     }

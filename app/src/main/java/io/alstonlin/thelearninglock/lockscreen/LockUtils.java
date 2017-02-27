@@ -1,21 +1,13 @@
 package io.alstonlin.thelearninglock.lockscreen;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.os.BatteryManager;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pin.PINUtils;
@@ -49,19 +41,20 @@ public class LockUtils {
 
     /**
      * Has the effect of "unlocking" the screen.
+     *
      * @param context The context of the app
-     * @param attach The View that is attached as the lock screen
+     * @param attach  The View that is attached as the lock screen
      */
-    public static void unlock(Context context, View attach, View background){
+    public static void unlock(Context context, View attach, View background) {
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         try {
             if (attach != null) windowManager.removeView(attach);
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-        try{
+        try {
             if (background != null) windowManager.removeView(background);
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
     }
@@ -69,11 +62,11 @@ public class LockUtils {
     /**
      * Performs the effect of "locking" the screen.
      *
-     * @param context The context of the app
-     * @param attach The View to attach as the lock screen
+     * @param context    The context of the app
+     * @param attach     The View to attach as the lock screen
      * @param background The view of the separate background layout
      */
-    public static void lock(Context context, View attach, View background) throws WindowManager.BadTokenException{
+    public static void lock(Context context, View attach, View background) throws WindowManager.BadTokenException {
         // Sets up the window manage parameters for the View to add\
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Point displaySize = new Point();
@@ -90,8 +83,8 @@ public class LockUtils {
     }
 
     // Quick way of setting which screen is the one visible, and sets all the others to GONE
-    public static void setVisibleScreen(ViewGroup lockContainer, int visibleId){
-        for (int i = 0; i < lockContainer.getChildCount(); i++){
+    public static void setVisibleScreen(ViewGroup lockContainer, int visibleId) {
+        for (int i = 0; i < lockContainer.getChildCount(); i++) {
             View screen = lockContainer.getChildAt(i);
             screen.setVisibility(screen.getId() == visibleId ? View.VISIBLE : View.GONE);
         }

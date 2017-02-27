@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Bundle;
-
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -21,25 +20,24 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
-import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
+import io.alstonlin.thelearninglock.R;
+import io.alstonlin.thelearninglock.lockscreen.LockScreenService;
+import io.alstonlin.thelearninglock.pin.OnPINSelectListener;
+import io.alstonlin.thelearninglock.pin.PINUtils;
 import io.alstonlin.thelearninglock.setup.BackgroundPickerFragment;
 import io.alstonlin.thelearninglock.setup.PINSetupFragment;
 import io.alstonlin.thelearninglock.setup.PatternSetupFragment;
 import io.alstonlin.thelearninglock.shared.Const;
-import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
 import io.alstonlin.thelearninglock.shared.SharedUtils;
-import io.alstonlin.thelearninglock.lockscreen.LockScreenService;
-import io.alstonlin.thelearninglock.pin.OnPINSelectListener;
-import io.alstonlin.thelearninglock.pin.PINUtils;
 import io.fabric.sdk.android.Fabric;
 
 /**
  * Warning: This flow is VERY complicated due to Android's new permission system.
- *
+ * <p>
  * Entry point to the app (Activity that is launched when the app is started).
  * The first thing this will do is to check the non-super permissions, and request them.
  * It will then show a Settings Fragment showing options to configure the app if already set up.
@@ -77,7 +75,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
         // Sets the Fragment to show based on if Lockscreen has already been set up
         setup = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Const.SETUP_FLAG, false);
         Fragment fragment;
-        if (setup){
+        if (setup) {
             fragment = SettingsFragment.newInstance();
             setTitle("Settings");
         } else {
@@ -88,21 +86,21 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         PINHash = SharedUtils.loadHashFromFiledFile(this, Const.PASSCODE_FILENAME, false);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if (requestCode == REQUEST_PERMISSIONS_CODE){
-            if (grantResults.length != PERMISSIONS.length){
+        if (requestCode == REQUEST_PERMISSIONS_CODE) {
+            if (grantResults.length != PERMISSIONS.length) {
                 Snackbar.make(findViewById(R.id.activity_main_fragment_container), "All the permissions must be accepted before the lock screen can be started", Snackbar.LENGTH_SHORT).show();
                 finish();
                 return;
             }
-            for (int i = 0; i < grantResults.length; i++){
-                if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                     Snackbar.make(findViewById(R.id.activity_main_fragment_container), "All the permissions must be accepted before the lock screen can be started", Snackbar.LENGTH_SHORT).show();
                     finish();
                     return;
@@ -115,7 +113,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
      * Fragment Flow
      */
 
-    private void changeFragment(Fragment fragment){
+    private void changeFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.activity_main_fragment_container, fragment);
         transaction.addToBackStack(null);
@@ -132,11 +130,11 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
      * onClick methods from SettingsFragment
      */
 
-    public void clickChangeBackground(View view){
+    public void clickChangeBackground(View view) {
         changeFragment(BackgroundPickerFragment.newInstance());
     }
 
-    public void clickChangePattern(View view){
+    public void clickChangePattern(View view) {
         runAuthenticated(new Runnable() {
             @Override
             public void run() {
@@ -145,7 +143,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
         });
     }
 
-    public void clickChangePIN(View view){
+    public void clickChangePIN(View view) {
         runAuthenticated(new Runnable() {
             @Override
             public void run() {
@@ -157,9 +155,10 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
     /**
      * Goes through the setup process.
      * Can be called from both the SettingsFragment and WelcomeFragment.
+     *
      * @param v Unused
      */
-    public void clickSetup(View v){
+    public void clickSetup(View v) {
         runAuthenticated(new Runnable() {
             @Override
             public void run() {
@@ -171,7 +170,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
     /**
      * Launches the SetupActivity through the LockScreenService (so it can permission check first).
      */
-    private void setupLockScreen(){
+    private void setupLockScreen() {
         Intent intent = new Intent(this, LockScreenService.class);
         intent.addFlags(LockScreenService.OPEN_SETUP_ACTIVITY);
         startService(intent);
@@ -181,10 +180,11 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
 
     /**
      * Runs the given task after checking for PIN, if already set up
+     *
      * @param task Task to run once authenticated
      */
-    private void runAuthenticated(final Runnable task){
-        if (!setup){
+    private void runAuthenticated(final Runnable task) {
+        if (!setup) {
             task.run();
             return;
         }
@@ -196,7 +196,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
         PINUtils.setupPINView(pinView, new OnPINSelectListener() {
             @Override
             public void onPINSelected(String PIN) {
-                if (SharedUtils.compareObjectToHash(getApplicationContext(), PIN, PINHash)){
+                if (SharedUtils.compareObjectToHash(getApplicationContext(), PIN, PINHash)) {
                     task.run();
                     authCheckPopup.dismiss();
                 } else {

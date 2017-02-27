@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/container"
     android:background="#424242">
 
     <FrameLayout
@@ -12,33 +11,33 @@
         android:layout_height="wrap_content" />
 
     <LinearLayout
+        android:id="@+id/undo_block"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/undo_block"
         android:orientation="horizontal"
-        android:visibility="gone"
-        android:weightSum="3"
         android:paddingLeft="12dp"
-        android:paddingRight="12dp">
+        android:paddingRight="12dp"
+        android:visibility="gone"
+        android:weightSum="3">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:text="Deleted"
-            android:clickable="false"
             android:layout_weight="2"
+            android:clickable="false"
+            android:gravity="center_vertical"
             android:hapticFeedbackEnabled="true"
-            android:textColor="@android:color/white"/>
+            android:text="Deleted"
+            android:textColor="@android:color/white" />
 
         <TextView
+            android:id="@+id/undo_text"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:id="@+id/undo_text"
-            android:text="Undo"
-            android:clickable="false"
             android:layout_weight="1"
-            android:textColor="#FFEB3B"/>
+            android:clickable="false"
+            android:gravity="center"
+            android:text="Undo"
+            android:textColor="#FFEB3B" />
     </LinearLayout>
 </FrameLayout>

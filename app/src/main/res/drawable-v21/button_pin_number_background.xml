@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ripple android:color="@color/colorAccent" xmlns:android="http://schemas.android.com/apk/res/android">
-    <item >
-        <shape android:shape="oval" android:innerRadiusRatio="1" >
-            <stroke android:color="@color/colorPrimary" android:width="2dp"/>
-            <solid android:color="@color/opacity_grey"/>
-            <padding android:left="@dimen/fab_margin"
-                android:right="@dimen/fab_margin"
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/colorAccent">
+    <item>
+        <shape
+            android:innerRadiusRatio="1"
+            android:shape="oval">
+            <stroke
+                android:width="2dp"
+                android:color="@color/colorPrimary" />
+            <solid android:color="@color/opacity_grey" />
+            <padding
                 android:bottom="@dimen/fab_margin"
-                android:top="@dimen/fab_margin"/>
+                android:left="@dimen/fab_margin"
+                android:right="@dimen/fab_margin"
+                android:top="@dimen/fab_margin" />
         </shape>
     </item>
 </ripple>

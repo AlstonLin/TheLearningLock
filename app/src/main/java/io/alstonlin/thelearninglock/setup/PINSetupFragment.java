@@ -1,6 +1,5 @@
 package io.alstonlin.thelearninglock.setup;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -8,17 +7,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-
-import io.alstonlin.thelearninglock.shared.Const;
-import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
 import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.pin.OnPINSelectListener;
 import io.alstonlin.thelearninglock.pin.PINUtils;
+import io.alstonlin.thelearninglock.shared.Const;
+import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
 import io.alstonlin.thelearninglock.shared.SharedUtils;
 
 
@@ -28,6 +22,7 @@ import io.alstonlin.thelearninglock.shared.SharedUtils;
 public class PINSetupFragment extends Fragment {
     /**
      * Factory method to create a new instance of this Fragment
+     *
      * @return A new instance of fragment PINSetupFragment.
      */
     public static PINSetupFragment newInstance() {
@@ -54,7 +49,7 @@ public class PINSetupFragment extends Fragment {
                     PINUtils.setPINTitle(view, "Confirm your PIN");
                     PINUtils.clearPIN(view);
                 } else {
-                    if (PINToConfirm[0].equals(PIN)){
+                    if (PINToConfirm[0].equals(PIN)) {
                         savePIN(PIN);
                         finished();
                     } else {
@@ -74,7 +69,7 @@ public class PINSetupFragment extends Fragment {
         editor.putBoolean(Const.SETUP_FLAG, true);
         editor.putBoolean(Const.ENABLED, true);
         editor.commit();
-        ((OnFragmentFinishedListener)getActivity()).onFragmentFinished();
+        ((OnFragmentFinishedListener) getActivity()).onFragmentFinished();
     }
 
     private boolean savePIN(String PIN) {

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -13,7 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
@@ -31,132 +29,28 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import io.alstonlin.thelearninglock.R;
 import io.alstonlin.thelearninglock.shared.Const;
 import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
-import io.alstonlin.thelearninglock.R;
 
 
 /**
  * A Fragment where the user can select the Lock screen background
  */
 public class BackgroundPickerFragment extends Fragment {
-    private int PICK_IMAGE_REQUEST = 1;
     // Ratio of the what % of full screen res to save image as
     private static final int MAX_BG_SIZE = (int) (Math.max(Resources.getSystem().getDisplayMetrics().heightPixels,
             Resources.getSystem().getDisplayMetrics().widthPixels) * Const.SCREEN_BG_RESIZE_RATIO);
+    private int PICK_IMAGE_REQUEST = 1;
+
     /**
      * Factory method to create a new instance of this Fragment
+     *
      * @return A new instance of fragment BackgroundPickerFragment.
      */
     public static BackgroundPickerFragment newInstance() {
         BackgroundPickerFragment fragment = new BackgroundPickerFragment();
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getActivity().setTitle("Pick a Background");
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_background_picker, container, false);
-        // TODO: Maybe also have default backgrounds to choose from?
-        Button galleryPickButton = (Button) view.findViewById(R.id.fragment_background_picker_gallery_button);
-        galleryPickButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pickFromGallery();
-            }
-        });
-        Button selectPictureButton = (Button) view.findViewById(R.id.fragment_background_picker_select_button);
-        selectPictureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectPicture();
-            }
-        });
-        return view;
-    }
-
-    /**
-     * Picks from the user's gallery
-     */
-    private void pickFromGallery(){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
-    }
-
-    /**
-     * Picks from the default pictures
-     */
-    private void selectPicture(){
-        // Sets up the gridview
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ViewGroup pickerView = (ViewGroup) inflater.inflate(R.layout.layout_select_bg, null, false);
-        GridView imagesGrid = (GridView) pickerView.findViewById(R.id.bg_grid);
-        final PopupWindow popup = new PopupWindow(pickerView,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                true);
-        final BGImagePickerAdapter bgImageAdapter = new BGImagePickerAdapter(getContext());
-        imagesGrid.setAdapter(bgImageAdapter);
-        imagesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Usually, full resolution = alot of memory
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), bgImageAdapter.getItem(position));
-                setBackgroundBitmap(bitmap);
-                onBackgroundSelected();
-                popup.dismiss();
-            }
-        });
-        popup.showAtLocation(getView(), Gravity.CENTER, 0, 0);
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null){
-            Uri uri = data.getData();
-            Bitmap bitmap = BitmapFactory.decodeFile(getPath(getContext(), uri));
-            setBackgroundBitmap(bitmap);
-            onBackgroundSelected();
-        }
-    }
-
-    public void onBackgroundSelected(){
-        ((OnFragmentFinishedListener)getActivity()).onFragmentFinished();
-    }
-
-    private void setBackgroundBitmap(Bitmap bg){
-        // Resizes the bitmap
-        Bitmap resized = Bitmap.createScaledBitmap(bg, MAX_BG_SIZE, MAX_BG_SIZE, false);
-        // Saves the new resized bg to a file
-        File dir = new File(Const.BACKGROUND_DIR);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        File file = new File(dir, Const.BACKGROUND_FILE);
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(file);
-            resized.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            fos.close();
-        } catch (IOException e) {
-            Snackbar.make(getView(), "Couldnt save background!", Snackbar.LENGTH_SHORT).show();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     /**
@@ -165,7 +59,7 @@ public class BackgroundPickerFragment extends Fragment {
      * other file-based ContentProviders.
      *
      * @param context The context.
-     * @param uri The Uri to query.
+     * @param uri     The Uri to query.
      * @author paulburke
      */
     private static String getPath(final Context context, final Uri uri) {
@@ -208,7 +102,7 @@ public class BackgroundPickerFragment extends Fragment {
                 }
 
                 final String selection = "_id=?";
-                final String[] selectionArgs = new String[] {
+                final String[] selectionArgs = new String[]{
                         split[1]
                 };
 
@@ -231,9 +125,9 @@ public class BackgroundPickerFragment extends Fragment {
      * Get the value of the data column for this Uri. This is useful for
      * MediaStore Uris, and other file-based ContentProviders.
      *
-     * @param context The context.
-     * @param uri The Uri to query.
-     * @param selection (Optional) Filter used in the query.
+     * @param context       The context.
+     * @param uri           The Uri to query.
+     * @param selection     (Optional) Filter used in the query.
      * @param selectionArgs (Optional) Selection arguments used in the query.
      * @return The value of the _data column, which is typically a file path.
      */
@@ -260,7 +154,6 @@ public class BackgroundPickerFragment extends Fragment {
         return null;
     }
 
-
     /**
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider.
@@ -283,5 +176,111 @@ public class BackgroundPickerFragment extends Fragment {
      */
     private static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActivity().setTitle("Pick a Background");
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_background_picker, container, false);
+        // TODO: Maybe also have default backgrounds to choose from?
+        Button galleryPickButton = (Button) view.findViewById(R.id.fragment_background_picker_gallery_button);
+        galleryPickButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pickFromGallery();
+            }
+        });
+        Button selectPictureButton = (Button) view.findViewById(R.id.fragment_background_picker_select_button);
+        selectPictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectPicture();
+            }
+        });
+        return view;
+    }
+
+    /**
+     * Picks from the user's gallery
+     */
+    private void pickFromGallery() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    /**
+     * Picks from the default pictures
+     */
+    private void selectPicture() {
+        // Sets up the gridview
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ViewGroup pickerView = (ViewGroup) inflater.inflate(R.layout.layout_select_bg, null, false);
+        GridView imagesGrid = (GridView) pickerView.findViewById(R.id.bg_grid);
+        final PopupWindow popup = new PopupWindow(pickerView,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                true);
+        final BGImagePickerAdapter bgImageAdapter = new BGImagePickerAdapter(getContext());
+        imagesGrid.setAdapter(bgImageAdapter);
+        imagesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Usually, full resolution = alot of memory
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), bgImageAdapter.getItem(position));
+                setBackgroundBitmap(bitmap);
+                onBackgroundSelected();
+                popup.dismiss();
+            }
+        });
+        popup.showAtLocation(getView(), Gravity.CENTER, 0, 0);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            Bitmap bitmap = BitmapFactory.decodeFile(getPath(getContext(), uri));
+            setBackgroundBitmap(bitmap);
+            onBackgroundSelected();
+        }
+    }
+
+    public void onBackgroundSelected() {
+        ((OnFragmentFinishedListener) getActivity()).onFragmentFinished();
+    }
+
+    private void setBackgroundBitmap(Bitmap bg) {
+        // Resizes the bitmap
+        Bitmap resized = Bitmap.createScaledBitmap(bg, MAX_BG_SIZE, MAX_BG_SIZE, false);
+        // Saves the new resized bg to a file
+        File dir = new File(Const.BACKGROUND_DIR);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File file = new File(dir, Const.BACKGROUND_FILE);
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+            resized.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+        } catch (IOException e) {
+            Snackbar.make(getView(), "Couldnt save background!", Snackbar.LENGTH_SHORT).show();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

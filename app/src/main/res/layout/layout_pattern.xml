@@ -2,61 +2,62 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="25dp"
     android:background="@android:color/transparent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingTop="25dp">
 
     <TextView
+        android:id="@+id/pattern_view_title"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_gravity="center_horizontal|top"
         android:layout_marginTop="15dp"
         android:layout_weight="1"
-        android:text="Large Text"
-        android:textColor="#FFFFFF"
-        android:id="@+id/pattern_view_title"
-        android:layout_gravity="center_horizontal|top"
-        android:textSize="21sp"
         android:gravity="center"
         android:paddingLeft="15dp"
-        android:paddingRight="15dp"/>
+        android:paddingRight="15dp"
+        android:text="Large Text"
+        android:textColor="#FFFFFF"
+        android:textSize="21sp" />
 
-    <me.zhanghai.android.patternlock.PatternView
-        xmlns:PatternView="http://schemas.android.com/apk/res-auto"
+    <me.zhanghai.android.patternlock.PatternView xmlns:PatternView="http://schemas.android.com/apk/res-auto"
         android:id="@+id/pattern_view_pattern"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4"
         android:layout_marginTop="10dp"
-        PatternView:pl_regularColor="#FFFFFF"/>
+        android:layout_weight="4"
+        PatternView:pl_regularColor="#FFFFFF" />
 
     <LinearLayout
+        android:id="@+id/pattern_view_confirm_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="bottom"
-        android:visibility="gone"
-        android:id="@+id/pattern_view_confirm_bar">
+        android:orientation="horizontal"
+        android:visibility="gone">
+
         <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Confirm"
             android:id="@+id/pattern_view_confirm_button"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginRight="8dp" />
-        <Button
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Reset"
-            android:id="@+id/pattern_view_reset_button"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginBottom="16dp"
-            android:layout_marginRight="16dp" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:text="Confirm" />
+
+        <Button
+            android:id="@+id/pattern_view_reset_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:text="Reset" />
     </LinearLayout>
 </LinearLayout>

@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
     android:id="@+id/status_bar"
+    android:layout_width="match_parent"
+    android:layout_height="32dp"
     android:gravity="right"
-    android:layout_height="32dp">
+    android:orientation="horizontal">
+
     <ImageView
+        android:id="@+id/signal_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:src="@drawable/ic_signal_wifi_off_white_36dp"
         android:adjustViewBounds="true"
-        android:visibility="gone"
-        android:id="@+id/signal_icon"/>
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
         android:src="@drawable/ic_signal_wifi_off_white_36dp"
-        android:adjustViewBounds="true"
-        android:id="@+id/wifi_icon"/>
+        android:visibility="gone" />
+
     <ImageView
+        android:id="@+id/wifi_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_signal_wifi_off_white_36dp" />
+
+    <ImageView
+        android:id="@+id/airplane_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
         android:src="@drawable/ic_airplanemode_active_white_36dp"
-        android:adjustViewBounds="true"
-        android:visibility="gone"
-        android:id="@+id/airplane_icon"/>
+        android:visibility="gone" />
+
     <ImageView
+        android:id="@+id/battery_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:src="@drawable/ic_battery_full_white_36dp"
         android:adjustViewBounds="true"
-        android:id="@+id/battery_icon"/>
+        android:src="@drawable/ic_battery_full_white_36dp" />
+
     <TextView
-        android:text="100%"
+        android:id="@+id/battery_percentage"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:id="@+id/battery_percentage"
-        android:textColor="@color/white"/>
+        android:text="100%"
+        android:textColor="@color/white" />
 </LinearLayout>

@@ -16,8 +16,8 @@ import io.alstonlin.thelearninglock.shared.SharedUtils;
  */
 
 public class BGImagePickerAdapter extends BaseAdapter {
-    private Context context;
     private static final int MAX_THUMBNAIL_SIZE = 250; // Max number of pixels for height and width
+    private Context context;
     private TypedArray backgrounds;
 
     public BGImagePickerAdapter(Context c) {

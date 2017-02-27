@@ -1,133 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:id="@+id/activity_main_root" android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_main_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <TextView
+        android:id="@+id/fragment_settings_page_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/fragment_settings_page_title"
-        android:text="Settings"
-        android:gravity="left"
         android:background="@color/colorPrimary"
-        android:textSize="32sp"
-        android:paddingTop="24dp"
+        android:gravity="left"
         android:paddingBottom="12dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="24dp"
+        android:text="Settings"
         android:textColor="@color/white"
-        android:paddingLeft="16dp"/>
+        android:textSize="32sp" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:fitsSystemWindows="true"
         android:layout_height="wrap_content"
+        android:layout_below="@id/fragment_settings_page_title"
         android:layout_marginTop="32dp"
-        android:layout_below="@id/fragment_settings_page_title">
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
         <Switch
+            android:id="@+id/settings_page_enable"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/settings_page_enable"
-            android:textSize="24sp"
-            android:text="Enable Lock Screen"
             android:layout_gravity="center"
             android:max="10"
-            android:switchPadding="12dp" />
+            android:switchPadding="12dp"
+            android:text="Enable Lock Screen"
+            android:textSize="24sp" />
 
         <TextView
-            android:text="Unlock Tolerance"
             android:layout_width="wrap_content"
-            android:textSize="18sp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingTop="12dp"
-            android:layout_height="wrap_content" />
+            android:text="Unlock Tolerance"
+            android:textSize="18sp" />
 
         <SeekBar
+            android:id="@+id/epsilonMult"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
-            android:minHeight="10dp"
             android:maxHeight="10dp"
-            android:id="@+id/epsilonMult" />
+            android:minHeight="10dp" />
 
         <TextView
-            android:text="1x"
-            android:layout_width="wrap_content"
-            android:textSize="12sp"
-            android:layout_gravity="center"
             android:id="@+id/epsilonMultVal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:paddingBottom="6dp"
-            android:layout_height="wrap_content" />
+            android:text="1x"
+            android:textSize="12sp" />
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="24dp">
+            android:layout_marginTop="24dp"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:orientation="horizontal"
                 android:weightSum="2">
 
                 <Button
+                    android:id="@+id/settings_page_reset_lockscreen"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:text="Reset Lockscreen"
-                    android:textSize="18sp"
-                    android:onClick="clickSetup"
-                    android:id="@+id/settings_page_reset_lockscreen"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="2dp"
+                    android:layout_weight="1"
                     android:background="@drawable/button_background_square"
-                    android:layout_weight="1" />
+                    android:onClick="clickSetup"
+                    android:text="Reset Lockscreen"
+                    android:textSize="18sp" />
 
                 <Button
+                    android:id="@+id/settings_page_change_background"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:text="Change Background"
-                    android:textSize="18sp"
-                    android:onClick="clickChangeBackground"
-                    android:id="@+id/settings_page_change_background"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="2dp"
+                    android:layout_weight="1"
                     android:background="@drawable/button_background_square"
-                    android:layout_weight="1" />
+                    android:onClick="clickChangeBackground"
+                    android:text="Change Background"
+                    android:textSize="18sp" />
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:orientation="horizontal"
                 android:weightSum="2">
 
                 <Button
+                    android:id="@+id/settings_page_change_pattern"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:text="Change Pattern"
-                    android:textSize="18sp"
-                    android:id="@+id/settings_page_change_pattern"
-                    android:onClick="clickChangePattern"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="2dp"
+                    android:layout_weight="1"
                     android:background="@drawable/button_background_square"
-                    android:layout_weight="1" />
+                    android:onClick="clickChangePattern"
+                    android:text="Change Pattern"
+                    android:textSize="18sp" />
 
                 <Button
+                    android:id="@+id/settings_page_change_pin"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:text="Change PIN"
-                    android:textSize="18sp"
-                    android:onClick="clickChangePIN"
-                    android:id="@+id/settings_page_change_pin"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="2dp"
+                    android:layout_weight="1"
                     android:background="@drawable/button_background_square"
-                    android:layout_weight="1" />
+                    android:onClick="clickChangePIN"
+                    android:text="Change PIN"
+                    android:textSize="18sp" />
             </LinearLayout>
         </LinearLayout>
 
