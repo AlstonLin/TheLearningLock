@@ -329,6 +329,7 @@ public class LockScreen {
     }
 
     private void updateWeather(final View view) {
+        if (statusBar == null) return; // Did not load screen
         try {
             Awareness.SnapshotApi.getWeather(googleApi)
                     .setResultCallback(new ResultCallback<WeatherResult>() {
@@ -378,8 +379,8 @@ public class LockScreen {
                                 @Override
                                 protected void onPostExecute(String cityName) {
                                     super.onPostExecute(cityName);
-                                    if (cityName == null) return;
                                     TextView cityView = (TextView) view.findViewById(R.id.cityName);
+                                    if (cityName == null || cityView == null) return;
                                     cityView.setVisibility(View.VISIBLE);
                                     cityView.setText(cityName);
                                 }
