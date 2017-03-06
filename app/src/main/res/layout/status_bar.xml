@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/status_bar"
-    android:layout_width="match_parent"
-    android:layout_height="32dp"
-    android:gravity="right"
-    android:orientation="horizontal">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/status_bar"
+              android:layout_width="match_parent"
+              android:layout_height="32dp"
+              android:gravity="right"
+              android:orientation="horizontal"
+              android:paddingTop="4dp">
 
     <ImageView
         android:id="@+id/signal_icon"
@@ -12,14 +14,18 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:src="@drawable/ic_signal_wifi_off_white_36dp"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:layout_marginRight="4dp"
+        android:layout_marginLeft="4dp"/>
 
     <ImageView
         android:id="@+id/wifi_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:src="@drawable/ic_signal_wifi_off_white_36dp" />
+        android:src="@drawable/ic_signal_wifi_off_white_36dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginLeft="4dp"/>
 
     <ImageView
         android:id="@+id/airplane_icon"
@@ -27,14 +33,18 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:src="@drawable/ic_airplanemode_active_white_36dp"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:layout_marginRight="4dp"
+        android:layout_marginLeft="4dp"/>
 
     <ImageView
         android:id="@+id/battery_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:src="@drawable/ic_battery_full_white_36dp" />
+        android:src="@drawable/ic_battery_full_white_36dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginLeft="4dp"/>
 
     <TextView
         android:id="@+id/battery_percentage"
@@ -42,5 +52,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="100%"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:layout_marginRight="4dp"
+        android:layout_marginLeft="4dp"/>
 </LinearLayout>

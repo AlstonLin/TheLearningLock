@@ -7,18 +7,6 @@
     android:orientation="vertical">
 
     <TextClock
-        android:id="@+id/clock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="48dp"
-        android:fontFamily="sans-serif-light"
-        android:textColor="#FFFFFF"
-        android:textSize="64sp"
-        android:typeface="sans" />
-
-    <TextClock
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,19 +59,6 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/lock_screen_notifications_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/relativeLayout"
-        android:layout_alignParentTop="false"
-        android:layout_below="@+id/awareness"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="25dp"
-        android:layout_marginRight="25dp" />
-
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
@@ -107,13 +82,40 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:clickable="false"
             android:max="100"
             android:progressDrawable="@android:color/transparent"
-            android:thumb="@mipmap/ic_launcher" />
+            android:baselineAligned="false"
+            android:thumb="@mipmap/ic_launcher"
+            android:layout_alignParentStart="true"
+            android:paddingEnd="24dp"
+            android:paddingStart="24dp"/>
     </RelativeLayout>
+
+    <ListView
+        android:id="@+id/lock_screen_notifications_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:divider="@null"
+        android:dividerHeight="2dp"
+        android:layout_below="@+id/awareness"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/relativeLayout"/>
+
+    <TextClock
+        android:id="@+id/clock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="58dp"
+        android:fontFamily="sans-serif-light"
+        android:textColor="#FFFFFF"
+        android:textSize="64sp"
+        android:typeface="sans"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

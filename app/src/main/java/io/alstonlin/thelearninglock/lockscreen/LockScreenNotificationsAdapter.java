@@ -2,6 +2,7 @@ package io.alstonlin.thelearninglock.lockscreen;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,7 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<LockScreenNotif
         // TODO: Make a style for the Notification and create it with it for consistency
         final LockScreenNotificationService.LockScreenNotification notification = getItem(i);
         View view = notification.getNotification().contentView.apply(context, parent);
-        view.setBackgroundColor(Color.parseColor("#88FFFFFF"));
+        view.setBackgroundColor(ContextCompat.getColor(context,R.color.white));
         // Sets up the view
         View undoText = convertView.findViewById(R.id.undo_text);
         undoText.setOnClickListener(new View.OnClickListener() {
