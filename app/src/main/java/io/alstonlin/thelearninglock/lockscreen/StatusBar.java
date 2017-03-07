@@ -155,7 +155,10 @@ public class StatusBar {
                 } else {
                     signalIcon.setVisibility(View.VISIBLE);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        signalIcon.setImageResource(signalStrengthToIcon.get(signalStrength.getLevel()));
+                        // See https://github.com/AlstonLin/TheLearningLock/issues/54
+                        Integer imageRes = signalStrengthToIcon.get(signalStrength.getLevel());
+                        if (imageRes != null) signalIcon.setImageResource(imageRes);
+                        else signalIcon.setImageResource(signalStrengthToIcon.get(4));
                     } else {
                         // Just show the full icon
                         signalIcon.setImageResource(signalStrengthToIcon.get(4));
