@@ -60,7 +60,7 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/relativeLayout"
+        android:id="@+id/slider_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/lock_screen_notifications_list"
@@ -103,7 +103,8 @@
         android:dividerHeight="2dp"
         android:layout_below="@+id/awareness"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/relativeLayout"/>
+        android:layout_marginBottom="18dp"
+        android:layout_above="@+id/slider_container"/>
 
     <TextClock
         android:id="@+id/clock"

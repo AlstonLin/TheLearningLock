@@ -1,9 +1,12 @@
 package io.alstonlin.thelearninglock.lockscreen;
 
 import android.content.Context;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 import android.widget.SeekBar;
 
 /**
@@ -12,12 +15,17 @@ import android.widget.SeekBar;
  */
 
 public class SlideButton extends SeekBar {
+    private static final float HITBOX_DISPLAY_FRACTION = 0.35f;
 
+    private int hitboxPadding;
     private Drawable thumb;
     private SlideButtonListener listener;
 
     public SlideButton(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        super(context, attrs);        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Point displaySize = new Point();
+        windowManager.getDefaultDisplay().getRealSize(displaySize);
+        hitboxPadding = (int)(HITBOX_DISPLAY_FRACTION * displaySize.x);
     }
 
     @Override
@@ -29,7 +37,10 @@ public class SlideButton extends SeekBar {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (thumb.getBounds().contains((int) event.getX(), (int) event.getY())) {
+            Rect hitbox = new Rect(thumb.getBounds());
+            hitbox.left -= hitboxPadding;
+            hitbox.right += hitboxPadding;
+            if (hitbox.contains((int) event.getX(), (int) event.getY())) {
                 super.onTouchEvent(event);
             } else
                 return false;

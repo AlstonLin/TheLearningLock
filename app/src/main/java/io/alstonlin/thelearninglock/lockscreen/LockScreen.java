@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -13,6 +14,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -197,8 +199,14 @@ public class LockScreen {
      * @param view The Lock Screen's View
      */
     private void setupLockContainer(View view) {
-        // Lock screen
-        // TODO: Slide up to unlock
+        setupSlidebar(view);
+        setupNotificationList(view);
+        setupPatternScreen(view);
+        setupPINScreen(view);
+        setupAddEntryDialog(view);
+    }
+
+    private void setupSlidebar(View view){
         SlideButton seekBar = (SlideButton) view.findViewById(R.id.lock_screen_slider);
         seekBar.setSlideButtonListener(new SlideButtonListener() {
             @Override
@@ -206,10 +214,15 @@ public class LockScreen {
                 showUnlockScreen();
             }
         });
-        setupNotificationList(view);
-        setupPatternScreen(view);
-        setupPINScreen(view);
-        setupAddEntryDialog(view);
+        // Increases the vertical touch hitbox
+        Rect delegateArea = new Rect();
+        seekBar.getHitRect(delegateArea);
+        delegateArea.top -= 600;
+        delegateArea.bottom += 600;
+        TouchDelegate expandedArea = new TouchDelegate(delegateArea, seekBar);
+        if (View.class.isInstance(seekBar.getParent())) {
+            ((View) seekBar.getParent()).setTouchDelegate(expandedArea);
+        }
     }
 
     private void setupNotificationList(View lockView) {
