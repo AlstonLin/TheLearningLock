@@ -6,9 +6,11 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.util.Base64;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
@@ -38,8 +40,14 @@ public class SharedUtils {
     public static void setupBackground(Context context, View view) {
         File dir = new File(Const.BACKGROUND_DIR);
         File file = new File(dir, Const.BACKGROUND_FILE);
-        if (file.exists()) view.setBackground(Drawable.createFromPath(file.getAbsolutePath()));
-        else view.setBackgroundColor(Color.BLUE);
+        if (file.exists()){
+            Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath());
+            BitmapDrawable drawable = new BitmapDrawable(context.getResources(), bmp);
+            drawable.setGravity(Gravity.CENTER);
+            view.setBackground(drawable);
+        } else{
+            view.setBackgroundColor(Color.BLUE);
+        }
     }
 
     /**
