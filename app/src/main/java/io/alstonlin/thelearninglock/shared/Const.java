@@ -35,4 +35,6 @@ public class Const {
     // Ratio to resize background image relative to screen size
     // Lower this is memory becomes and issuex
     public static final float SCREEN_BG_RESIZE_RATIO = 1f;
+    // Defaults
+    public static final float DEFAULT_EPSILON_TOL = 1.01f;
 }

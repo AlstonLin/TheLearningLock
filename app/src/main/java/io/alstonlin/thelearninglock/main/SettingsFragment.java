@@ -34,7 +34,7 @@ public class SettingsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         enabled = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(Const.ENABLED, false);
-        tolerance = PreferenceManager.getDefaultSharedPreferences(getContext()).getFloat(Const.EPSILON_TOL, 1f);
+        tolerance = PreferenceManager.getDefaultSharedPreferences(getContext()).getFloat(Const.EPSILON_TOL, Const.DEFAULT_EPSILON_TOL);
     }
 
     @Override

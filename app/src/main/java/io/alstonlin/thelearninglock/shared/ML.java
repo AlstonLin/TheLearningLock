@@ -38,7 +38,7 @@ public class ML implements Serializable {
         this.n = n;
         muArr = new double[n];
         sigmaSquaredArr = new double[n];
-        epsTol = PreferenceManager.getDefaultSharedPreferences(context).getFloat(Const.EPSILON_TOL, 1f);
+        epsTol = PreferenceManager.getDefaultSharedPreferences(context).getFloat(Const.EPSILON_TOL, Const.DEFAULT_EPSILON_TOL);
     }
 
     /**
@@ -55,7 +55,7 @@ public class ML implements Serializable {
             is = new ObjectInputStream(fis);
             ML loaded = (ML) is.readObject();
             loaded.context = context;
-            loaded.epsTol = PreferenceManager.getDefaultSharedPreferences(context).getFloat(Const.EPSILON_TOL, 1f);
+            loaded.epsTol = PreferenceManager.getDefaultSharedPreferences(context).getFloat(Const.EPSILON_TOL, Const.DEFAULT_EPSILON_TOL);
             result = loaded;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
