@@ -69,10 +69,6 @@ public class LockUtils {
     public static void lock(Context context, View attach, View background) throws WindowManager.BadTokenException {
         // Sets up the window manage parameters for the View to add\
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Point displaySize = new Point();
-        windowManager.getDefaultDisplay().getRealSize(displaySize);
-        BG_PARAMS.height = displaySize.y;
-        BG_PARAMS.width = displaySize.x;
         SharedUtils.setupBackground(context, background);
         // Adds the view to the Window Manager
         if (attach.getWindowToken() == null) { // If not already attached
