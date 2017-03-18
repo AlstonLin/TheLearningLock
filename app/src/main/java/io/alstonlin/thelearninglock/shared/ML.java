@@ -148,7 +148,8 @@ public class ML implements Serializable {
      */
     public boolean predictImposter(double[] x) {
         if (x.length != n) {
-            throw new IllegalArgumentException("N is set to " + n + " but given data of size " + x.length);
+            Log.e("ML", "N is set to " + n + " but given data of size " + x.length);
+            return false;
         }
         double prediction = getPrediction(x);
         Log.d("ML", "PREDICTED " + prediction + " with an epsilon " + epsilon);

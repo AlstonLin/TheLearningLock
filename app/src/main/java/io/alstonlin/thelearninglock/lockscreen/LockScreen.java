@@ -239,6 +239,7 @@ public class LockScreen {
                 new SwipeToDismissTouchListener.DismissCallbacks<ListViewAdapter>() {
                     @Override
                     public boolean canDismiss(int position) {
+                        if (notificationsAdapter.getCount() <= position) return false;
                         return notificationsAdapter.getItem(position).isDeletable();
                     }
 
