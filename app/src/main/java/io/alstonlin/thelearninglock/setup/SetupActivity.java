@@ -1,11 +1,13 @@
 package io.alstonlin.thelearninglock.setup;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -16,18 +18,15 @@ import io.alstonlin.thelearninglock.shared.OnFragmentFinishedListener;
 /**
  * The activity that goes through the set up process of the lock screen.
  */
-public class SetupActivity extends FragmentActivity implements OnFragmentFinishedListener {
+public class SetupActivity extends AppCompatActivity implements OnFragmentFinishedListener {
     private Bundle savedInstanceState;
     private int fragmentStateIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         this.savedInstanceState = savedInstanceState;
-        // Full Screen
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         startApp();
     }
 
@@ -37,9 +36,14 @@ public class SetupActivity extends FragmentActivity implements OnFragmentFinishe
         if (savedInstanceState != null) {
             return;
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window w = getWindow();
+            w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
         // Permission Check first
         BackgroundPickerFragment firstFragment = new BackgroundPickerFragment();
-        firstFragment.setArguments(getIntent().getExtras());
+            firstFragment.setArguments(getIntent().getExtras());
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.activity_setup_fragment_container, firstFragment).commit();
     }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -12,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -46,7 +48,7 @@ import io.fabric.sdk.android.Fabric;
  * To set up, the app will start the LockScreenService with the OPEN_SETUP_ACTIVITY flag, which
  * will run the super permissions checks followed by starting the SetupActivity.
  */
-public class MainActivity extends FragmentActivity implements OnFragmentFinishedListener {
+public class MainActivity extends AppCompatActivity implements OnFragmentFinishedListener {
     private static final int REQUEST_PERMISSIONS_CODE = 3;
     private static String[] PERMISSIONS = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -61,11 +63,6 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Full screen
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_main);
         // Crashlytics
         Fabric.with(this, new Crashlytics());
         // Sets up the salt for security
@@ -76,11 +73,21 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
         setup = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Const.SETUP_FLAG, false);
         Fragment fragment;
         if (setup) {
+            requestWindowFeature(Window.FEATURE_ACTION_BAR);
             fragment = SettingsFragment.newInstance();
-            setTitle("Settings");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window w = getWindow();
+                w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+                w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            }
         } else {
+            // Full screen
+            getSupportActionBar().hide();
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
             fragment = WelcomeFragment.newInstance();
         }
+        setContentView(R.layout.activity_main);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.activity_main_fragment_container, fragment).commit();
     }
@@ -163,6 +170,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentFinished
             @Override
             public void run() {
                 setupLockScreen();
+                finish();
             }
         });
     }

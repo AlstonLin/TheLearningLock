@@ -49,6 +49,12 @@ public class PatternSetupFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle("Choose a Pattern");
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         patternsLeft = Const.STARTING_TRAINING_SIZE;
         final View layout = inflater.inflate(R.layout.layout_pattern, container, false);
@@ -96,7 +102,7 @@ public class PatternSetupFragment extends Fragment {
                         }
                     });
                 } else {
-                    confirmBar.setVisibility(View.GONE);
+                    confirmBar.setVisibility(View.INVISIBLE);
                     patternView.clearPattern();
                     // Checks if it's the same pattern
                     if (!PatternUtils.arePatternsEqual(pattern, PatternSetupFragment.this.pattern)) {

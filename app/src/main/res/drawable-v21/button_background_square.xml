@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/colorPrimaryDark">
-    <item>
+        android:color="@color/opacity_grey">
+    <item android:id="@android:id/mask">
         <shape android:shape="rectangle">
-            <solid android:color="@color/colorPrimary" />
-            <padding
-                android:bottom="@dimen/fab_margin"
-                android:left="@dimen/fab_margin"
-                android:right="@dimen/fab_margin"
-                android:top="@dimen/fab_margin" />
+            <solid android:color="#ffffff" />
         </shape>
     </item>
 </ripple>

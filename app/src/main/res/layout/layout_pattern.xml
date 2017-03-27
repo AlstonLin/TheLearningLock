@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <Button
             android:id="@+id/pattern_view_confirm_button"

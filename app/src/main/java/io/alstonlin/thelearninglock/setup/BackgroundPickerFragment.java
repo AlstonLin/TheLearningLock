@@ -185,6 +185,12 @@ public class BackgroundPickerFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle("Pick a Background");
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_background_picker, container, false);
         // TODO: Maybe also have default backgrounds to choose from?
@@ -224,6 +230,7 @@ public class BackgroundPickerFragment extends Fragment {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ViewGroup pickerView = (ViewGroup) inflater.inflate(R.layout.layout_select_bg, null, false);
         GridView imagesGrid = (GridView) pickerView.findViewById(R.id.bg_grid);
+        // Ugh Alston why are you obsessed with PopupWindow, they are impossible to style without being hacky.
         final PopupWindow popup = new PopupWindow(pickerView,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,

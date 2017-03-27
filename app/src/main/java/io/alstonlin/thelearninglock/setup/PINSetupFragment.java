@@ -37,6 +37,12 @@ public class PINSetupFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle("Choose a PIN");
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.layout_pin, container, false);
         final String[] PINToConfirm = {null};
