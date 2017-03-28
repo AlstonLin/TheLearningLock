@@ -121,8 +121,7 @@ public class PatternSetupFragment extends Fragment {
                         if (patternsLeft <= Const.CHANGE_FINGERS_MESSAGE_AT) {
                             title += "\nTry switching fingers/hands";
                         }
-                        PatternUtils.setPatternLayoutTitle(layout,
-                                "Enter the pattern " + patternsLeft + " more times");
+                        PatternUtils.setPatternLayoutTitle(layout, title);
                     }
                 }
             }

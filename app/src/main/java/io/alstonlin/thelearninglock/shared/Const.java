@@ -36,5 +36,5 @@ public class Const {
     // Lower this is memory becomes and issuex
     public static final float SCREEN_BG_RESIZE_RATIO = 1f;
     // Defaults
-    public static final float DEFAULT_EPSILON_TOL = 1.01f;
+    public static final float DEFAULT_EPSILON_TOL = 1.017f;
 }
