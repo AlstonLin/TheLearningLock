@@ -32,13 +32,18 @@ public class LockScreenNotificationService extends NotificationListenerService {
     }
 
     public LockScreenNotification[] getNotifications() {
-        StatusBarNotification[] statusNotifications = getActiveNotifications();
-        if (statusNotifications == null) return new LockScreenNotification[0];
-        LockScreenNotification[] notifications = new LockScreenNotification[statusNotifications.length];
-        for (int i = 0; i < statusNotifications.length; i++) {
-            notifications[i] = new LockScreenNotification(statusNotifications[i]);
+        try {
+            StatusBarNotification[] statusNotifications = getActiveNotifications();
+            if (statusNotifications == null) return new LockScreenNotification[0];
+            LockScreenNotification[] notifications = new LockScreenNotification[statusNotifications.length];
+            for (int i = 0; i < statusNotifications.length; i++) {
+                notifications[i] = new LockScreenNotification(statusNotifications[i]);
+            }
+            return notifications;
+        } catch (NullPointerException e){
+            // Some problem with binding
+            return new LockScreenNotification[]{};
         }
-        return notifications;
     }
 
     @Override

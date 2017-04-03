@@ -43,6 +43,7 @@ public class BackgroundPickerFragment extends Fragment {
             Resources.getSystem().getDisplayMetrics().widthPixels) * Const.SCREEN_BG_RESIZE_RATIO);
     private int PICK_IMAGE_REQUEST = 1;
 
+
     /**
      * Factory method to create a new instance of this Fragment
      *

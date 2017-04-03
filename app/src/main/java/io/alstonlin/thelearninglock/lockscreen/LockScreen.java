@@ -351,6 +351,7 @@ public class LockScreen {
                         public void onResult(WeatherResult weatherResult) {
                             if (weatherResult.getStatus().isSuccess()) {
                                 Weather weather = weatherResult.getWeather();
+                                if (weather == null) return;
                                 // Temperature
                                 int tempC = Math.round(weather.getTemperature(Weather.CELSIUS));
                                 int tempF = Math.round(weather.getTemperature(Weather.FAHRENHEIT));
@@ -378,6 +379,7 @@ public class LockScreen {
                         @Override
                         public void onResult(LocationResult locationResult) {
                             final Location location = locationResult.getLocation();
+                            if (location == null) return;
                             // Async Task because this network call is not synchronous
                             new AsyncTask<Void, Void, String>() {
                                 @Override

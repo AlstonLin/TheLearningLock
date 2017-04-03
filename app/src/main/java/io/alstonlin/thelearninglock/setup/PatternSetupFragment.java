@@ -45,7 +45,6 @@ public class PatternSetupFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setTitle("Choose a Pattern");
     }
 
     @Override
@@ -102,7 +101,7 @@ public class PatternSetupFragment extends Fragment {
                         }
                     });
                 } else {
-                    confirmBar.setVisibility(View.INVISIBLE);
+                    confirmBar.setVisibility(View.GONE);
                     patternView.clearPattern();
                     // Checks if it's the same pattern
                     if (!PatternUtils.arePatternsEqual(pattern, PatternSetupFragment.this.pattern)) {
@@ -121,8 +120,7 @@ public class PatternSetupFragment extends Fragment {
                         if (patternsLeft <= Const.CHANGE_FINGERS_MESSAGE_AT) {
                             title += "\nTry switching fingers/hands";
                         }
-                        PatternUtils.setPatternLayoutTitle(layout,
-                                "Enter the pattern " + patternsLeft + " more times");
+                        PatternUtils.setPatternLayoutTitle(layout, title);
                     }
                 }
             }

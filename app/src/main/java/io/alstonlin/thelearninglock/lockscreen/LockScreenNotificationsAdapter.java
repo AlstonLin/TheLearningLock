@@ -2,12 +2,15 @@ package io.alstonlin.thelearninglock.lockscreen;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -50,10 +53,12 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<LockScreenNotif
             convertView = inflater.inflate(R.layout.notification_list_item, parent, false);
             createdViews.add((ViewGroup) convertView);
         }
-        // TODO: Make a style for the Notification and create it with it for consistency
         final LockScreenNotificationService.LockScreenNotification notification = getItem(i);
         View view = notification.getNotification().contentView.apply(context, parent);
-        view.setBackgroundColor(ContextCompat.getColor(context,R.color.white));
+        Drawable background = view.getBackground();
+        if (background == null){
+            view.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+        }
         // Sets up the view
         View undoText = convertView.findViewById(R.id.undo_text);
         undoText.setOnClickListener(new View.OnClickListener() {

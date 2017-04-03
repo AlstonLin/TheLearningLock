@@ -3,17 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
+    android:layout_gravity="center"
     android:orientation="vertical"
-    android:paddingTop="25dp"
     tools:context=".setup.PINSetupFragment">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"/>
 
     <TextView
         android:id="@+id/pin_view_title"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_gravity="center_horizontal|top"
-        android:layout_marginTop="24dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
@@ -24,8 +27,7 @@
     <TextView
         android:id="@+id/pin_view_display"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:inputType="textPassword"
         android:text="PIN"
@@ -36,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="24dp"
-        android:layout_weight="7"
+        android:layout_weight="8"
         android:orientation="vertical">
 
         <LinearLayout

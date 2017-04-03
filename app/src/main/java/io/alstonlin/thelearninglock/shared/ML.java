@@ -85,7 +85,9 @@ public class ML implements Serializable {
      */
     public void addEntry(double[] data, boolean retrain) {
         if (data.length != n) {
-            throw new IllegalArgumentException("N is set to " + n + " but given data of size " + data.length);
+            // TODO: How is this being thrown???
+            Log.e("ML", "N is set to " + n + " but given data of size " + data.length);
+            return;
         }
         trainingData.add(data);
         // Shortens the list if over max size
