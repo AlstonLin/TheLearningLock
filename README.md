@@ -11,7 +11,7 @@ An Android app that uses an anomaly detection (based on a Normal Distribution) t
     <string name="AWARENESS_API_KEY_DEBUG">{Google API Key for debug builds}</string>
     <string name="AWARENESS_API_KEY_RELEASE">{Google API Key for release builds}</string>
     <string name="FABRIC_API_KEY_DEBUG">{Crashlytics API Key for debug builds}</string>
-    <string name="FABRIC_API_KEY_RELEASE">{Google API Key for release builds}</string>
+    <string name="FABRIC_API_KEY_RELEASE">{Crashlytics API Key for release builds}</string>
 </resources>
 ```
 - Build and Run on Android Studio
