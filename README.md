@@ -4,7 +4,16 @@ An Android app that uses an anomaly detection (based on a Normal Distribution) t
 ##### Setup
 - Install JDK
 - Install Android Studio + Android SDK
-- Ask Alston for the `app/src/main/res/values/secrets.xml` file which contains API keys (or make one youself)
+- Create / Get the `app/src/main/res/values/secrets.xml` file which contains API keys. The format should be
+```
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="AWARENESS_API_KEY_DEBUG">{Google API Key for debug builds}</string>
+    <string name="AWARENESS_API_KEY_RELEASE">{Google API Key for release builds}</string>
+    <string name="FABRIC_API_KEY_DEBUG">{Crashlytics API Key for debug builds}</string>
+    <string name="FABRIC_API_KEY_RELEASE">{Google API Key for release builds}</string>
+</resources>
+```
 - Build and Run on Android Studio
 
 ##### Details 
