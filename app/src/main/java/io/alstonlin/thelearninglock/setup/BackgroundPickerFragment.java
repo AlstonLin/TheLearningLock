@@ -266,6 +266,10 @@ public class BackgroundPickerFragment extends Fragment {
     }
 
     private void setBackgroundBitmap(Bitmap bg) {
+        if (bg == null){
+            Snackbar.make(getView(), "You have selected an invalid background", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
         // Resizes the bitmap
         Bitmap resized = Bitmap.createScaledBitmap(bg, MAX_BG_SIZE, MAX_BG_SIZE, false);
         // Saves the new resized bg to a file

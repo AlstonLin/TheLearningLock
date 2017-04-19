@@ -350,12 +350,14 @@ public class LockScreen {
                         @Override
                         public void onResult(WeatherResult weatherResult) {
                             if (weatherResult.getStatus().isSuccess()) {
+                                TextView tempView = (TextView) view.findViewById(R.id.temperature);
                                 Weather weather = weatherResult.getWeather();
-                                if (weather == null) return;
+                                // Weather = null => No data available
+                                // tempView = null => Result came after lock screen opened
+                                if (weather == null || tempView == null) return;
                                 // Temperature
                                 int tempC = Math.round(weather.getTemperature(Weather.CELSIUS));
                                 int tempF = Math.round(weather.getTemperature(Weather.FAHRENHEIT));
-                                TextView tempView = (TextView) view.findViewById(R.id.temperature);
                                 tempView.setVisibility(View.VISIBLE);
                                 tempView.setText(String.format("%d℃ / %d℉", tempC, tempF));
                                 // Weather icons

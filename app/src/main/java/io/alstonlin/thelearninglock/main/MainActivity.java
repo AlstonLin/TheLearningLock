@@ -101,14 +101,17 @@ public class MainActivity extends AppCompatActivity implements OnFragmentFinishe
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         if (requestCode == REQUEST_PERMISSIONS_CODE) {
+            View container = findViewById(R.id.activity_main_fragment_container);
             if (grantResults.length != PERMISSIONS.length) {
-                Snackbar.make(findViewById(R.id.activity_main_fragment_container), "All the permissions must be accepted before the lock screen can be started", Snackbar.LENGTH_SHORT).show();
+                // Because sometimes it's not actually rendered properly
+                if (container != null) Snackbar.make(container, "All the permissions must be accepted before the lock screen can be started", Snackbar.LENGTH_SHORT).show();
                 finish();
                 return;
             }
             for (int i = 0; i < grantResults.length; i++) {
                 if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                    Snackbar.make(findViewById(R.id.activity_main_fragment_container), "All the permissions must be accepted before the lock screen can be started", Snackbar.LENGTH_SHORT).show();
+                    // Because sometimes it's not actually rendered properly
+                    if (container != null) Snackbar.make(container, "All the permissions must be accepted before the lock screen can be started", Snackbar.LENGTH_SHORT).show();
                     finish();
                     return;
                 }

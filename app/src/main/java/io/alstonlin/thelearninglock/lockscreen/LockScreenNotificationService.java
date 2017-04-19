@@ -40,8 +40,8 @@ public class LockScreenNotificationService extends NotificationListenerService {
                 notifications[i] = new LockScreenNotification(statusNotifications[i]);
             }
             return notifications;
-        } catch (NullPointerException e){
-            // Some problem with binding
+        } catch (NullPointerException | SecurityException e){
+            // Some problem with binding / they revoked the Notifications permission
             return new LockScreenNotification[]{};
         }
     }
