@@ -10,6 +10,7 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationManagerCompat;
@@ -92,6 +93,16 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
         googleApi = new GoogleApiClient.Builder(this)
                 .addApi(Awareness.API)
                 .build();
+        // See http://stackoverflow.com/questions/39390557/google-awareness-api-securityexception-is-thrown
+        final Thread.UncaughtExceptionHandler defaultHandler = Looper.myLooper().getThread().getDefaultUncaughtExceptionHandler();
+        Looper.myLooper().getThread().setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                if (e instanceof SecurityException){
+                    defaultHandler.uncaughtException(t, e);
+                }
+            }
+        });
         googleApi.connect();
     }
 

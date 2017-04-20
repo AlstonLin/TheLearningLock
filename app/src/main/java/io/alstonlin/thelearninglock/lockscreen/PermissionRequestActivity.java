@@ -1,11 +1,13 @@
 package io.alstonlin.thelearninglock.lockscreen;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.widget.Toast;
 
 /**
  * An Activity that's called from LockScreenService to Request a strict permission, and then
@@ -42,7 +44,13 @@ public class PermissionRequestActivity extends Activity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                     Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent, OVERLAY_REQUEST_CODE);
+            try {
+                startActivityForResult(intent, OVERLAY_REQUEST_CODE);
+            } catch (ActivityNotFoundException e){
+                // Some phones apparently don't have this permission enabled
+                Toast.makeText(getApplicationContext(), "You'll need to manually enable this app to draw over " +
+                        "other apps in the Settings (your phone doesn't allow us to do this for you)", Toast.LENGTH_LONG);
+            }
         } else {
             throw new IllegalStateException("Why is this Activity being started on an API level " + Build.VERSION.SDK_INT);
         }

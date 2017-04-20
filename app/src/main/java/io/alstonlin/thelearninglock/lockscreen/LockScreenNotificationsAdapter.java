@@ -1,5 +1,6 @@
 package io.alstonlin.thelearninglock.lockscreen;
 
+import android.app.Notification;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -53,8 +54,10 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<LockScreenNotif
             convertView = inflater.inflate(R.layout.notification_list_item, parent, false);
             createdViews.add((ViewGroup) convertView);
         }
-        final LockScreenNotificationService.LockScreenNotification notification = getItem(i);
-        View view = notification.getNotification().contentView.apply(context, parent);
+        Notification notification = getItem(i).getNotification();
+        // TODO: What should actually be done when this happens?
+        if (notification == null) return convertView;
+        View view = notification.contentView.apply(context, parent);
         Drawable background = view.getBackground();
         if (background == null){
             view.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
