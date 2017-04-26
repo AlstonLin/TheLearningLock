@@ -15,7 +15,9 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.TelephonyManager;
+import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -99,6 +101,13 @@ public class LockScreenService extends Service implements NotificationsUpdateLis
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 if (e instanceof SecurityException){
+                    Toast.makeText(getApplicationContext(), "Whao! Something unexpected happened.", Toast.LENGTH_LONG).show();
+                    Crashlytics.logException(e);
+                } else {
+                    // Mind as well leave a nice Toast saying the lock screen crashed and how to restore it
+                    Toast.makeText(getApplicationContext(), "Unfortunately, the lock screen has crashed," +
+                            "and the developer has been notified to fix it as soon as they can. To restart" +
+                            "the lock screen, please restart your phone. Sorry about that!", Toast.LENGTH_LONG).show();
                     defaultHandler.uncaughtException(t, e);
                 }
             }
