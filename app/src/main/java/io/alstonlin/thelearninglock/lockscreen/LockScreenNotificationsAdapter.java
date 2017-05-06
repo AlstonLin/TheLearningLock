@@ -55,8 +55,8 @@ public class LockScreenNotificationsAdapter extends ArrayAdapter<LockScreenNotif
             createdViews.add((ViewGroup) convertView);
         }
         Notification notification = getItem(i).getNotification();
-        // TODO: What should actually be done when this happens?
-        if (notification == null) return convertView;
+        // TODO: What should actually be done when this happens? This situation really should not be possible
+        if (notification == null || notification.contentView == null) return convertView;
         View view = notification.contentView.apply(context, parent);
         Drawable background = view.getBackground();
         if (background == null){

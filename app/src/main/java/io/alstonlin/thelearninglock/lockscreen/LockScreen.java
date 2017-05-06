@@ -260,6 +260,7 @@ public class LockScreen {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PendingIntent intent = notificationsAdapter.getItem(position).getNotification().contentIntent;
+                if (intent == null) return;
                 try {
                     intent.send();
                     showUnlockScreen();
@@ -278,8 +279,10 @@ public class LockScreen {
      * Shows the unlock Popup.
      */
     private void showUnlockScreen() {
-        if (ml == null) { // This really should be been set up
-            Snackbar.make(lockView, "You have no set up the lock screen yet!", Snackbar.LENGTH_SHORT).show();
+        if (ml == null) { // Corner cases! Yay!
+            unlock();
+            Toast.makeText(context, "You have not set up the lock screen yet!", Toast.LENGTH_LONG).show();
+            return;
         }
         LockUtils.setVisibleScreen(lockView, R.id.unlock_screen);
     }
